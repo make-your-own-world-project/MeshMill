@@ -4,6 +4,8 @@ All notable release changes are documented here.
 
 ## 0.1.0
 
+- Connected the application GitHub button to the MeshMill repository.
+- Added GitHub and Buy Me a Coffee links to the About dialog.
 - Added local STL loading, inspection, selection, cropping, deletion, optimization, and export.
 - Added Fast QEM, density-balanced, shape-preserving, and topology-preserving optimization.
 - Added shaded, density, wireframe, and vertex display modes.

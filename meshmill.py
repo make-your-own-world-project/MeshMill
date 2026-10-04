@@ -111,7 +111,8 @@ from localization import DEFAULT_LOCALE, locale_manager, tr
 
 APP_NAME = "MeshMill"
 APP_VERSION = "0.1.0"
-REPOSITORY_URL = ""
+REPOSITORY_URL = "https://github.com/make-your-own-world-project/MeshMill"
+SUPPORT_URL = "https://buymeacoffee.com/tednv"
 PRESETS = {"light": 50_000, "balanced": 200_000, "detailed": 400_000}
 UNIT_MM = {"mm": 1.0, "cm": 10.0, "m": 1000.0, "in": 25.4, "ft": 304.8}
 SMART_DIVISORS = {"Draft": 160.0, "Balanced": 500.0, "Fine": 800.0}
@@ -5848,13 +5849,19 @@ class MainWindow(QMainWindow):
             self.save_file()
 
     def _show_about(self) -> None:
-        QMessageBox.about(
-            self,
-            f"About {APP_NAME}",
-            f"{APP_NAME} {APP_VERSION}\n\n"
-            "STL mesh inspection, selection, and optimization.\n\n"
-            "GNU General Public License v3.0 or later.",
+        dialog = QMessageBox(self)
+        dialog.setWindowTitle(f"About {APP_NAME}")
+        dialog.setIconPixmap(self.windowIcon().pixmap(64, 64))
+        dialog.setTextFormat(Qt.TextFormat.RichText)
+        dialog.setText(
+            f"<b>{APP_NAME} {APP_VERSION}</b><br><br>"
+            "STL mesh inspection, selection, and optimization.<br><br>"
+            f'<a href="{REPOSITORY_URL}">GitHub repository</a><br>'
+            f'<a href="{SUPPORT_URL}">Support MeshMill on Buy Me a Coffee</a><br><br>'
+            "GNU General Public License v3.0 or later."
         )
+        dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        dialog.exec()
 
     def _open_repository(self) -> None:
         if REPOSITORY_URL:
