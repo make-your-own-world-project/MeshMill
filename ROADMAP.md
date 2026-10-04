@@ -139,6 +139,10 @@ The index, streaming, cache, work-unit, and safety contract is documented in
 - Open oversized binary STL files as bounded, evenly sampled navigation overviews.
 - Partition full-resolution geometry into spatial cubes with deterministic overlap boundaries.
 - Read, analyze, and optimize independent cubes concurrently within CPU and memory limits.
+- Benchmark GPU-compute implementations for reduction stages such as error evaluation, candidate
+  scoring, spatial queries, and independent work-unit processing. Offload a stage only when it
+  provides a measurable end-to-end speed or memory benefit without reducing determinism, mesh
+  quality, topology guarantees, or compatibility with systems that lack a suitable GPU.
 - Stream coarse-to-fine viewport levels instead of requiring the complete mesh in memory.
 - Draw cube state directly in the viewport: queued, reading, processing, completed, and failed.
 - Show per-cube progress by filling each cube and retain a high-level whole-object view.
