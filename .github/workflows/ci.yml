@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Compile source
+        run: python -m py_compile meshmill.py
+      - name: Check release privacy
+        run: python tools/release_privacy_check.py
+      - name: Validate localization catalogs
+        run: python tools/localization/validate_locales.py
+      - name: Test density processing
+        run: python tools/test_density.py
+      - name: Test shortcut routing
+        run: python tests/test_shortcut_routing.py
+      - name: Check command-line entry point
+        run: python meshmill.py --cli --help
+      - name: Smoke-test the sample mesh
+        shell: pwsh
+        run: |
+          $output = Join-Path $env:RUNNER_TEMP "meshmill-smoke.stl"
+          python meshmill.py --cli "samples/sample-scan.stl" --target 10000 --output $output
+          if (-not (Test-Path -LiteralPath $output)) { throw "CLI did not create an output STL" }

@@ -1,0 +1,2 @@
+96b01f0e02269707b1ce6e75d6b5ca172ac0b1e2ae6698dcee66b6a852989652  sample-scan.stl
+ba814af3ba1d449c17c44d10f8470b3feb185644f370fab203e0c5dce2ce60f6  original-scan.stl

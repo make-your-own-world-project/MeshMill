@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "sourceLocale": "en-US",
+  "sourceRoot": "../..",
+  "documents": [
+    "README.md",
+    "CONTRIBUTING.md",
+    "RELEASING.md",
+    "ROADMAP.md",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "localeManifest": "../../locales/manifest.json",
+  "targetPattern": "docs/locales/<locale>/<document>"
+}

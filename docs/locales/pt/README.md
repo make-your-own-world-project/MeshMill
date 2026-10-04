@@ -1,0 +1,189 @@
+# MeshMill
+
+![Viewport sombreado do MeshMill](../../images/meshmill-shaded.png)
+
+O MeshMill é um aplicativo de desktop especializado na manipulação de geometrias de malha
+grandes, densas ou complexas, tornando-as gerenciáveis. Ele oferece inspeção rápida, análise de densidade, seleção regional, recorte, exclusão
+e redução controlada da malha, sem exigir criação de conta ou upload da geometria.
+
+O MeshMill trabalha com malhas provenientes de scanners 3D, exportações de CAD e modelagem, pipelines de reconstrução,
+geometria gerada e outras fontes compatíveis com o STL. Ele prepara a geometria para editores subsequentes,
+ferramentas de manufatura e outros fluxos de trabalho com malhas. Modelagem de uso geral, escultura, animação,
+materiais e criação de cenas estão fora do seu escopo.
+
+## Download
+
+Baixe um destes arquivos em [Lançamentos do GitHub](../../releases):
+
+- `MeshMill-<version>-windows-x64-setup.exe`: instalador por usuário com menu Iniciar e
+  atalhos na área de trabalho opcionais.
+- `MeshMill-<version>-windows-x64-portable.zip`: aplicativo portátil. Extraia todo o arquivo compactado,
+  e então execute o `MeshMill.exe`.
+
+Ambos os pacotes incluem o ambiente de execução (runtime) do aplicativo. Os usuários finais não instalam as dependências Python, Node.js ou
+A versão inicial oferece suporte ao Windows 10 e ao Windows 11 em hardware x64. Pacotes Linux e
+macOS estão planejados; os formatos de produto e de arquivo não são específicos do Windows.
+
+Compilações da comunidade não assinadas podem exibir um aviso do SmartScreen do Windows. Os checksums da versão estão listados
+no `SHA256SUMS.txt`, ao lado de cada versão.
+
+## Início rápido
+
+1. Abra um STL.
+2. Inspecione-o nos modos de exibição Sombreado, Densidade, Aramado ou Vértices.
+3. Escolha um nível de qualidade, um algoritmo e uma contagem de triângulos desejada.
+4. Selecione **Otimizar** para calcular um resultado.
+5. Compare as malhas original e otimizada e, em seguida, selecione **Aplicar** para confirmar a operação.
+6. Selecione **Salvar estado atual** ou pressione `Ctrl+S`.
+
+O MeshMill nunca inicia a otimização apenas porque um arquivo ou configuração foi alterado.
+
+## Recursos
+
+- Entrada STL em formatos binário e ASCII; saída STL em formato binário
+- Fast QEM, redução com densidade balanceada, preservação de forma e preservação de topologia
+- Modos de visualização: sombreado, densidade, estrutura de arame (wireframe) e vértices
+- Metas automáticas derivadas da geometria, em vez de um limite fixo de triângulos
+- Seleção de polígonos com seleção aditiva de múltiplas regiões
+- Recortar, excluir ou otimizar apenas a região selecionada
+- Comparação em cache entre as malhas original, anterior e atual
+- Desfazer e refazer para alterações de geometria confirmadas
+- Desvio dimensional, porcentagem de redução e tamanho estimado da saída
+- Unidades de exibição: milímetro, centímetro, metro, polegada e pé
+- Métricas de CPU, memória, GPU e atividade geométrica
+- Carregamento de visão geral limitada quando um arquivo STL binário excede o limite de memória configurado
+- Aplicativos com interface gráfica (GUI) e linha de comando
+- Processamento local sem dependência de conta, telemetria, upload ou nuvem
+
+![Exibição de densidade MeshMill](../../images/meshmill-density.png)
+
+## Controles de visualização
+
+| Entrada | Ação |
+| --- | --- |
+| Arrastar com o botão do meio | Orbitar |
+| Shift + arrastar com o botão do meio | Panorâmica |
+| Roda do mouse | Zoom em direção ao ponteiro |
+| Ctrl + roda do mouse | Girar no sentido horário ou anti-horário |
+| Teclas de seta | Orbitar em torno do centro da vista |
+| Ctrl + teclas de seta | Panorâmica |
+| Ctrl + Shift + Cima/Baixo | Zoom |
+| Ctrl + Shift + Esquerda/Direita | Rolo |
+| `F1`/`F2`/`F3`/`F4` | Sombreado / Densidade / Wireframe / Vértices |
+| Segure o botão direito do mouse | Lupa |
+| Shift + clique com o botão esquerdo | Adicionar ou remover pontos de régua |
+| Ctrl + arrastar para a esquerda | Desenhe um polígono de seleção |
+| `Ctrl+C` | Adicione o polígono à seleção salva |
+| `Ctrl+X` | Cortar para a seleção |
+| `Ctrl+Space` | Otimizar a seleção |
+| `Delete` | Exclua a seleção |
+| `Escape` | Limpar a seleção ou régua ativa |
+| `Ctrl+Z`/`Ctrl+Y` | Desfazer/refazer |
+| `Ctrl+S` | Salvar o estado atual da malha |
+
+As teclas de visualização padrão seguem o bloco de navegação de seis teclas:
+
+| Chave | Ver | Ctrl + tecla |
+| --- | --- | --- |
+| `Insert` | Esquerda | Defina a orientação atual como Esquerda |
+| `Home` | Frente | Defina a orientação atual como Frontal |
+| `Page Up` | Certo | Defina a orientação atual como Direita |
+| `Delete` | Topo quando não existe seleção | Defina a orientação atual como Superior |
+| `End` | Voltar | Defina a orientação atual como Voltar |
+| `Page Down` | Parte inferior | Defina a orientação atual como Inferior |
+
+Salvar uma visualização também atualiza sua visualização oposta. Esquerda e Direita, Frente e Trás, e Superior e Inferior
+permanecer emparelhado. Na caixa de diálogo de confirmação, **Salvar** é a ação padrão, então Enter salva o
+orientação. A frente aparece na parte superior das visualizações Superior e Inferior.
+
+Os atalhos podem ser alterados ou redefinidos em Configurações.
+
+## Fluxo de trabalho de seleção
+
+Segure Ctrl e arraste para a esquerda para desenhar um polígono. Arraste os cantos para remodelá-la, clique com o botão esquerdo em uma aresta para adicionar uma
+ponto ou clique com o botão direito em uma aresta para removê-la. Adicione mais regiões com `Ctrl+C`. Mover a câmera esconde
+o polígono do espaço da tela, mantendo a geometria selecionada.
+
+A otimização com uma seleção ativa afeta apenas essa seleção. O resultado permanece provisório
+até que **Aplicar** seja selecionado. **Cancelar** descarta o resultado provisório e mantém a seleção para
+outra configuração pode ser tentada. As operações de corte e exclusão tornam-se edições normais de malha que podem ser revertidas.
+
+## Malhas grandes
+
+Antes de alocar um STL binário, MeshMill compara sua memória de trabalho estimada com a configurada
+orçamento de memória. Um arquivo acima do orçamento é aberto como uma visão geral limitada e somente leitura. Os relatórios de visão geral
+a contagem completa de triângulos de origem, mas desativa a edição e a exportação porque é uma amostra, não a completa
+objeto. O processamento fora do núcleo indexado e dependente de zoom é planejado em
+[docs/OUT_OF_CORE.md](docs/OUT_OF_CORE.md).
+
+## Linha de comando
+
+`MeshMillCLI.exe` está incluído em ambos os pacotes de lançamento:
+
+```powershell
+.\MeshMillCLI.exe "C:\path\mesh.stl" --preset balanced
+.\MeshMillCLI.exe "C:\path\mesh.stl" --target 150000 --output "C:\path\mesh-reduced.stl"
+.\MeshMillCLI.exe "C:\path\mesh.stl" --algorithm density --target 150000
+.\MeshMillCLI.exe "C:\path\mesh.stl" --algorithm topology --overwrite
+```
+
+Execute `.\MeshMillCLI.exe --help` para todas as opções. MeshMill se recusa a substituir seu arquivo de entrada.
+
+## Geometria de amostra
+
+Duas versões do exemplo de desenvolvimento estão disponíveis. A amostra é uma malha composta com
+camadas intencionais de geometria redundante e densidade variada. Dá às pessoas sem scanner uma
+acessório realista para comparar algoritmos, inspecionar densidade, exercer operações regionais,
+e desenvolvimento de recursos de roteiro. MeshMill não requer entrada digitalizada.
+
+| Arquivo | Triângulos | Tamanho | Entrega | Melhor para |
+| --- | ---: | ---: | --- | --- |
+| [`sample-scan.stl`](../../../samples/sample-scan.stl) | 249.999 | 11,9 MiB | Git normal | Avaliação rápida, CI e aprendizado dos controles |
+| [`original-scan.stl`](../../../samples/original-scan.stl) | 4.126.315 | 196,8 MiB | Git LFS | Testando geometria de fonte densa e desempenho de malha grande |
+
+A amostra menor é baixada com cada clone normal. O original intocado é opcional e
+gerenciado por meio de Git LFS para que não aumente o histórico comum do repositório. O desktop GitHub inclui
+Git LFS. Usuários de linha de comando podem instalar Git LFS e executar:
+
+```powershell
+git lfs pull --include="samples/original-scan.stl"
+```
+
+Os lançamentos marcados também publicam o STL original como um download direto para pessoas que não usam Git.
+Consulte [`samples/README.md`](../../../samples/README.md) para procedência, dimensões e somas de verificação.
+
+Os contribuidores do algoritmo também devem ler o
+[guia de teste de algoritmo](docs/ALGORITHM_TESTING.md) antes de comparar ou alterar a redução
+comportamento.
+
+## Unidades STL
+
+STL não codifica uma unidade. Alterar unidades do modelo altera rótulos e medidas sem dimensionamento
+as coordenadas salvas. Selecione a unidade que descreve a geometria de origem.
+
+## Privacidade
+
+MeshMill lê e grava arquivos locais. Ele não contém conta, telemetria, upload, publicidade ou
+recurso de processamento em nuvem. A implementação atual das métricas GPU usa desempenho Windows local
+contadores. Provedores de métricas nativas equivalentes estão planejados para Linux e macOS.
+
+Para solução de problemas de diagnóstico, os desenvolvedores podem iniciar a GUI com
+`--diagnostic-log <local-file.jsonl>`. O log registra o roteamento de entrada e o estado da câmera localmente e é
+desativado durante o uso normal.
+
+## Desenvolvimento e lançamento
+
+- [Contribuindo](CONTRIBUTING.md)
+- [Processo de liberação](RELEASING.md)
+- [Roteiro](ROADMAP.md)
+- [Solução de problemas](docs/TROUBLESHOOTING.md)
+- [Avisos de terceiros](THIRD_PARTY_NOTICES.md)
+
+## Suporte MeshMill
+
+MeshMill é desenvolvido e mantido de forma independente. Leia
+[por que apoiar este trabalho é importante](SUPPORT.md), ou apoiar o desenvolvimento contínuo por meio de
+[Compre um café para mim](https://buymeacoffee.com/tednv).
+
+MeshMill está licenciado sob a Licença Pública Geral GNU, versão 3 ou posterior. Veja
+[`LICENSE`](../../../LICENSE).

@@ -1,0 +1,53 @@
+"""Generate Windows executable metadata for a release build."""
+
+from __future__ import annotations
+
+import argparse
+import re
+from pathlib import Path
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--version", required=True)
+    args = parser.parse_args()
+    if not re.fullmatch(r"\d+\.\d+\.\d+(?:\.\d+)?", args.version):
+        parser.error("version must contain three or four numeric components")
+    numeric = tuple(int(part) for part in args.version.split("."))
+    numeric += (0,) * (4 - len(numeric))
+    content = f"""VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers={numeric!r},
+    prodvers={numeric!r},
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0),
+  ),
+  kids=[
+    StringFileInfo([
+      StringTable('040904B0', [
+        StringStruct('CompanyName', 'MeshMill contributors'),
+        StringStruct('FileDescription', 'MeshMill STL mesh simplification tool'),
+        StringStruct('FileVersion', '{args.version}'),
+        StringStruct('InternalName', 'MeshMill'),
+        StringStruct('LegalCopyright', 'Copyright (C) 2026 MeshMill contributors'),
+        StringStruct('OriginalFilename', 'MeshMill.exe'),
+        StringStruct('ProductName', 'MeshMill'),
+        StringStruct('ProductVersion', '{args.version}'),
+      ])
+    ]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])]),
+  ],
+)
+"""
+    destination = Path(__file__).resolve().parents[1] / "version_info.txt"
+    destination.write_text(content, "utf-8")
+    print(f"Wrote {destination} for version {args.version}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
