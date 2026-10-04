@@ -21,6 +21,16 @@ materials, and scene creation are outside its scope.
 
 ![MeshMill density display showing relative mesh density](docs/images/meshmill-density.png)
 
+### Regional selection
+
+![MeshMill viewport showing a retained multi-region selection](docs/images/meshmill-selection.png)
+
+### Saved orientation views
+
+![MeshMill viewport showing a saved front-relative orientation](docs/images/meshmill-orientation-front.png)
+
+![MeshMill viewport showing a saved side-relative orientation](docs/images/meshmill-orientation-side.png)
+
 ## Download
 
 Download one of these files from [GitHub Releases](../../releases):
