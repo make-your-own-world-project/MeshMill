@@ -17,19 +17,29 @@ materials, and scene creation are outside its scope.
 
 ![MeshMill shaded viewport showing the bundled sample mesh](docs/images/meshmill-shaded.png)
 
-### Density analysis
+### Density overview
 
 ![MeshMill density display showing relative mesh density](docs/images/meshmill-density.png)
 
 ### Regional selection
 
-![MeshMill viewport showing a retained multi-region selection](docs/images/meshmill-selection.png)
+![MeshMill showing a retained regional selection and its geometry statistics](docs/images/meshmill-crop-selection.png)
 
-### Saved orientation views
+### Vertex distribution
 
-![MeshMill viewport showing a saved front-relative orientation](docs/images/meshmill-orientation-front.png)
+![MeshMill Vertices display with expanded performance metrics](docs/images/meshmill-vertices.png)
 
-![MeshMill viewport showing a saved side-relative orientation](docs/images/meshmill-orientation-side.png)
+### Density analysis
+
+![MeshMill Density display showing relative mesh density](docs/images/meshmill-density-overview.png)
+
+### Magnified density inspection
+
+![MeshMill Density display with the viewport magnifier](docs/images/meshmill-density-zoom.png)
+
+### Wireframe inspection
+
+![MeshMill Wireframe display showing variation in triangle density](docs/images/meshmill-wireframe.png)
 
 ## Download
 
