@@ -2,8 +2,6 @@
   <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
 </p>
 
-![MeshMill shaded viewport](docs/images/meshmill-shaded.png)
-
 MeshMill is a focused desktop application for making oversized, dense, or difficult mesh geometry
 manageable. It provides fast inspection, density analysis, regional selection, cropping, deletion,
 and controlled mesh reduction without requiring an account or uploading geometry.
@@ -12,6 +10,16 @@ MeshMill works with meshes from 3D scanners, CAD and modeling exports, reconstru
 generated geometry, and other STL sources. It prepares geometry for downstream editors,
 manufacturing tools, and other mesh workflows. General-purpose modeling, sculpting, animation,
 materials, and scene creation are outside its scope.
+
+## Screenshots
+
+### Shaded geometry
+
+![MeshMill shaded viewport showing the bundled sample mesh](docs/images/meshmill-shaded.png)
+
+### Density analysis
+
+![MeshMill density display showing relative mesh density](docs/images/meshmill-density.png)
 
 ## Download
 
@@ -56,8 +64,6 @@ MeshMill never starts optimization merely because a file or setting changed.
 - Bounded overview loading when a binary STL exceeds the configured memory budget
 - GUI and command-line applications
 - Local processing with no account, telemetry, upload, or cloud dependency
-
-![MeshMill density display](docs/images/meshmill-density.png)
 
 ## View controls
 
