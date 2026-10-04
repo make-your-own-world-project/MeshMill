@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: MeshMill documentation
+    url: https://github.com/make-your-own-world-project/MeshMill#readme
+    about: Review installation, workflow, troubleshooting, and contribution guidance.

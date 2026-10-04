@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose an improvement to MeshMill's focused geometry-management workflow.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: MeshMill focuses on inspecting, reducing, selecting, cropping, cleaning, and coordinating difficult mesh geometry.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Geometry-management problem
+      description: Describe the current limitation and the mesh workflow it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the interaction, expected result, and any relevant performance constraints.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This request supports focused mesh or geometry management rather than general-purpose content creation.
+          required: true
+

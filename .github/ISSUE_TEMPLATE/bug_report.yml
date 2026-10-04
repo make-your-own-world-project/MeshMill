@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a reproducible problem in MeshMill.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve MeshMill. Do not attach private or identifying geometry.
+  - type: input
+    id: version
+    attributes:
+      label: MeshMill version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - Windows installer
+        - Windows portable
+        - Source checkout
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe what happened and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Open...
+        2. Select...
+        3. Choose...
+    validations:
+      required: true
+  - type: textarea
+    id: mesh
+    attributes:
+      label: Mesh characteristics
+      description: Include format, approximate file size, triangle count, and whether the bundled sample reproduces the issue.
+  - type: textarea
+    id: system
+    attributes:
+      label: System details
+      description: Include operating-system version, CPU, memory, and GPU when relevant.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Remove private paths, names, email addresses, and identifying geometry before attaching anything.
+
