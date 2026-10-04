@@ -6,6 +6,8 @@ MeshMill est une application de bureau spécialisée conçue pour rendre gérabl
 volumineuses, denses ou complexes. Elle permet une inspection rapide, l'analyse de la densité, la sélection par zone, le découpage, la suppression,
 ainsi qu'une réduction contrôlée du maillage, sans nécessiter de compte ni de téléchargement de la géométrie vers un serveur.
 
+Le rendu OpenGL accéléré par le GPU assure une navigation fluide dans la vue, la sélection matérielle, la visualisation de la densité et l’inspection interactive. La réduction du maillage s’exécute actuellement dans des processus CPU natifs distincts afin que les longs calculs géométriques ne bloquent pas l’interface.
+
 MeshMill prend en charge les maillages issus de scanners 3D, d'exports CAO et de modélisation, de chaînes de reconstruction,
 de géométries générées et d'autres sources STL. Elle prépare la géométrie pour des logiciels d'édition en aval,
 des outils de fabrication et d'autres flux de travail liés aux maillages. La modélisation généraliste, la sculpture, l'animation,

@@ -6,6 +6,8 @@ MeshMill è un'applicazione desktop specifica per gestire geometrie mesh
 di grandi dimensioni, ad alta densità o complesse. Offre funzionalità di ispezione rapida, analisi della densità, selezione per aree, ritaglio, eliminazione,
 e riduzione controllata della mesh, senza richiedere la creazione di un account o il caricamento della geometria.
 
+Il rendering OpenGL con accelerazione GPU mantiene reattivi la navigazione della vista, la selezione hardware, la visualizzazione della densità e l’ispezione interattiva. La riduzione della mesh viene attualmente eseguita in processi CPU nativi separati, così i calcoli geometrici prolungati non bloccano l’interfaccia.
+
 MeshMill supporta mesh provenienti da scanner 3D, esportazioni CAD e di modellazione, pipeline di ricostruzione,
 geometrie generate proceduralmente e altre fonti STL. Prepara la geometria per editor a valle,
 strumenti di produzione e altri flussi di lavoro basati su mesh. La modellazione generica, lo sculpting, l'animazione,

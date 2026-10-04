@@ -6,6 +6,8 @@ MeshMill is een gespecialiseerde desktopapplicatie om zeer grote, complexe of
 dichte mesh-geometrie hanteerbaar te maken. Het biedt snelle inspectie, dichtheidsanalyse,
 selectie van gebieden, bijsnijden, verwijderen en gecontroleerde mesh-reductie, zonder dat een account of upload van geometrie nodig is.
 
+GPU-versnelde OpenGL-rendering houdt viewportnavigatie, hardwareselectie, dichtheidsweergave en interactieve inspectie responsief. Mesh-reductie wordt momenteel uitgevoerd in afzonderlijke native CPU-processen, zodat langdurige geometrieberekeningen de interface niet blokkeren.
+
 MeshMill werkt met meshes van 3D-scanners, CAD- en modelleerexportbestanden, reconstructiepipelines,
 gegenereerde geometrie en andere STL-bronnen. Het bereidt geometrie voor op verdere verwerking in editors,
 productietools en andere mesh-workflows. Algemene modellering, sculpting, animatie,

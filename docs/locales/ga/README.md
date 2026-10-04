@@ -6,6 +6,8 @@ Is feidhmchlár deisce tiomnaithe é MeshMill chun geoiméadracht mhogalra atá 
 agus a dhéanamh níos soláimhsithe. Cuireann sé iniúchadh tapa, anailís dlúis, roghnú réigiún, bearradh, scriosadh,
 agus laghdú rialaithe ar an mogalra ar fáil, gan gá le cuntas ná le geoiméadracht a uaslódáil.
 
+Coinníonn rindreáil OpenGL luasghéaraithe ag an GPU nascleanúint an amhairc, piocadh crua-earraí, léirshamhlú dlúis agus iniúchadh idirghníomhach freagrúil. Ritheann laghdú mogail faoi láthair i bpróisis dhúchasacha CPU ar leith, ionas nach gcuireann ríomhanna fada geoiméadracha bac ar an gcomhéadan.
+
 Oibríonn MeshMill le mogalraí ó scanóirí 3D, ó chomhaid easpórtáilte CAD agus samhaltú, ó phíblínte athchruthaithe,
 ó gheoiméadracht ghinte, agus ó fhoinsí eile STL. Ullmhaíonn sé geoiméadracht d’eagarthóirí iartheachtacha,
 d’uirlisí déantúsaíochta, agus do shreafaí oibre mogalra eile. Ní bhaineann sé le samhaltú ginearálta, dealbhóireacht, beochan,

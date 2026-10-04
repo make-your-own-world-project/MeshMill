@@ -6,6 +6,8 @@ A MeshMill egy célzott asztali alkalmazás, amely lehetővé teszi a túlméret
 kezelését. Gyors ellenőrzést, sűrűségelemzést, régiókijelölést, vágást, törlést,
 valamint szabályozott hálóegyszerűsítést kínál anélkül, hogy fiókra vagy a geometria feltöltésére lenne szükség.
 
+A GPU-gyorsítású OpenGL-megjelenítés gördülékenyen tartja a nézet navigációját, a hardveres kijelölést, a sűrűségábrázolást és az interaktív vizsgálatot. A hálócsökkentés jelenleg külön natív CPU-folyamatokban fut, így a hosszú geometriai számítások nem blokkolják a felületet.
+
 A MeshMill együttműködik a 3D szkennerekből, CAD- és modellezőszoftverek exportjaiból, rekonstrukciós folyamatokból,
 generált geometriákból és egyéb STL-forrásokból származó hálókkal. Előkészíti a geometriát további szerkesztőprogramok,
 gyártási eszközök és egyéb hálóalapú munkafolyamatok számára. Az általános célú modellezés, szobrászat, animáció,

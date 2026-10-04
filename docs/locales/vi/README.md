@@ -6,6 +6,8 @@ MeshMill là ứng dụng máy tính chuyên dụng giúp xử lý các mô hìn
 mật độ cao hoặc cấu trúc phức tạp. Ứng dụng hỗ trợ kiểm tra nhanh, phân tích mật độ, chọn vùng, cắt, xóa,
 và giảm số lượng lưới có kiểm soát mà không yêu cầu tài khoản hay tải dữ liệu hình học lên máy chủ.
 
+Kết xuất OpenGL tăng tốc bằng GPU giúp thao tác trong khung nhìn, chọn bằng phần cứng, hiển thị mật độ và kiểm tra tương tác luôn phản hồi nhanh. Việc giảm lưới hiện chạy trong các tiến trình CPU gốc riêng biệt, nhờ đó các phép tính hình học kéo dài không chặn giao diện.
+
 MeshMill hoạt động với dữ liệu lưới từ máy quét 3D, tệp xuất từ ​​CAD và phần mềm mô hình hóa, quy trình tái tạo,
 dữ liệu hình học được tạo tự động và các nguồn khác. Ứng dụng chuẩn bị dữ liệu cho các công cụ chỉnh sửa, (STL)
 công cụ sản xuất và các quy trình xử lý lưới khác. Các tính năng mô hình hóa tổng quát, điêu khắc, hoạt ảnh,

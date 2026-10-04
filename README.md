@@ -6,6 +6,10 @@ MeshMill is a focused desktop application for making oversized, dense, or diffic
 manageable. It provides fast inspection, density analysis, regional selection, cropping, deletion,
 and controlled mesh reduction without requiring an account or uploading geometry.
 
+GPU-accelerated OpenGL rendering keeps viewport navigation, hardware picking, density visualization,
+and interactive inspection responsive. Mesh reduction currently runs in separate native CPU workers,
+keeping long geometry calculations away from the interface.
+
 MeshMill works with meshes from 3D scanners, CAD and modeling exports, reconstruction pipelines,
 generated geometry, and other STL sources. It prepares geometry for downstream editors,
 manufacturing tools, and other mesh workflows. General-purpose modeling, sculpting, animation,
@@ -42,6 +46,8 @@ MeshMill never starts optimization merely because a file or setting changed.
 
 - Binary and ASCII STL input, binary STL output
 - Fast QEM, density-balanced, shape-preserving, and topology-preserving reduction
+- GPU-accelerated OpenGL viewport, hardware picking, and density visualization
+- Native background geometry workers for mesh reduction
 - Shaded, density, wireframe, and vertex display modes
 - Automatic targets derived from geometry rather than a fixed triangle ceiling
 - Polygon selection with additive multi-region selection

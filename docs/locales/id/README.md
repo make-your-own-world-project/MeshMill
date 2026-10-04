@@ -6,6 +6,8 @@ MeshMill adalah aplikasi desktop khusus untuk mengolah geometri mesh yang beruku
 agar lebih mudah dikelola. Aplikasi ini menyediakan fitur inspeksi cepat, analisis kepadatan, pemilihan area, pemotongan, penghapusan,
 serta pengurangan mesh secara terkontrol tanpa perlu membuat akun atau mengunggah geometri.
 
+Rendering OpenGL yang dipercepat GPU menjaga navigasi viewport, pemilihan berbasis perangkat keras, visualisasi kepadatan, dan pemeriksaan interaktif tetap responsif. Pengurangan mesh saat ini berjalan dalam proses CPU native terpisah agar perhitungan geometri yang panjang tidak memblokir antarmuka.
+
 MeshMill dapat memproses mesh dari pemindai 3D, hasil ekspor CAD dan pemodelan, alur kerja rekonstruksi,
 geometri yang dihasilkan secara prosedural, dan sumber STL lainnya. Aplikasi ini menyiapkan geometri untuk editor tahap selanjutnya,
 perangkat manufaktur, dan alur kerja mesh lainnya. Pemodelan umum, pemahatan (sculpting), animasi,

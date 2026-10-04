@@ -6,6 +6,8 @@ MeshMill to specjalistyczna aplikacja desktopowa służąca do pracy z geometri�
 zbyt duża, zbyt gęsta lub trudna w obróbce. Umożliwia szybką inspekcję, analizę gęstości, zaznaczanie obszarów, przycinanie, usuwanie elementów
 oraz kontrolowaną redukcję siatki – a wszystko to bez konieczności zakładania konta czy przesyłania geometrii na serwer.
 
+Renderowanie OpenGL przyspieszane przez GPU zapewnia płynną nawigację w widoku, wybieranie sprzętowe, wizualizację gęstości i interaktywną inspekcję. Redukcja siatki działa obecnie w oddzielnych natywnych procesach CPU, dzięki czemu długie obliczenia geometrii nie blokują interfejsu.
+
 MeshMill obsługuje siatki pochodzące ze skanerów 3D, plików eksportowanych z systemów CAD i programów do modelowania,
 procesów rekonstrukcji, wygenerowanej geometrii oraz innych źródeł. Przygotowuje geometrię do dalszej obróbki w innych edytorach, (STL)
 narzędziach produkcyjnych i innych procesach roboczych związanych z siatkami. Ogólne modelowanie, rzeźbienie, animacja,

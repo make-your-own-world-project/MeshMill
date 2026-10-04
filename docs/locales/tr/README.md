@@ -6,6 +6,8 @@ MeshMill; çok büyük boyutlu, yoğun veya karmaşık ağ (mesh) geometrilerini
 yönetilebilir hale getirmeye odaklanmış bir masaüstü uygulamasıdır. Hızlı inceleme, yoğunluk analizi, bölgesel seçim, kırpma, silme
 ve hesap oluşturma ya da geometri yükleme gerektirmeyen kontrollü ağ sadeleştirme imkanı sunar.
 
+GPU hızlandırmalı OpenGL oluşturma, görünüm alanı gezinmesini, donanım tabanlı seçimi, yoğunluk görselleştirmesini ve etkileşimli incelemeyi akıcı tutar. Ağ azaltma şu anda ayrı yerel CPU işlemlerinde çalışır; böylece uzun geometri hesaplamaları arayüzü engellemez.
+
 MeshMill; 3D tarayıcılar, CAD ve modelleme dışa aktarımları, yeniden yapılandırma süreçleri,
 oluşturulan geometriler ve diğer STL kaynaklarından gelen ağlarla çalışır. Geometriyi sonraki aşamadaki düzenleyiciler,
 üretim araçları ve diğer ağ iş akışları için hazırlar. Genel amaçlı modelleme, şekillendirme (sculpting), animasyon,
