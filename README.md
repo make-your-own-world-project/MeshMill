@@ -11,36 +11,6 @@ generated geometry, and other STL sources. It prepares geometry for downstream e
 manufacturing tools, and other mesh workflows. General-purpose modeling, sculpting, animation,
 materials, and scene creation are outside its scope.
 
-## Screenshots
-
-### Shaded geometry
-
-![MeshMill shaded viewport showing the bundled sample mesh](docs/images/meshmill-shaded.png)
-
-### Density overview
-
-![MeshMill density display showing relative mesh density](docs/images/meshmill-density.png)
-
-### Regional selection
-
-![MeshMill showing a retained regional selection and its geometry statistics](docs/images/meshmill-crop-selection.png)
-
-### Vertex distribution
-
-![MeshMill Vertices display with expanded performance metrics](docs/images/meshmill-vertices.png)
-
-### Density analysis
-
-![MeshMill Density display showing relative mesh density](docs/images/meshmill-density-overview.png)
-
-### Magnified density inspection
-
-![MeshMill Density display with the viewport magnifier](docs/images/meshmill-density-zoom.png)
-
-### Wireframe inspection
-
-![MeshMill Wireframe display showing variation in triangle density](docs/images/meshmill-wireframe.png)
-
 ## Download
 
 Download one of these files from [GitHub Releases](../../releases):
@@ -84,6 +54,42 @@ MeshMill never starts optimization merely because a file or setting changed.
 - Bounded overview loading when a binary STL exceeds the configured memory budget
 - GUI and command-line applications
 - Local processing with no account, telemetry, upload, or cloud dependency
+
+## Inspect geometry before reducing it
+
+The Shaded display provides a clean view of the surface and silhouette. It is useful for comparing
+shape preservation before applying an optimization pass.
+
+![MeshMill shaded viewport showing the bundled sample mesh](docs/images/meshmill-shaded.png)
+
+The Vertices display exposes the actual point distribution. Dense scan regions, sparse areas, and
+abrupt changes in sampling are visible without changing the geometry. The expanded metrics panel
+tracks CPU, memory, GPU, and geometry-processing activity while working with the mesh.
+
+![MeshMill Vertices display with expanded performance metrics](docs/images/meshmill-vertices.png)
+
+The Wireframe display shows triangle structure directly. It helps identify unnecessary density,
+irregular triangulation, and regions where simplification can remove substantial geometry.
+
+![MeshMill Wireframe display showing variation in triangle density](docs/images/meshmill-wireframe.png)
+
+## Analyze mesh density
+
+The Density display maps relative local density across the model. Sparse regions remain cool while
+increasingly dense regions move through brighter colors, making uneven sampling visible at a glance.
+
+![MeshMill density display showing relative mesh density](docs/images/meshmill-density.png)
+
+Density remains available while evaluating a provisional optimization. The toolbox reports the
+algorithm, target, resulting triangle and vertex counts, reduction percentage, dimensions, and
+estimated output size before the pass is applied.
+
+![MeshMill Density display showing a provisional optimization](docs/images/meshmill-density-overview.png)
+
+Hold the right mouse button to inspect a region through the circular magnifier. The magnified view
+stays centered on the pointer and reveals local density without changing the main camera position.
+
+![MeshMill Density display with the viewport magnifier](docs/images/meshmill-density-zoom.png)
 
 ## View controls
 
@@ -135,6 +141,12 @@ the screen-space polygon while retaining the selected geometry.
 Optimization with an active selection affects that selection only. The result remains provisional
 until **Apply** is selected. **Cancel** discards the provisional result and retains the selection so
 another configuration can be tried. Crop and delete operations become normal undoable mesh edits.
+
+The selection panel reports the cumulative selected vertices, triangles, mesh share, estimated
+size, and dimensions. Its actions crop, add, optimize, delete, step back, or clear the retained
+selection without hiding the surrounding geometry.
+
+![MeshMill showing a retained regional selection and its geometry statistics](docs/images/meshmill-crop-selection.png)
 
 ## Large meshes
 
