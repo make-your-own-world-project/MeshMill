@@ -1,7 +1,8 @@
 # Releasing MeshMill
 
-The release pipeline builds Windows artifacts on GitHub-hosted Windows runners. End users receive
-a self-contained installer or portable ZIP and do not install Python, Node.js, or dependencies.
+The stable release pipeline builds Windows artifacts on GitHub-hosted Windows runners. A separate
+manual workflow builds unsigned Linux x86-64 and macOS Intel/Apple silicon previews on native
+GitHub-hosted runners. End users do not install Python, Node.js, or dependencies.
 
 Before building, refresh and validate the localization source catalogs:
 
@@ -74,3 +75,19 @@ Verify the installer and portable archive on a clean Windows system before annou
 Keep the source corresponding to every distributed binary available under the same release tag.
 Confirm that the GitHub button points to the final public repository URL before tagging the first
 release.
+
+## Build Linux and macOS previews
+
+Open **Actions**, select **Platform preview builds**, and choose **Run workflow**. Enter a preview
+version such as `0.2.0-preview.1`.
+
+Leave **Publish a public GitHub prerelease** off for the first run. The workflow builds and tests:
+
+- Linux x86-64 on Ubuntu 22.04;
+- macOS x86-64 on an Intel runner;
+- macOS arm64 on an Apple silicon runner.
+
+Download the workflow artifacts and inspect their checksums and logs. Run the workflow again with
+publishing enabled only after every build job passes. Published macOS previews are ad-hoc signed,
+not Apple-notarized. Describe them as preview builds and link testers to
+`docs/PLATFORM_TESTING.md` and the **Platform preview test** issue form.

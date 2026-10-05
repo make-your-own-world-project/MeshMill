@@ -1,0 +1,166 @@
+name: Platform preview builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Preview version, for example 0.2.0-preview.1
+        required: true
+        default: 0.2.0-preview.1
+      publish_prerelease:
+        description: Publish a public GitHub prerelease after all builds pass
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  linux-x64:
+    name: Linux x86-64
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0 libxcb-xinerama0 xvfb
+
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Validate source and privacy
+        run: |
+          python -m py_compile meshmill.py
+          python tools/release_privacy_check.py
+          python tools/localization/validate_locales.py
+
+      - name: Build portable application
+        env:
+          MESHMILL_BUILD_VERSION: ${{ inputs.version }}
+        run: python -m PyInstaller --noconfirm --clean packaging/MeshMill-posix.spec
+
+      - name: Test packaged CLI and sample reduction
+        run: |
+          dist/MeshMill/MeshMill --cli --help
+          dist/MeshMill/MeshMill --cli samples/sample-scan.stl \
+            --target 10000 --output "$RUNNER_TEMP/meshmill-smoke.stl"
+          test -s "$RUNNER_TEMP/meshmill-smoke.stl"
+
+      - name: Test packaged GUI startup
+        run: |
+          set +e
+          timeout 15s xvfb-run -a dist/MeshMill/MeshMill >gui-smoke.log 2>&1
+          status=$?
+          set -e
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
+            cat gui-smoke.log
+            exit "$status"
+          fi
+
+      - name: Package preview
+        run: |
+          mkdir -p release
+          tar -C dist -czf "release/MeshMill-${{ inputs.version }}-linux-x86_64.tar.gz" MeshMill
+          sha256sum release/* > release/SHA256SUMS-linux-x86_64.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MeshMill-${{ inputs.version }}-linux-x86_64
+          path: release/*
+          if-no-files-found: error
+
+  macos:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            arch: x86_64
+          - runner: macos-15
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Validate source and privacy
+        run: |
+          python -m py_compile meshmill.py
+          python tools/release_privacy_check.py
+          python tools/localization/validate_locales.py
+
+      - name: Build application bundle
+        env:
+          MESHMILL_BUILD_VERSION: ${{ inputs.version }}
+        run: python -m PyInstaller --noconfirm --clean packaging/MeshMill-posix.spec
+
+      - name: Test packaged CLI and sample reduction
+        run: |
+          APP="dist/MeshMill.app/Contents/MacOS/MeshMill"
+          "$APP" --cli --help
+          "$APP" --cli samples/sample-scan.stl \
+            --target 10000 --output "$RUNNER_TEMP/meshmill-smoke.stl"
+          test -s "$RUNNER_TEMP/meshmill-smoke.stl"
+          file "$APP"
+
+      - name: Ad-hoc sign application bundle
+        run: codesign --force --deep --sign - --timestamp=none dist/MeshMill.app
+
+      - name: Verify application bundle
+        run: |
+          codesign --verify --deep --strict --verbose=2 dist/MeshMill.app
+          plutil -lint dist/MeshMill.app/Contents/Info.plist
+
+      - name: Package preview
+        run: |
+          mkdir -p release
+          ditto -c -k --sequesterRsrc --keepParent dist/MeshMill.app \
+            "release/MeshMill-${{ inputs.version }}-macos-${{ matrix.arch }}.zip"
+          shasum -a 256 release/* > "release/SHA256SUMS-macos-${{ matrix.arch }}.txt"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MeshMill-${{ inputs.version }}-macos-${{ matrix.arch }}
+          path: release/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish platform prerelease
+    if: ${{ inputs.publish_prerelease }}
+    needs: [linux-x64, macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: MeshMill-${{ inputs.version }}-*
+          path: release
+          merge-multiple: true
+
+      - name: Publish public prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v${{ inputs.version }}"
+          gh release create "$tag" release/* \
+            --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" \
+            --prerelease \
+            --title "MeshMill ${{ inputs.version }}" \
+            --notes "Unsigned Linux and macOS preview builds for community testing. See docs/PLATFORM_TESTING.md before installing and report results through the platform test issue form."

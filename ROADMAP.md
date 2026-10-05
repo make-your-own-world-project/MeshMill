@@ -7,8 +7,10 @@ cross-platform, and future releases should add native Linux and macOS packages. 
 includes packaging, application integration, hardware metrics, filesystem behavior, and automated
 release testing while preserving the same project and STL workflows on every supported system.
 
-- Add Linux x86-64 packages and CI coverage.
-- Add macOS Apple silicon and x86-64 packages, signing, notarization, and CI coverage.
+- Validate the Linux x86-64 preview package across distributions, desktop environments, display
+  servers, and GPU drivers before promoting it to stable.
+- Validate the macOS Apple silicon and x86-64 preview packages on real hardware, then add Developer
+  ID signing and notarization before promoting them to stable.
 - Add platform-native CPU, memory, and GPU metrics providers behind a shared interface.
 - Keep saved settings, keyboard mappings, command-line behavior, and project data portable.
 

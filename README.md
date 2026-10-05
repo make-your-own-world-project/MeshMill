@@ -25,11 +25,15 @@ Download one of these files from [GitHub Releases](../../releases):
   then run `MeshMill.exe`.
 
 Both packages include the application runtime. End users do not install Python, Node.js, or
-dependencies. The initial release supports Windows 10 and Windows 11 on x64 hardware. Linux and
-macOS packages are planned; the product and file formats are not Windows-specific.
+dependencies. The stable release supports Windows 10 and Windows 11 on x64 hardware.
 
-Unsigned community builds may display a Windows SmartScreen warning. Release checksums are listed
-in `SHA256SUMS.txt` beside each release.
+Unsigned Linux x86-64 and macOS Intel/Apple silicon preview packages may also appear in Releases.
+They are built on native GitHub-hosted runners and pass packaged CLI and sample-mesh smoke tests,
+but still need testing on real hardware. See [Linux and macOS preview testing](docs/PLATFORM_TESTING.md)
+before installing or reporting results.
+
+Unsigned community builds may display a Windows SmartScreen or macOS Gatekeeper warning. Release
+checksums are listed beside each release.
 
 ## Quick start
 

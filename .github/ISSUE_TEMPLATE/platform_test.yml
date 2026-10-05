@@ -1,0 +1,64 @@
+name: Platform preview test
+description: Report a Linux or macOS preview result on real hardware.
+title: "[Platform test]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing a preview build. Do not include private meshes, account details, serial numbers, or unrelated logs.
+  - type: input
+    id: version
+    attributes:
+      label: MeshMill version and package
+      placeholder: 0.2.0-preview.1, MeshMill-0.2.0-preview.1-macos-arm64.zip
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Linux x86-64
+        - macOS Intel
+        - macOS Apple silicon
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: Ubuntu 24.04 with GNOME on Wayland, or macOS 15.4
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: CPU, GPU, and driver
+      placeholder: Apple M2, or Ryzen 7 / Radeon 780M / Mesa 24.x
+    validations:
+      required: true
+  - type: checkboxes
+    id: results
+    attributes:
+      label: Results
+      options:
+        - label: Application launched
+        - label: Sample STL loaded
+        - label: Viewport rendered correctly
+        - label: Orbit, pan, and zoom worked
+        - label: Selection and crop worked
+        - label: Optimization completed
+        - label: STL export completed
+        - label: Packaged CLI completed a reduction
+  - type: textarea
+    id: details
+    attributes:
+      label: Failure details or other observations
+      description: Include exact steps and the smallest shareable reproducer. Drag screenshots here if useful.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Remove names, paths, tokens, and other private data before pasting logs.
