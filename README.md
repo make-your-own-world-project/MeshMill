@@ -2,6 +2,36 @@
   <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
 </p>
 
+<p align="center">
+  <a href="README.md">English</a> ·
+  <a href="docs/locales/ar/README.md">العربية</a> ·
+  <a href="docs/locales/bn/README.md">বাংলা</a> ·
+  <a href="docs/locales/de/README.md">Deutsch</a> ·
+  <a href="docs/locales/el/README.md">Ελληνικά</a> ·
+  <a href="docs/locales/es/README.md">Español</a> ·
+  <a href="docs/locales/fa/README.md">فارسی</a> ·
+  <a href="docs/locales/fr/README.md">Français</a> ·
+  <a href="docs/locales/ga/README.md">Gaeilge</a> ·
+  <a href="docs/locales/hi/README.md">हिन्दी</a> ·
+  <a href="docs/locales/hu/README.md">Magyar</a> ·
+  <a href="docs/locales/id/README.md">Bahasa Indonesia</a> ·
+  <a href="docs/locales/it/README.md">Italiano</a> ·
+  <a href="docs/locales/ja/README.md">日本語</a> ·
+  <a href="docs/locales/ko/README.md">한국어</a> ·
+  <a href="docs/locales/nl/README.md">Nederlands</a> ·
+  <a href="docs/locales/pl/README.md">Polski</a> ·
+  <a href="docs/locales/pt/README.md">Português</a> ·
+  <a href="docs/locales/ro/README.md">Română</a> ·
+  <a href="docs/locales/ru/README.md">Русский</a> ·
+  <a href="docs/locales/sr/README.md">Српски</a> ·
+  <a href="docs/locales/th/README.md">ไทย</a> ·
+  <a href="docs/locales/tr/README.md">Türkçe</a> ·
+  <a href="docs/locales/uk/README.md">Українська</a> ·
+  <a href="docs/locales/ur/README.md">اردو</a> ·
+  <a href="docs/locales/vi/README.md">Tiếng Việt</a> ·
+  <a href="docs/locales/zh-CN/README.md">简体中文</a>
+</p>
+
 MeshMill is a focused desktop application for making oversized, dense, or difficult mesh geometry
 manageable. It provides fast inspection, density analysis, regional selection, cropping, deletion,
 and controlled mesh reduction without requiring an account or uploading geometry.
