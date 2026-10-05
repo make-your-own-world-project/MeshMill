@@ -82,7 +82,7 @@
   "overview.mode.is.for.navigation.load.the.full.mesh.to.edit": "حالت نمای کلی برای ناوبری است. مش کامل را برای ویرایش بارگیری کنید.",
   "overview.only": "فقط نمای کلی",
   "overview.triangles": "مثلث های اجمالی",
-  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "تراکم نقطه <span style='color:#123070'>پراکنده</span> <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'> <span style='color:#FACC15'></span> style='color:#E23730'>● متراکم</span>",
+  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "POINT DENSITY   <span style='color:#123070'>Sparse</span>  <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#E23730'>● Dense</span>",
   "percentage.of.the.original.stl.triangles.removed.from.the.current.mesh": "درصد مثلث های اصلی STL از شبکه فعلی حذف شده است.",
   "point.density.analysis.failed": "تجزیه و تحلیل چگالی نقطه ای ناموفق بود",
   "point.density.ready": "تراکم نقطه آماده است",

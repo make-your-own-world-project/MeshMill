@@ -24,6 +24,12 @@ geometriyi yönetilebilir ağlara dönüştürün ve destekleyici kontrolleri ge
 `<locale>.json`. Çevrilmiş belgeler aşağıdaki eşleşen kök dosya adını kullanır:
 `docs/locales/<locale>/`.
 
+Çeviriler başlangıçta harici makine çeviri hizmetleriyle üretilir ve alınır.
+Otomatik yapısal doğrulama. Bu süreç doğal, teknik açıdan kesin veya
+bağlamsal olarak doğru dil. Ana dilini konuşanların çevrilmiş kullanıcı arayüzünü incelemesi ve düzeltmesi teşvik edilir
+metin ve belgeler. Çeviri düzeltmeleri katalog anahtarlarını, yer tutucularını,
+komutlar, bağlantılar, ölçümler, ürün adları ve Markdown yapısı.
+
 Etiketleri, araç ipuçlarını, iletişim kutularını veya kullanıcıların görebileceği diğer metinleri değiştirdikten sonra şunu çalıştırın:
 
 ```powershell

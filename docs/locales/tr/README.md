@@ -1,12 +1,14 @@
-# MeshMill
-
-![MeshMill gölgeli görünüm alanı](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill; çok büyük boyutlu, yoğun veya karmaşık ağ (mesh) geometrilerini
 yönetilebilir hale getirmeye odaklanmış bir masaüstü uygulamasıdır. Hızlı inceleme, yoğunluk analizi, bölgesel seçim, kırpma, silme
 ve hesap oluşturma ya da geometri yükleme gerektirmeyen kontrollü ağ sadeleştirme imkanı sunar.
 
-GPU hızlandırmalı OpenGL oluşturma, görünüm alanı gezinmesini, donanım tabanlı seçimi, yoğunluk görselleştirmesini ve etkileşimli incelemeyi akıcı tutar. Ağ azaltma şu anda ayrı yerel CPU işlemlerinde çalışır; böylece uzun geometri hesaplamaları arayüzü engellemez.
+GPU ile hızlandırılmış OpenGL oluşturma, görüntü alanı gezinmesini, donanım toplamayı, yoğunluk görselleştirmeyi,
+ve etkileşimli denetim duyarlı. Mesh azaltma şu anda ayrı yerel CPU çalışanlarında çalışmaktadır.
+uzun geometri hesaplamalarını arayüzden uzak tutmak.
 
 MeshMill; 3D tarayıcılar, CAD ve modelleme dışa aktarımları, yeniden yapılandırma süreçleri,
 oluşturulan geometriler ve diğer STL kaynaklarından gelen ağlarla çalışır. Geometriyi sonraki aşamadaki düzenleyiciler,
@@ -23,11 +25,15 @@ malzeme ve sahne oluşturma işlemleri kapsamı dışındadır.
   ardından `MeshMill.exe`'yi çalıştırın.
 
 Her iki paket de uygulama çalışma zamanını (runtime) içerir. Son kullanıcılar Python, Node.js veya
-bağımlılıklarını yüklemezler. İlk sürüm, x64 donanım üzerinde Windows 10 ve Windows 11'i destekler. Linux ve
-macOS paketleri planlanmaktadır; ürün ve dosya formatları Windows'ye özgü değildir.
+bağımlılıklar. Kararlı sürüm, x64 donanımında Windows 10 ve Windows 11'i destekler.
 
-İmzasız topluluk derlemeleri bir Windows SmartScreen uyarısı gösterebilir. Sürüm sağlama toplamları (checksums)
-`SHA256SUMS.txt` içinde her bir sürümün yanında listelenmiştir.
+İmzasız Linux x86-64 ve macOS Intel/Apple silikon önizleme paketleri de Sürümlerde görünebilir.
+Yerel GitHub tarafından barındırılan çalıştırıcılar üzerine kuruludurlar ve paketlenmiş CLI ve örnek ağ duman testlerini geçerler.
+ancak yine de gerçek donanım üzerinde test yapılması gerekiyor. Bkz. [Linux ve macOS önizleme testi](../../PLATFORM_TESTING.md)
+Sonuçları yüklemeden veya raporlamadan önce.
+
+İmzasız topluluk yapıları Windows SmartScreen veya macOS Gatekeeper uyarısı görüntüleyebilir. Sürüm
+sağlama toplamları her sürümün yanında listelenir.
 
 ## Hızlı başlangıç
 
@@ -44,6 +50,8 @@ MeshMill, yalnızca bir dosya veya ayar değiştiği için optimizasyonu asla ba
 
 - İkili (binary) ve ASCII STL girişi, ikili STL çıkışı
 - Yoğunluk dengeli, şekil ve topoloji koruyucu Fast QEM indirgeme işlemi
+- GPU ile hızlandırılmış OpenGL görünüm, donanım toplama ve yoğunluk görselleştirme
+- Örgü azaltımı için yerel arka plan geometri çalışanları
 - Gölgeli, yoğunluk, tel kafes (wireframe) ve köşe noktası (vertex) görüntüleme modları
 - Sabit bir üçgen üst sınırı yerine geometriden türetilen otomatik hedefler
 - Eklemeli çoklu bölge seçimi ile poligon seçimi
@@ -57,7 +65,41 @@ MeshMill, yalnızca bir dosya veya ayar değiştiği için optimizasyonu asla ba
 - GUI ve komut satırı uygulamaları
 - Hesap, telemetri, yükleme veya bulut bağımlılığı olmaksızın yerel işleme
 
-![MeshMill yoğunluk görünümü](../../images/meshmill-density.png)
+## Azaltmadan önce geometriyi inceleyin
+
+Gölgeli ekran, yüzeyin ve silüetin net bir görünümünü sağlar. Karşılaştırma yapmakta fayda var
+Bir optimizasyon geçişi uygulamadan önce şeklin korunması.
+
+![Paketlenmiş örnek ağı gösteren MeshMill gölgeli görünüm portu](../../images/meshmill-shaded.png)
+
+Köşeler ekranı gerçek nokta dağılımını gösterir. Yoğun tarama bölgeleri, seyrek alanlar ve
+örneklemedeki ani değişiklikler geometriyi değiştirmeden görülebilir. Genişletilmiş metrikler paneli
+Mesh ile çalışırken CPU, bellek, GPU ve geometri işleme etkinliğini izler.
+
+![MeshMill Vertices ekranı genişletilmiş performans ölçümleriyle birlikte](../../images/meshmill-vertices.png)
+
+Tel Çerçeve ekranı doğrudan üçgen yapısını gösterir. Gereksiz yoğunluğun belirlenmesine yardımcı olur,
+düzensiz üçgenleme ve basitleştirmenin önemli geometriyi ortadan kaldırabileceği bölgeler.
+
+![Üçgen yoğunluğundaki değişimi gösteren MeshMill Tel Çerçeve ekranı](../../images/meshmill-wireframe.png)
+
+## Örgü yoğunluğunu analiz edin
+
+Yoğunluk ekranı, model genelinde göreceli yerel yoğunluğu eşler. Seyrek bölgeler serin kalırken
+Giderek daha yoğun olan bölgeler daha parlak renklerle hareket ederek düzensiz örneklemeyi bir bakışta görünür hale getirir.
+
+![Göreceli ağ yoğunluğunu gösteren MeshMill yoğunluk ekranı](../../images/meshmill-density.png)
+
+Geçici bir optimizasyon değerlendirilirken yoğunluk mevcut kalır. Araç kutusu şunları bildirir:
+algoritma, hedef, sonuçta ortaya çıkan üçgen ve köşe sayıları, azaltma yüzdesi, boyutlar ve
+geçiş uygulanmadan önceki tahmini çıktı boyutu.
+
+![Geçici optimizasyonu gösteren MeshMill Yoğunluk ekranı](../../images/meshmill-density-overview.png)
+
+Dairesel büyüteci kullanarak bir bölgeyi incelemek için farenin sağ düğmesini basılı tutun. Büyütülmüş görünüm
+imlecin merkezinde kalır ve ana kamera konumunu değiştirmeden yerel yoğunluğu ortaya çıkarır.
+
+![Görünüm alanı büyüteci ile MeshMill Yoğunluk ekranı](../../images/meshmill-density-zoom.png)
 
 ## Görünüm kontrolleri
 
@@ -109,6 +151,12 @@ seçilen geometriyi korurken ekran alanı çokgenini kullanın.
 Etkin seçimle yapılan optimizasyon yalnızca o seçimi etkiler. Sonuç geçicidir
 **Uygula** seçilene kadar. **İptal** geçici sonucu iptal eder ve seçimi korur;
 başka bir konfigürasyon denenebilir. Kırpma ve silme işlemleri, normal, geri alınamayan ağ düzenlemeleri haline gelir.
+
+Seçim paneli, seçilen kümülatif köşeleri, üçgenleri, ağ payını, tahmini
+boyut ve boyutlar. Eylemleri, tutulanları kırpar, ekler, optimize eder, siler, geri adım atar veya temizler
+çevredeki geometriyi gizlemeden seçim.
+
+![MeshMill, korunan bölgesel seçimi ve geometri istatistiklerini gösteriyor](../../images/meshmill-crop-selection.png)
 
 ## Büyük ağlar
 
@@ -174,6 +222,11 @@ Tanılama sorunlarını gidermek için geliştiriciler GUI'yi şununla başlatab
 normal kullanım sırasında devre dışı bırakılır.
 
 ## Geliştirme ve sürüm
+
+Yerelleştirilmiş kullanıcı arayüzü metni ve belgeleri başlangıçta harici makine çevirisiyle üretilir
+hizmetler ve yapısal hasar açısından otomatik olarak kontrol edilir. Makine çevirisi hala yapılabilir
+doğal olmayan veya yanlış. Ana dilini konuşanların çevirileri gözden geçirmeleri ve düzeltmeleri teşvik edilir.
+katkı süreci.
 
 - [Katkıda Bulunuyor](CONTRIBUTING.md)
 - [Yayınlama süreci](RELEASING.md)

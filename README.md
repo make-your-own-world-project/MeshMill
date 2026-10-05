@@ -223,6 +223,11 @@ disabled during normal use.
 
 ## Development and release
 
+Localized UI text and documentation are initially produced with external machine-translation
+services and checked automatically for structural damage. Machine translation can still be
+unnatural or incorrect. Native speakers are encouraged to review and correct translations through
+the contribution process.
+
 - [Contributing](CONTRIBUTING.md)
 - [Release process](RELEASING.md)
 - [Roadmap](ROADMAP.md)

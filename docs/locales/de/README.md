@@ -1,12 +1,14 @@
-# MeshMill
-
-![MeshMill schattierte Ansicht](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill ist eine spezialisierte Desktop-Anwendung, um sehr große, hochdichte oder komplexe Mesh-Geometrien
 handhabbar zu machen. Sie bietet Funktionen zur schnellen Überprüfung, Dichteanalyse, bereichsweisen Auswahl, zum Zuschneiden, Löschen
 und zur kontrollierten Mesh-Reduzierung – ganz ohne Benutzerkonto oder das Hochladen von Geometriedaten.
 
-GPU-beschleunigtes OpenGL-Rendering sorgt für eine reaktionsschnelle Ansichtssteuerung, Hardware-Auswahl, Dichtevisualisierung und interaktive Prüfung. Die Mesh-Reduzierung läuft derzeit in separaten nativen CPU-Prozessen, sodass lange Geometrieberechnungen die Benutzeroberfläche nicht blockieren.
+Durch das GPU-beschleunigte OpenGL-Rendering bleiben Ansichtsfensternavigation, Hardwareauswahl, Dichtevisualisierung usw. erhalten.
+und interaktive Inspektion reaktionsschnell. Die Mesh-Reduktion wird derzeit in separaten nativen CPU-Workern ausgeführt.
+Dadurch werden lange Geometrieberechnungen von der Schnittstelle ferngehalten.
 
 MeshMill verarbeitet Meshes aus 3D-Scannern, CAD- und Modellierungsexporten, Rekonstruktions-Pipelines,
 generierter Geometrie und anderen STL-Quellen. Es bereitet Geometrien für nachgelagerte Editoren,
@@ -23,11 +25,15 @@ Laden Sie eine dieser Dateien von [GitHub Releases](../../releases) herunter:
   und starten Sie anschließend `MeshMill.exe`.
 
 Beide Pakete enthalten die Laufzeitumgebung für die Anwendung. Endbenutzer installieren keine Python-, Node.js- oder
-Abhängigkeiten. Die erste Version unterstützt Windows 10 und Windows 11 auf x64-Hardware. Linux- und
-macOS-Pakete sind geplant; die Produkt- und Dateiformate sind nicht spezifisch für Windows.
+Abhängigkeiten. Die stabile Version unterstützt Windows 10 und Windows 11 auf x64-Hardware.
 
-Nicht signierte Community-Builds lösen möglicherweise eine Windows-SmartScreen-Warnung aus. Prüfsummen der Versionen sind
-in `SHA256SUMS.txt` neben der jeweiligen Version aufgeführt.
+In Veröffentlichungen können auch nicht signierte Linux x86-64- und macOS Intel/Apple Silicon-Vorschaupakete enthalten sein.
+Sie basieren auf nativen, von GitHub gehosteten Läufern und bestehen verpackte CLI- und Sample-Mesh-Rauchtests.
+muss aber noch auf echter Hardware getestet werden. Siehe [Linux- und macOS-Vorschautests](../../PLATFORM_TESTING.md)
+bevor Sie die Ergebnisse installieren oder melden.
+
+Bei nicht signierten Community-Builds wird möglicherweise eine Windows SmartScreen- oder macOS Gatekeeper-Warnung angezeigt. Veröffentlichung
+Prüfsummen sind neben jeder Version aufgeführt.
 
 ## Schnellstart
 
@@ -44,6 +50,8 @@ MeshMill startet die Optimierung niemals allein aufgrund einer Änderung an eine
 
 - Eingabe im Binär- und ASCII-Format, Ausgabe im Binärformat (STL) (STL)
 - Dichteausgeglichene, form- und topologieerhaltende Reduzierung (Fast QEM)
+- GPU-beschleunigtes OpenGL-Ansichtsfenster, Hardwareauswahl und Dichtevisualisierung
+- Native Hintergrundgeometrie-Worker zur Netzreduzierung
 - Anzeigemodi: Schattiert, Dichte, Drahtgitter und Eckpunkte
 - Automatische Zielvorgaben basierend auf der Geometrie statt auf einer festen Obergrenze für die Anzahl der Dreiecke
 - Polygon-Auswahl mit additiver Auswahl mehrerer Bereiche
@@ -57,7 +65,41 @@ MeshMill startet die Optimierung niemals allein aufgrund einer Änderung an eine
 - Anwendungen mit grafischer Benutzeroberfläche (GUI) und Befehlszeilenschnittstelle
 - Lokale Verarbeitung ohne Abhängigkeit von Benutzerkonten, Telemetrie, Uploads oder Cloud-Diensten
 
-![Anzeige der Dichte](../../images/meshmill-density.png) (MeshMill)
+## Überprüfen Sie die Geometrie, bevor Sie sie reduzieren
+
+Die schattierte Anzeige bietet eine klare Sicht auf die Oberfläche und Silhouette. Es ist nützlich zum Vergleichen
+Formerhaltung vor der Anwendung eines Optimierungsdurchlaufs.
+
+![Schattiertes MeshMill-Ansichtsfenster mit gebündeltem Beispielnetz](../../images/meshmill-shaded.png)
+
+Die Vertices-Anzeige zeigt die tatsächliche Punktverteilung. Dichte Scanbereiche, spärliche Bereiche und
+Abrupte Änderungen der Probenahme sind sichtbar, ohne dass sich die Geometrie ändert. Das erweiterte Metrik-Panel
+Verfolgt CPU-, Speicher-, GPU- und Geometrieverarbeitungsaktivitäten während der Arbeit mit dem Netz.
+
+![MeshMill Vertices-Anzeige mit erweiterten Leistungsmetriken](../../images/meshmill-vertices.png)
+
+Die Wireframe-Anzeige zeigt die Dreiecksstruktur direkt an. Es hilft, unnötige Dichte zu erkennen,
+unregelmäßige Triangulation und Bereiche, in denen durch Vereinfachung wesentliche Geometrie entfernt werden kann.
+
+![MeshMill Wireframe-Anzeige mit Variation in der Dreiecksdichte](../../images/meshmill-wireframe.png)
+
+## Analysieren Sie die Netzdichte
+
+Die Dichteanzeige bildet die relative lokale Dichte im gesamten Modell ab. Spärliche Regionen bleiben dabei kühl
+Immer dichtere Regionen bewegen sich durch hellere Farben, wodurch eine ungleichmäßige Abtastung auf einen Blick sichtbar wird.
+
+![MeshMill-Dichteanzeige mit relativer Maschendichte](../../images/meshmill-density.png)
+
+Die Dichte bleibt während der Auswertung einer vorläufigen Optimierung verfügbar. Die Toolbox meldet das
+Algorithmus, Ziel, resultierende Dreiecks- und Scheitelpunktzahlen, Reduktionsprozentsatz, Abmessungen und
+geschätzte Ausgabegröße vor der Anwendung des Durchgangs.
+
+![MeshMill Density-Anzeige zeigt eine vorläufige Optimierung](../../images/meshmill-density-overview.png)
+
+Halten Sie die rechte Maustaste gedrückt, um einen Bereich durch die kreisförmige Lupe zu untersuchen. Die vergrößerte Ansicht
+bleibt auf dem Zeiger zentriert und zeigt die lokale Dichte an, ohne die Hauptkameraposition zu ändern.
+
+![MeshMill Density-Anzeige mit der Ansichtsfensterlupe](../../images/meshmill-density-zoom.png)
 
 ## Ansichtssteuerung
 
@@ -109,6 +151,12 @@ das Bildschirmraum-Polygon unter Beibehaltung der ausgewählten Geometrie.
 Die Optimierung mit einer aktiven Auswahl wirkt sich nur auf diese Auswahl aus. Das Ergebnis bleibt vorläufig
 bis **Anwenden** ausgewählt ist. **Abbrechen** verwirft das vorläufige Ergebnis und behält die Auswahl bei
 Es kann eine andere Konfiguration ausprobiert werden. Zuschneide- und Löschvorgänge werden zu normalen, rückgängig zu machenden Netzbearbeitungen.
+
+Das Auswahlfeld meldet die kumulativen geschätzten ausgewählten Scheitelpunkte, Dreiecke und Netzanteile
+Größe und Abmessungen. Seine Aktionen beschneiden, hinzufügen, optimieren, löschen, gehen zurück oder löschen das Zurückbehaltene
+Auswahl, ohne die umgebende Geometrie auszublenden.
+
+![MeshMill zeigt eine beibehaltene regionale Auswahl und ihre Geometriestatistiken](../../images/meshmill-crop-selection.png)
 
 ## Große Maschen
 
@@ -174,6 +222,11 @@ Zur diagnostischen Fehlerbehebung können Entwickler die GUI mit starten
 bei normalem Gebrauch deaktiviert.
 
 ## Entwicklung und Veröffentlichung
+
+Lokalisierter UI-Text und Dokumentation werden zunächst mit externer maschineller Übersetzung erstellt
+erfasst und automatisch auf Bauschäden geprüft. Maschinelle Übersetzung kann immer noch sein
+unnatürlich oder falsch. Muttersprachler werden ermutigt, Übersetzungen zu überprüfen und zu korrigieren
+Der Beitragsprozess.
 
 - [Beitrag](CONTRIBUTING.md)
 - [Freigabeprozess](RELEASING.md)

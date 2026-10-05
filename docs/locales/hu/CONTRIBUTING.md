@@ -24,6 +24,12 @@ Az angol felhasználói felület forrásszövege a `locales/en-US.json`-ben van 
 `<locale>.json`. A lefordított dokumentáció a megfelelő gyökér fájlnevet használja
 `docs/locales/<locale>/`.
 
+A fordításokat kezdetben külső gépi fordítási szolgáltatásokkal állítják elő és fogadják
+automatizált szerkezeti érvényesítés. Az a folyamat nem garantálja a természetes, technikailag pontos, ill
+kontextus szerint helyes nyelvezet. Az anyanyelvi beszélőket arra biztatjuk, hogy nézzék át és javítsák ki a lefordított felhasználói felületet
+szöveg és dokumentáció. A fordítási javításoknak meg kell őrizniük a katalóguskulcsokat, a helyőrzőket,
+parancsok, hivatkozások, mérések, terméknevek és Markdown szerkezet.
+
 A címkék, elemleírások, párbeszédpanelek vagy más, a felhasználó által látható szövegek módosítása után futtassa:
 
 ```powershell

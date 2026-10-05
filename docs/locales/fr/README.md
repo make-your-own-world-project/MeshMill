@@ -1,12 +1,14 @@
-# MeshMill
-
-![Vue ombrée MeshMill](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill est une application de bureau spécialisée conçue pour rendre gérables les géométries de maillage
 volumineuses, denses ou complexes. Elle permet une inspection rapide, l'analyse de la densité, la sélection par zone, le découpage, la suppression,
 ainsi qu'une réduction contrôlée du maillage, sans nécessiter de compte ni de téléchargement de la géométrie vers un serveur.
 
-Le rendu OpenGL accéléré par le GPU assure une navigation fluide dans la vue, la sélection matérielle, la visualisation de la densité et l’inspection interactive. La réduction du maillage s’exécute actuellement dans des processus CPU natifs distincts afin que les longs calculs géométriques ne bloquent pas l’interface.
+Le rendu OpenGL accéléré par GPU conserve la navigation dans les fenêtres, la sélection du matériel, la visualisation de la densité,
+et une inspection interactive réactive. La réduction du maillage s'exécute actuellement sur des processeurs natifs distincts, (CPU)
+en gardant les longs calculs de géométrie à l’écart de l’interface.
 
 MeshMill prend en charge les maillages issus de scanners 3D, d'exports CAO et de modélisation, de chaînes de reconstruction,
 de géométries générées et d'autres sources STL. Elle prépare la géométrie pour des logiciels d'édition en aval,
@@ -23,11 +25,15 @@ Téléchargez l'un de ces fichiers depuis la section [Releases de GitHub](../../
   puis lancez `MeshMill.exe`.
 
 Les deux packages incluent l'environnement d'exécution de l'application. Les utilisateurs finaux n'installent pas les dépendances Python, Node.js ou
-La version initiale prend en charge Windows 10 et Windows 11 sur du matériel x64. Des packages Linux et
-macOS sont prévus ; les formats de produit et de fichier ne sont pas spécifiques à Windows.
+dépendances. La version stable prend en charge Windows 10 et Windows 11 sur le matériel x64.
 
-Les builds communautaires non signés peuvent déclencher un avertissement SmartScreen lié à Windows. Les sommes de contrôle des versions sont indiquées
-dans `SHA256SUMS.txt`, à côté de chaque version.
+Les packages Linux x86-64 non signés et macOS Intel/Apple Silicon Preview peuvent également apparaître dans les versions.
+Ils sont construits sur des exécuteurs natifs hébergés sur GitHub et réussissent les tests de fumée packagés CLI et sample-mesh,
+mais il faut encore des tests sur du matériel réel. Voir [Tests préliminaires Linux et macOS](../../PLATFORM_TESTING.md)
+avant d'installer ou de rapporter les résultats.
+
+Les versions de communauté non signées peuvent afficher un avertissement Windows SmartScreen ou macOS Gatekeeper. Libération
+les sommes de contrôle sont répertoriées à côté de chaque version.
 
 ## Démarrage rapide
 
@@ -44,6 +50,8 @@ MeshMill ne lance jamais l'optimisation simplement parce qu'un fichier ou un par
 
 - Entrée au format binaire et ASCII, sortie au format binaire (STL) (STL)
 - Réduction préservant la densité, la forme et la topologie (Fast QEM)
+- Fenêtre d'affichage OpenGL accélérée par GPU, sélection du matériel et visualisation de la densité
+- Travailleurs de géométrie d'arrière-plan natifs pour la réduction du maillage
 - Modes d'affichage : ombré, densité, filaire et sommets
 - Cibles automatiques basées sur la géométrie plutôt que sur un nombre maximal de triangles fixe
 - Sélection de polygones avec possibilité de sélection additive multi-zone
@@ -57,7 +65,41 @@ MeshMill ne lance jamais l'optimisation simplement parce qu'un fichier ou un par
 - Applications avec interface graphique (GUI) et ligne de commande
 - Traitement local sans dépendance vis-à-vis d'un compte, de la télémétrie, de téléchargements ou du cloud
 
-![Affichage de la densité du maillage](../../images/meshmill-density.png) (MeshMill)
+## Inspecter la géométrie avant de la réduire
+
+L'affichage ombré offre une vue nette de la surface et de la silhouette. C'est utile pour comparer
+préservation de la forme avant d’appliquer une passe d’optimisation.
+
+![Fenêtre ombrée de MeshMill montrant l'échantillon de maillage groupé](../../images/meshmill-shaded.png)
+
+L'affichage Vertices expose la distribution réelle des points. Régions d'analyse denses, zones clairsemées et
+des changements brusques d'échantillonnage sont visibles sans changer la géométrie. Le panneau de métriques étendu
+suit l'activité du processeur, de la mémoire, du GPU et du traitement de la géométrie tout en travaillant avec le maillage. (CPU)
+
+![Affichage des sommets MeshMill avec des mesures de performances étendues](../../images/meshmill-vertices.png)
+
+L'affichage Wireframe affiche directement la structure triangulaire. Cela aide à identifier la densité inutile,
+une triangulation irrégulière et des régions où la simplification peut supprimer une géométrie substantielle.
+
+![Affichage MeshMill Wireframe montrant la variation de la densité des triangles](../../images/meshmill-wireframe.png)
+
+## Analyser la densité du maillage
+
+L’affichage Densité cartographie la densité locale relative dans le modèle. Les régions clairsemées restent fraîches tandis que
+les régions de plus en plus denses se déplacent à travers des couleurs plus vives, rendant l'échantillonnage inégal visible d'un seul coup d'œil.
+
+![Affichage de la densité MeshMill montrant la densité relative du maillage](../../images/meshmill-density.png)
+
+La densité reste disponible lors de l'évaluation d'une optimisation provisoire. La boîte à outils rapporte le
+algorithme, cible, nombre de triangles et de sommets résultants, pourcentage de réduction, dimensions et
+taille de sortie estimée avant l’application de la passe.
+
+![Affichage de la densité MeshMill montrant une optimisation provisoire](../../images/meshmill-density-overview.png)
+
+Maintenez le bouton droit de la souris pour inspecter une région à travers la loupe circulaire. La vue agrandie
+reste centré sur le pointeur et révèle la densité locale sans changer la position principale de la caméra.
+
+![Affichage de la densité MeshMill avec la loupe de la fenêtre](../../images/meshmill-density-zoom.png)
 
 ## Commandes de visualisation
 
@@ -110,6 +152,12 @@ L'optimisation avec une sélection active affecte uniquement cette sélection. L
 jusqu'à ce que **Appliquer** soit sélectionné. **Annuler** annule le résultat provisoire et conserve la sélection afin
 une autre configuration peut être essayée. Les opérations de recadrage et de suppression deviennent des modifications de maillage normales et annulables.
 
+Le panneau de sélection indique les sommets sélectionnés cumulés, les triangles, la part de maillage, les valeurs estimées.
+taille et dimensions. Ses actions recadrent, ajoutent, optimisent, suppriment, reculent ou effacent les éléments conservés.
+sélection sans masquer la géométrie environnante.
+
+![MeshMill montrant une sélection régionale conservée et ses statistiques géométriques](../../images/meshmill-crop-selection.png)
+
 ## Grandes mailles
 
 Avant d'allouer un binaire STL, MeshMill compare sa mémoire de travail estimée avec la mémoire configurée.
@@ -140,8 +188,8 @@ et développer des fonctionnalités de feuille de route. MeshMill ne nécessite 
 
 | Fichier | Triangles | Taille | Livraison | Idéal pour |
 | --- | ---: | ---: | --- | --- |
-| [`sample-scan.stl`](../../../samples/sample-scan.stl) | 249 999 | 11,9 Mo | Git normal | Évaluation rapide, CI et apprentissage des contrôles |
-| [`original-scan.stl`](../../../samples/original-scan.stl) | 4 126 315 | 196,8 Mo | Git LFS | Test de la géométrie source dense et des performances des grands maillages |
+| [`sample-scan.stl`](../../../samples/sample-scan.stl) | 249 999 | 11,9 Mo | Git normal | Évaluation rapide, CI et apprentissage des contrôles | (249,999)
+| [`original-scan.stl`](../../../samples/original-scan.stl) | 4 126 315 | 196,8 Mo | Git LFS | Test de la géométrie source dense et des performances des grands maillages | (4,126,315)
 
 Le plus petit échantillon est téléchargé avec chaque clone normal. L'original intact est facultatif et
 géré via Git LFS afin de ne pas gonfler l'historique du référentiel ordinaire. Le bureau GitHub comprend
@@ -174,6 +222,11 @@ Pour le dépannage diagnostique, les développeurs peuvent démarrer l'interface
 désactivé pendant une utilisation normale.
 
 ## Développement et sortie
+
+Le texte et la documentation localisés de l'interface utilisateur sont initialement produits avec une traduction automatique externe
+services et vérifié automatiquement pour les dommages structurels. La traduction automatique peut encore être
+contre nature ou incorrect. Les locuteurs natifs sont encouragés à réviser et à corriger les traductions via
+le processus de contribution.
 
 - [Contribuer](CONTRIBUTING.md)
 - [Processus de publication](RELEASING.md)

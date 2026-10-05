@@ -24,6 +24,12 @@ Văn bản nguồn UI tiếng Anh được lưu trữ trong `locales/en-US.json`
 `<locale>.json`. Tài liệu được dịch sử dụng tên tệp gốc phù hợp bên dưới
 `docs/locales/<locale>/`.
 
+Các bản dịch ban đầu được thực hiện bằng dịch vụ dịch máy bên ngoài và nhận
+xác nhận cấu trúc tự động. Quá trình đó không thể đảm bảo tính tự nhiên, chính xác về mặt kỹ thuật hoặc
+ngôn ngữ đúng ngữ cảnh. Người bản ngữ được khuyến khích xem xét và sửa giao diện người dùng đã dịch
+văn bản và tài liệu. Việc sửa bản dịch phải giữ nguyên khóa danh mục, phần giữ chỗ,
+lệnh, liên kết, số đo, tên sản phẩm và cấu trúc Markdown.
+
 Sau khi thay đổi nhãn, chú giải công cụ, hộp thoại hoặc văn bản khác mà người dùng hiển thị, hãy chạy:
 
 ```powershell

@@ -24,6 +24,12 @@ Tekst źródłowy interfejsu użytkownika w języku angielskim jest przechowywan
 `<locale>.json`. Przetłumaczona dokumentacja używa pasującej nazwy pliku głównego w pliku
 `docs/locales/<locale>/`.
 
+Tłumaczenia są początkowo tworzone za pomocą zewnętrznych usług tłumaczeń maszynowych i odbierane
+automatyczna walidacja strukturalna. Proces ten nie może zagwarantować naturalnego, technicznie precyzyjnego lub
+kontekstowo poprawny język. Zachęcamy rodzimych użytkowników języka do sprawdzania i poprawiania przetłumaczonego interfejsu użytkownika
+tekst i dokumentacja. Korekty w tłumaczeniu powinny zachować klucze katalogu, symbole zastępcze,
+polecenia, linki, pomiary, nazwy produktów i struktura Markdown.
+
 Po zmianie etykiet, podpowiedzi, okien dialogowych lub innego tekstu widocznego dla użytkownika uruchom:
 
 ```powershell

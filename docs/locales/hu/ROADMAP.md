@@ -7,8 +7,10 @@ többplatformos, és a jövőbeli kiadásoknak natív Linux és macOS csomagokat
 magában foglalja a csomagolást, az alkalmazások integrációját, a hardver mérőszámait, a fájlrendszer viselkedését és az automatizált
 kiadásteszt, miközben megőrzi ugyanazt a projektet és a STL munkafolyamatokat minden támogatott rendszeren.
 
-- Adjon hozzá Linux x86-64 csomagokat és CI-lefedettséget.
-- Adjon hozzá macOS Apple szilícium és x86-64 csomagokat, aláírást, közjegyzői hitelesítést és CI-lefedettséget.
+- Érvényesítse a Linux x86-64 előnézeti csomagot disztribúciók, asztali környezetek és megjelenítések között
+  szervereket és GPU-illesztőprogramokat, mielőtt stabillá tenné elő.
+- Érvényesítse a macOS Apple Silicon és az x86-64 előnézeti csomagokat valódi hardveren, majd adja hozzá a Fejlesztőt
+  Személyi igazolvány aláírása és közjegyzői igazolása az istállóba lépés előtt.
 - Adjon hozzá platform-natív CPU, memória és GPU metrikaszolgáltatókat egy megosztott felület mögé.
 - A mentett beállítások, a billentyűzetkiosztás, a parancssori viselkedés és a projektadatok hordozhatóak legyenek.
 
@@ -130,7 +132,7 @@ Szükséges koordinációs koncepciók:
 
 ## Szállítási fázisok
 
-### 0. fázis: magon kívüli nagy szemű feldolgozás
+### Phase 0: out-of-core large-mesh processing
 
 Az index, az adatfolyam, a gyorsítótár, a munkaegység és a biztonsági szerződés dokumentálva van
 [`docs/OUT_OF_CORE.md`](docs/OUT_OF_CORE.md).
@@ -139,13 +141,17 @@ Az index, az adatfolyam, a gyorsítótár, a munkaegység és a biztonsági szer
 - Nyissa meg a túlméretezett bináris STL fájlokat korlátos, egyenletes mintavételű navigációs áttekintésként.
 - A teljes felbontású geometria felosztása determinisztikus átfedési határokkal rendelkező térkockákra.
 - Független kockák egyidejű olvasása, elemzése és optimalizálása a CPU és a memória határain belül.
+- Benchmark GPU-számítási megvalósítások csökkentési szakaszokhoz, például hibaértékeléshez, jelölt
+  pontozás, térbeli lekérdezések és független munkaegység-feldolgozás. Csak akkor töltsön le egy színpadot
+  mérhető végponttól végpontig terjedő sebesség- vagy memóriaelőnyt biztosít a determinizmus, a háló csökkentése nélkül
+  minőség, topológia garanciák vagy kompatibilitás a megfelelő GPU-t nem tartalmazó rendszerekkel.
 - A durva-finom nézetablak szintek streamelése ahelyett, hogy a teljes hálót megkövetelné a memóriában.
 - Rajzolja meg a kocka állapotát közvetlenül a nézetablakban: sorban állás, olvasás, feldolgozás, befejezett és sikertelen.
 - Mutasson kockánkénti haladást az egyes kockák kitöltésével, és őrizze meg a magas szintű teljes objektum nézetet.
 - Állítsa össze a feldolgozott kockákat határellenőrzéssel, ismétlődések eltávolításával és reprodukálható beállításokkal.
 - Bővítse ki a helyi kockaütemezőt elosztott szintézis munkaegységekre a későbbi fázisokban.
 
-### 1. fázis: verziózott helyi alapítvány
+### Phase 1: versioned local foundation
 
 - Határozza meg az objektum-, művelet-, hozzájárulás-, ág- és jegyzékformátumokat.
 - Adjon hozzá több STL munkaterületet forrásonkénti láthatósággal, átalakításokkal, metaadatokkal és származással.
@@ -156,28 +162,28 @@ Az index, az adatfolyam, a gyorsítótár, a munkaegység és a biztonsági szer
 - Vizuális háló és régió-összehasonlítás hozzáadása.
 - Tegye a műveleteket determinisztikussá és függetlenül reprodukálhatóvá.
 
-### 2. fázis: koordinált helyi csomópontok
+### Phase 2: coordinated local nodes
 
 - Munkavégző csomópontok futtatása egy munkaállomáson.
 - Adjon hozzá sorban állást, képességjelentéseket, munkafeladatokat és lemondást.
 - Csomópont és munkaegység állapotának megjelenítése a MeshMill felhasználói felületen.
 - Helyileg érvényesítse a particionálást és az eredmény-összeállítást.
 
-### 3. fázis: több munkaállomásos szintézis
+### Phase 3: multi-workstation synthesis
 
 - Hitelesített LAN-felderítés és regisztráció hozzáadása.
 - Tartalomközpontú munkabemenetek és eredmények átvitele az önéletrajz támogatásával.
 - Koordinálja az egyidejű munkát több munkaállomáson.
 - Hozzárendelések helyreállítása csomópont vagy hálózati hiba után.
 
-### 4. fázis: együttműködésen alapuló verziókészítés
+### Phase 4: collaborative versioning
 
 - Közreműködők, fiókok, áttekintési állapotok és engedélyek hozzáadása.
 - Egyesítse a nem átfedő hozzájárulásokat.
 - Az átfedő vagy függőségi konfliktusok észlelése és megoldása.
 - Szintetizálja a kiválasztott hozzájárulásokat reprodukálható objektumverzióvá.
 
-### 5. fázis: gyártási edzés
+### Phase 5: production hardening
 
 - Protokollkompatibilitási tesztek és vegyes verziókezelés hozzáadása.
 - Adjon hozzá audit-, integritás-, korrupció-, megszakítási és helyreállítási teszteket.

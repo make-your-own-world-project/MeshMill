@@ -4,6 +4,8 @@ Wszystkie istotne zmiany w wydaniu są udokumentowane tutaj.
 
 ## 0.1.0
 
+- Połączono przycisk aplikacji GitHub z repozytorium MeshMill.
+- Dodano łącza GitHub i Kup mi kawę do okna dialogowego Informacje.
 - Dodano lokalne ładowanie, inspekcję, selekcję, kadrowanie, usuwanie, optymalizację i eksport STL.
 - Dodano Fast QEM, optymalizację zrównoważoną gęstością, zachowującą kształt i topologię.
 - Dodano tryby wyświetlania cieniowania, gęstości, modelu szkieletowego i wierzchołków.

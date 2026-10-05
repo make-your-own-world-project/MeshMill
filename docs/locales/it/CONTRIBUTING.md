@@ -24,6 +24,12 @@ Il testo di origine dell'interfaccia utente in inglese è archiviato in `locales
 `<locale>.json`. La documentazione tradotta utilizza il nome file root corrispondente sotto
 `docs/locales/<locale>/`.
 
+Le traduzioni vengono inizialmente prodotte con servizi di traduzione automatica esterni e ricevute
+validazione strutturale automatizzata. Tale processo non può garantire naturale, tecnicamente preciso, o
+linguaggio contestualmente corretto. I madrelingua sono incoraggiati a rivedere e correggere l'interfaccia utente tradotta
+testo e documentazione. Le correzioni di traduzione dovrebbero preservare le chiavi del catalogo, i segnaposto,
+comandi, collegamenti, misurazioni, nomi di prodotti e struttura Markdown.
+
 Dopo aver modificato etichette, descrizioni comandi, finestre di dialogo o altro testo visibile all'utente, esegui:
 
 ```powershell

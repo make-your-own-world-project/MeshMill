@@ -1,12 +1,14 @@
-# MeshMill
-
-![Viewport sombreado do MeshMill](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 O MeshMill é um aplicativo de desktop especializado na manipulação de geometrias de malha
 grandes, densas ou complexas, tornando-as gerenciáveis. Ele oferece inspeção rápida, análise de densidade, seleção regional, recorte, exclusão
 e redução controlada da malha, sem exigir criação de conta ou upload da geometria.
 
-A renderização OpenGL acelerada por GPU mantém responsivas a navegação da vista, a seleção por hardware, a visualização de densidade e a inspeção interativa. A redução da malha é executada atualmente em processos nativos de CPU separados, evitando que cálculos geométricos demorados bloqueiem a interface.
+A renderização OpenGL acelerada por GPU mantém a navegação na janela de visualização, seleção de hardware, visualização de densidade,
+e inspeção interativa responsiva. A redução de malha atualmente é executada em trabalhadores de CPU nativos separados,
+mantendo longos cálculos de geometria longe da interface.
 
 O MeshMill trabalha com malhas provenientes de scanners 3D, exportações de CAD e modelagem, pipelines de reconstrução,
 geometria gerada e outras fontes compatíveis com o STL. Ele prepara a geometria para editores subsequentes,
@@ -23,11 +25,15 @@ Baixe um destes arquivos em [Lançamentos do GitHub](../../releases):
   e então execute o `MeshMill.exe`.
 
 Ambos os pacotes incluem o ambiente de execução (runtime) do aplicativo. Os usuários finais não instalam as dependências Python, Node.js ou
-A versão inicial oferece suporte ao Windows 10 e ao Windows 11 em hardware x64. Pacotes Linux e
-macOS estão planejados; os formatos de produto e de arquivo não são específicos do Windows.
+dependências. A versão estável oferece suporte ao Windows 10 e Windows 11 em hardware x64.
 
-Compilações da comunidade não assinadas podem exibir um aviso do SmartScreen do Windows. Os checksums da versão estão listados
-no `SHA256SUMS.txt`, ao lado de cada versão.
+Pacotes não assinados de visualização de silício Linux x86-64 e macOS Intel/Apple também podem aparecer em versões.
+Eles são construídos em executores nativos hospedados no GitHub e passam por CLI empacotado e testes de fumaça de malha de amostra,
+mas ainda precisa de testes em hardware real. Consulte [Teste de visualização do Linux e macOS](../../PLATFORM_TESTING.md)
+antes de instalar ou relatar resultados.
+
+Compilações de comunidade não assinadas podem exibir um aviso do Windows SmartScreen ou do macOS Gatekeeper. Liberar
+somas de verificação são listadas ao lado de cada versão.
 
 ## Início rápido
 
@@ -44,6 +50,8 @@ O MeshMill nunca inicia a otimização apenas porque um arquivo ou configuraçã
 
 - Entrada STL em formatos binário e ASCII; saída STL em formato binário
 - Fast QEM, redução com densidade balanceada, preservação de forma e preservação de topologia
+- Janela de visualização OpenGL acelerada por GPU, seleção de hardware e visualização de densidade
+- Trabalhadores de geometria de fundo nativos para redução de malha
 - Modos de visualização: sombreado, densidade, estrutura de arame (wireframe) e vértices
 - Metas automáticas derivadas da geometria, em vez de um limite fixo de triângulos
 - Seleção de polígonos com seleção aditiva de múltiplas regiões
@@ -57,7 +65,41 @@ O MeshMill nunca inicia a otimização apenas porque um arquivo ou configuraçã
 - Aplicativos com interface gráfica (GUI) e linha de comando
 - Processamento local sem dependência de conta, telemetria, upload ou nuvem
 
-![Exibição de densidade MeshMill](../../images/meshmill-density.png)
+## Inspecione a geometria antes de reduzi-la
+
+A tela sombreada fornece uma visão nítida da superfície e da silhueta. É útil para comparar
+preservação da forma antes de aplicar uma passagem de otimização.
+
+![Visualização sombreada do MeshMill mostrando a malha de amostra agrupada](../../images/meshmill-shaded.png)
+
+A exibição Vértices expõe a distribuição real dos pontos. Regiões de varredura densas, áreas esparsas e
+mudanças abruptas na amostragem são visíveis sem alterar a geometria. O painel de métricas expandido
+rastreia atividades de CPU, memória, GPU e processamento de geometria enquanto trabalha com a malha.
+
+![Exibição de vértices do MeshMill com métricas de desempenho expandidas](../../images/meshmill-vertices.png)
+
+A exibição Wireframe mostra a estrutura triangular diretamente. Ajuda a identificar densidade desnecessária,
+triangulação irregular e regiões onde a simplificação pode remover geometria substancial.
+
+![Exibição do MeshMill Wireframe mostrando variação na densidade do triângulo](../../images/meshmill-wireframe.png)
+
+## Analisar densidade de malha
+
+A exibição Densidade mapeia a densidade local relativa em todo o modelo. Regiões esparsas permanecem frias enquanto
+regiões cada vez mais densas movem-se através de cores mais brilhantes, tornando a amostragem irregular visível à primeira vista.
+
+![Exibição da densidade do MeshMill mostrando a densidade relativa da malha](../../images/meshmill-density.png)
+
+A densidade permanece disponível durante a avaliação de uma otimização provisória. A caixa de ferramentas informa o
+algoritmo, alvo, contagens de triângulos e vértices resultantes, porcentagem de redução, dimensões e
+tamanho de saída estimado antes da aplicação da passagem.
+
+![Exibição de densidade do MeshMill mostrando uma otimização provisória](../../images/meshmill-density-overview.png)
+
+Segure o botão direito do mouse para inspecionar uma região através da lupa circular. A visão ampliada
+permanece centralizado no ponteiro e revela a densidade local sem alterar a posição da câmera principal.
+
+![Exibição da densidade do MeshMill com o ampliador da janela de visualização](../../images/meshmill-density-zoom.png)
 
 ## Controles de visualização
 
@@ -109,6 +151,12 @@ o polígono do espaço da tela, mantendo a geometria selecionada.
 A otimização com uma seleção ativa afeta apenas essa seleção. O resultado permanece provisório
 até que **Aplicar** seja selecionado. **Cancelar** descarta o resultado provisório e mantém a seleção para
 outra configuração pode ser tentada. As operações de corte e exclusão tornam-se edições normais de malha que podem ser revertidas.
+
+O painel de seleção informa os vértices selecionados cumulativamente, triângulos, participação de malha, estimativa
+tamanho e dimensões. Suas ações cortam, adicionam, otimizam, excluem, recuam ou limpam os dados retidos.
+seleção sem ocultar a geometria circundante.
+
+![MeshMill mostrando uma seleção regional retida e suas estatísticas de geometria](../../images/meshmill-crop-selection.png)
 
 ## Malhas grandes
 
@@ -174,6 +222,11 @@ Para solução de problemas de diagnóstico, os desenvolvedores podem iniciar a 
 desativado durante o uso normal.
 
 ## Desenvolvimento e lançamento
+
+O texto e a documentação da interface do usuário localizados são inicialmente produzidos com tradução automática externa
+serviços e verificado automaticamente quanto a danos estruturais. A tradução automática ainda pode ser
+não natural ou incorreto. Os falantes nativos são incentivados a revisar e corrigir as traduções por meio de
+o processo de contribuição.
 
 - [Contribuindo](CONTRIBUTING.md)
 - [Processo de liberação](RELEASING.md)

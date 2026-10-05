@@ -1,7 +1,8 @@
 # Melepaskan MeshMill
 
-Alur rilis membuat artefak  pada runner Windows yang dihosting Windows. Pengguna akhir menerima (GitHub)
-penginstal mandiri atau ZIP portabel dan jangan menginstal Python, Node.js, atau dependensi.
+Alur rilis stabil membangun artefak Windows pada runner Windows yang dihosting GitHub. Terpisah
+alur kerja manual membuat pratinjau silikon Linux x86-64 dan macOS Intel/Apple yang tidak ditandatangani pada versi asli
+Pelari yang dihosting GitHub. Pengguna akhir tidak menginstal Python, Node.js, atau dependensi.
 
 Sebelum membuat, segarkan dan validasi katalog sumber pelokalan:
 
@@ -74,3 +75,19 @@ Verifikasi penginstal dan arsip portabel pada sistem Windows yang bersih sebelum
 Pertahankan sumber yang sesuai dengan setiap biner terdistribusi yang tersedia di bawah tag rilis yang sama.
 Konfirmasikan bahwa tombol GitHub mengarah ke URL repositori publik final sebelum memberi tag pada yang pertama
 rilis.
+
+## Bangun pratinjau Linux dan macOS
+
+Buka **Tindakan**, pilih **Pembuatan pratinjau platform**, dan pilih **Jalankan alur kerja**. Masukkan pratinjau
+versi seperti `0.2.0-preview.1`.
+
+Biarkan **Publikasikan prarilis GitHub publik** untuk dijalankan pertama kali. Alur kerja dibuat dan diuji:
+
+- Linux x86-64 di Ubuntu 22.04;
+- macOS x86-64 pada pelari Intel;
+- macOS arm64 pada pelari silikon Apple.
+
+Unduh artefak alur kerja dan periksa checksum dan lognya. Jalankan kembali alur kerja dengan
+penerbitan diaktifkan hanya setelah setiap pekerjaan build berhasil. Pratinjau macOS yang diterbitkan ditandatangani secara ad-hoc,
+tidak diaktakan oleh Apple. Jelaskan mereka sebagai versi pratinjau dan tautkan penguji ke dalamnya
+`docs/PLATFORM_TESTING.md` dan formulir masalah **Tes pratinjau platform**.

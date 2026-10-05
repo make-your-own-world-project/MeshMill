@@ -1,7 +1,8 @@
 # Sortie de MeshMill
 
-Le pipeline de versions génère des artefacts Windows sur les exécuteurs Windows hébergés par GitHub. Les utilisateurs finaux reçoivent
-un programme d'installation autonome ou un ZIP portable et n'installez pas Python, Node.js ou des dépendances.
+Le pipeline de versions stables crée des artefacts Windows sur les exécuteurs Windows hébergés par GitHub. Un séparé
+le flux de travail manuel crée des aperçus non signés Linux x86-64 et macOS Intel/Apple Silicon sur natif
+Coureurs hébergés sur GitHub. Les utilisateurs finaux n'installent pas Python, Node.js ou les dépendances.
 
 Avant de créer, actualisez et validez les catalogues sources de localisation :
 
@@ -74,3 +75,19 @@ Vérifiez le programme d'installation et l'archive portable sur un système Wind
 Conservez la source correspondant à chaque binaire distribué disponible sous la même balise de version.
 Confirmez que le bouton GitHub pointe vers l'URL du référentiel public final avant de baliser le premier.
 libération.
+
+## Créer des aperçus Linux et macOS
+
+Ouvrez **Actions**, sélectionnez **Builds d'aperçu de plateforme** et choisissez **Exécuter le workflow**. Entrez un aperçu
+version telle que « 0.2.0-preview.1 ».
+
+Laissez **Publier une version préliminaire publique de GitHub** désactivée pour la première exécution. Le workflow construit et teste :
+
+- Linux x86-64 sur Ubuntu 22.04 ;
+- macOS x86-64 sur un processeur Intel ;
+- macOS arm64 sur un coureur de silicium Apple.
+
+Téléchargez les artefacts de flux de travail et inspectez leurs sommes de contrôle et leurs journaux. Exécutez à nouveau le workflow avec
+la publication est activée uniquement après la réussite de chaque tâche de build. Les aperçus macOS publiés sont signés ad hoc,
+pas certifié par Apple. Décrivez-les en tant que versions préliminaires et associez les testeurs à
+`docs/PLATFORM_TESTING.md` et le formulaire de problème **Test d'aperçu de la plateforme**.

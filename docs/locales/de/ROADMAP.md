@@ -7,8 +7,10 @@ plattformübergreifend; zukünftige Releases sollen native Linux- und macOS-Pake
 umfassen Paketierung, Anwendungsintegration, Hardware-Metriken, Dateisystemverhalten sowie automatisierte
 Release-Tests, wobei die Projekt- und STL-Workflows auf allen unterstützten Systemen beibehalten werden.
 
-- Hinzufügen von Linux-x86-64-Paketen und CI-Abdeckung.
-- Hinzufügen von macOS-Paketen für Apple Silicon und x86-64 sowie Signierung, Notarisierung und CI-Abdeckung.
+- Validieren Sie das Linux x86-64-Vorschaupaket für alle Distributionen, Desktop-Umgebungen und Displays
+  Server und GPU-Treiber, bevor Sie es auf stabil hochstufen.
+- Validieren Sie die macOS Apple Silicon- und x86-64-Vorschaupakete auf echter Hardware und fügen Sie dann Developer hinzu
+  Unterzeichnung und notarielle Beglaubigung des Personalausweises vor der Beförderung zum Stall.
 - Hinzufügen plattformnativer Anbieter für CPU-, Speicher- und GPU-Metriken hinter einer gemeinsamen Schnittstelle.
 - Gewährleistung der Portabilität von gespeicherten Einstellungen, Tastaturbelegungen, Befehlszeilenverhalten und Projektdaten.
 
@@ -139,6 +141,10 @@ Der Index, das Streaming, der Cache, die Arbeitseinheit und der Sicherheitsvertr
 - Öffnen Sie übergroße binäre STL-Dateien als begrenzte, gleichmäßig abgetastete Navigationsübersichten.
 - Partitionieren Sie vollständig aufgelöste Geometrie in räumliche Würfel mit deterministischen Überlappungsgrenzen.
 - Lesen, analysieren und optimieren Sie gleichzeitig unabhängige Cubes innerhalb der CPU- und Speichergrenzen.
+- Benchmarken Sie GPU-Computing-Implementierungen für Reduktionsstufen wie Fehlerbewertung und Kandidaten
+  Scoring, räumliche Abfragen und unabhängige Arbeitseinheitenverarbeitung. Entladen Sie eine Stufe nur, wenn sie vorhanden ist
+  Bietet einen messbaren End-to-End-Geschwindigkeits- oder Speichervorteil, ohne Determinismus und Mesh zu reduzieren
+  Qualität, Topologiegarantien oder Kompatibilität mit Systemen, denen eine geeignete GPU fehlt.
 - Streamen Sie Ansichtsfensterebenen von grob nach fein, anstatt das gesamte Netz im Speicher zu benötigen.
 - Zeichnen Sie den Cube-Status direkt im Ansichtsfenster ein: in der Warteschlange, gelesen, verarbeitet, abgeschlossen und fehlgeschlagen.
 - Zeigen Sie den Fortschritt pro Würfel an, indem Sie jeden Würfel füllen, und behalten Sie eine übergeordnete Gesamtansicht des Objekts bei.

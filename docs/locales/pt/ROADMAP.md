@@ -7,8 +7,10 @@ multiplataforma e versões futuras devem adicionar pacotes nativos Linux e macOS
 inclui empacotamento, integração de aplicativos, métricas de hardware, comportamento do sistema de arquivos e automação
 teste de lançamento preservando o mesmo projeto e fluxos de trabalho STL em todos os sistemas suportados.
 
-- Adicione pacotes Linux x86-64 e cobertura CI.
-- Adicione pacotes macOS Apple Silicon e x86-64, assinatura, reconhecimento de firma e cobertura de CI.
+- Valide o pacote de visualização do Linux x86-64 em distribuições, ambientes de desktop, exibição
+  servidores e drivers de GPU antes de promovê-lo para estável.
+- Valide os pacotes de visualização macOS Apple Silicon e x86-64 em hardware real e adicione Developer
+  Assinatura de identidade e reconhecimento de firma antes de promovê-los a estáveis.
 - Adicione provedores de métricas CPU, memória e GPU nativos da plataforma por trás de uma interface compartilhada.
 - Mantenha as configurações salvas, os mapeamentos de teclado, o comportamento da linha de comando e os dados do projeto portáteis.
 
@@ -139,6 +141,10 @@ O contrato de índice, streaming, cache, unidade de trabalho e segurança está 
 - Abra arquivos STL binários grandes como visões gerais de navegação limitadas e com amostragem uniforme.
 - Divida a geometria de resolução total em cubos espaciais com limites de sobreposição determinísticos.
 - Leia, analise e otimize cubos independentes simultaneamente dentro de CPU e limites de memória.
+- Benchmark implementações de computação GPU para estágios de redução, como avaliação de erros, candidato
+  pontuação, consultas espaciais e processamento independente de unidades de trabalho. Descarregue um estágio somente quando ele
+  fornece uma velocidade mensurável de ponta a ponta ou benefício de memória sem reduzir o determinismo, a malha
+  qualidade, garantias de topologia ou compatibilidade com sistemas que não possuem uma GPU adequada.
 - Transmita níveis de viewport grossos a finos em vez de exigir a malha completa na memória.
 - Desenhe o estado do cubo diretamente na viewport: enfileirado, lendo, processando, concluído e com falha.
 - Mostre o progresso por cubo preenchendo cada cubo e mantenha uma visualização de alto nível do objeto inteiro.

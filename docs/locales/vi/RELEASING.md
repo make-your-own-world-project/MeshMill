@@ -1,7 +1,8 @@
 # Phát hành MeshMill
 
-Quy trình phát hành xây dựng các tạo phẩm Windows trên các trình chạy Windows được lưu trữ trên máy chủ GitHub. Người dùng cuối nhận được
-một trình cài đặt độc lập hoặc ZIP di động và không cài đặt Python, Node.js hoặc các phần phụ thuộc.
+Quy trình phát hành ổn định xây dựng các tạo phẩm Windows trên các trình chạy Windows được lưu trữ trên GitHub. riêng biệt
+quy trình làm việc thủ công xây dựng các bản xem trước silicon x86-64 và macOS không có chữ ký của Intel/Apple trên bản gốc (Linux)
+Người chạy được lưu trữ trên GitHub. Người dùng cuối không cài đặt Python, Node.js hoặc các phần phụ thuộc.
 
 Trước khi xây dựng, hãy làm mới và xác thực danh mục nguồn bản địa hóa:
 
@@ -74,3 +75,19 @@ Xác minh trình cài đặt và kho lưu trữ di động trên hệ thống Wi
 Giữ nguồn tương ứng với mọi tệp nhị phân được phân phối có sẵn trong cùng một thẻ phát hành.
 Xác nhận rằng nút GitHub trỏ đến URL kho lưu trữ công cộng cuối cùng trước khi gắn thẻ đầu tiên
 thả ra.
+
+## Xây dựng bản xem trước Linux và macOS
+
+Mở **Tác vụ**, chọn **Bản xem trước nền tảng** và chọn **Chạy quy trình công việc**. Nhập bản xem trước
+phiên bản chẳng hạn như `0.2.0-preview.1`.
+
+Tắt **Xuất bản bản phát hành trước GitHub công khai** trong lần chạy đầu tiên. Quy trình xây dựng và kiểm tra quy trình làm việc:
+
+- Linux x86-64 trên Ubuntu 22.04;
+- macOS x86-64 trên bộ chạy Intel;
+- macOS arm64 trên một con chạy silicon của Apple.
+
+Tải xuống các tạo phẩm của quy trình làm việc và kiểm tra tổng kiểm tra cũng như nhật ký của chúng. Chạy lại quy trình làm việc với
+chỉ được phép xuất bản sau khi mỗi công việc xây dựng trôi qua. Các bản xem trước macOS đã xuất bản được ký đặc biệt,
+không được Apple công chứng. Mô tả chúng dưới dạng bản dựng xem trước và liên kết người thử nghiệm với
+`docs/PLATFORM_TESTING.md` và biểu mẫu vấn đề **Kiểm tra bản xem trước nền tảng**.

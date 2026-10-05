@@ -24,6 +24,12 @@ El texto fuente de la interfaz de usuario en inglés se almacena en `locales/en-
 `<locale>.json`. La documentación traducida utiliza el nombre de archivo raíz correspondiente en
 `docs/locales/<locale>/`.
 
+Las traducciones se realizan inicialmente con servicios externos de traducción automática y reciben
+Validación estructural automatizada. Ese proceso no puede garantizar una calidad natural, técnicamente precisa o
+lenguaje contextualmente correcto. Se anima a los hablantes nativos a revisar y corregir la interfaz de usuario traducida.
+texto y documentación. Las correcciones de traducción deben preservar claves de catálogo, marcadores de posición,
+Comandos, enlaces, medidas, nombres de productos y estructura de Markdown.
+
 Después de cambiar etiquetas, información sobre herramientas, cuadros de diálogo u otro texto visible para el usuario, ejecute:
 
 ```powershell

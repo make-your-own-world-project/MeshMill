@@ -1,7 +1,8 @@
 # 释放MeshMill
 
-发布管道在 GitHub 托管的 Windows 运行器上构建 Windows 工件。最终用户收到
-独立安装程序或便携式 ZIP，并且不安装 Python、Node.js 或依赖项。
+稳定发布管道在 GitHub 托管的 Windows 运行器上构建 Windows 工件。一个单独的
+手动工作流程在本机上构建未签名的 Linux x86-64 和 macOS Intel/Apple 芯片预览
+GitHub 托管的运行器。最终用户不安装 Python、Node.js 或依赖项。
 
 在构建之前，刷新并验证本地化源目录：
 
@@ -74,3 +75,19 @@ git push origin v0.1.0
 保持与同一发布标签下可用的每个分布式二进制文件相对应的源代码。
 在标记第一个之前，请确认 GitHub 按钮指向最终的公共存储库 URL
 释放。
+
+## 构建 Linux 和 macOS 预览
+
+打开 **操作**，选择 **平台预览版本**，然后选择 **运行工作流程**。输入预览
+版本如“0.2.0-preview.1”。
+
+首次运行时关闭 **发布公共 GitHub 预发布**。工作流程构建和测试：
+
+- Ubuntu 22.04 上的 Linux x86-64；
+- Intel 运行器上的 macOS x86-64；
+- Apple 芯片运行器上的 macOS arm64。
+
+下载工作流程工件并检查其校验和和日志。再次运行工作流程
+仅在每个构建作业通过后才启用发布。已发布的 macOS 预览版是临时签名的，
+未经 Apple 公证。将它们描述为预览版本并将测试人员链接到
+`docs/PLATFORM_TESTING.md` 和 **平台预览测试** 问题表单。

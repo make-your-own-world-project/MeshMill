@@ -7,8 +7,10 @@ multiplataforma y las versiones futuras deberían agregar paquetes nativos Linux
 Incluye empaquetado, integración de aplicaciones, métricas de hardware, comportamiento del sistema de archivos y automatización.
 pruebas de lanzamiento mientras se conserva el mismo proyecto y los flujos de trabajo STL en todos los sistemas compatibles.
 
-- Agregue paquetes Linux x86-64 y cobertura CI.
-- Agregue macOS paquetes Apple Silicon y x86-64, firma, notarización y cobertura de CI.
+- Valide el paquete de vista previa de Linux x86-64 en todas las distribuciones, entornos de escritorio y pantalla.
+  servidores y controladores de GPU antes de promocionarlo a estable.
+- Valide los paquetes de vista previa de macOS Apple Silicon y x86-64 en hardware real y luego agregue Developer
+  Firma de identificación y certificación notarial antes de promoverlos a estable.
 - Agregue proveedores de métricas CPU, memoria y GPU nativos de la plataforma detrás de una interfaz compartida.
 - Mantenga portátiles las configuraciones guardadas, las asignaciones de teclado, el comportamiento de la línea de comandos y los datos del proyecto.
 
@@ -139,6 +141,10 @@ El contrato de índice, transmisión, caché, unidad de trabajo y seguridad est�
 - Abra archivos binarios STL de gran tamaño como descripciones generales de navegación delimitadas y muestreadas uniformemente.
 - Divida la geometría de resolución completa en cubos espaciales con límites de superposición deterministas.
 - Lea, analice y optimice cubos independientes simultáneamente dentro de CPU y los límites de memoria.
+- Implementaciones comparativas de computación GPU para etapas de reducción como evaluación de errores, candidato
+  puntuación, consultas espaciales y procesamiento independiente de unidades de trabajo. Descargue una etapa sólo cuando
+  proporciona un beneficio de memoria o velocidad de extremo a extremo medible sin reducir el determinismo, la malla
+  calidad, garantías de topología o compatibilidad con sistemas que carecen de una GPU adecuada.
 - Transmita niveles de ventana gráfica de grueso a fino en lugar de requerir la malla completa en la memoria.
 - Dibuje el estado del cubo directamente en la ventana gráfica: en cola, leyendo, procesando, completado y fallido.
 - Muestre el progreso por cubo llenando cada cubo y conserve una vista de alto nivel de todo el objeto.

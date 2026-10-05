@@ -1,7 +1,8 @@
 # Veröffentlichung von MeshMill
 
-Die Release-Pipeline erstellt Windows-Artefakte auf GitHub-gehosteten Windows-Läufern. Endbenutzer erhalten
-ein eigenständiges Installationsprogramm oder eine tragbare ZIP-Datei und installieren Sie weder Python, Node.js noch Abhängigkeiten.
+Die stabile Release-Pipeline erstellt Windows-Artefakte auf von GitHub gehosteten Windows-Runnern. Ein separates
+Der manuelle Workflow erstellt unsignierte Linux x86-64- und macOS Intel/Apple-Siliziumvorschauen auf nativer Basis
+Von GitHub gehostete Läufer. Endbenutzer installieren weder Python, Node.js noch Abhängigkeiten.
 
 Aktualisieren und validieren Sie vor dem Erstellen die Lokalisierungsquellenkataloge:
 
@@ -74,3 +75,19 @@ Das Tag startet den Release-Workflow. Dieser:
 Halten Sie den Quellcode für jede verteilte Binärdatei unter demselben Release-Tag bereit.
 Stellen Sie sicher, dass die Schaltfläche GitHub auf die endgültige URL des öffentlichen Repositorys verweist, bevor Sie das erste
 Release mit einem Tag versehen.
+
+## Erstellen Sie Linux- und macOS-Vorschauen
+
+Öffnen Sie **Aktionen**, wählen Sie **Plattform-Vorschau-Builds** und wählen Sie **Workflow ausführen**. Geben Sie eine Vorschau ein
+Version wie „0.2.0-preview.1“.
+
+Lassen Sie **Eine öffentliche GitHub-Vorabversion veröffentlichen** für die erste Ausführung deaktiviert. Der Workflow erstellt und testet:
+
+- Linux x86-64 auf Ubuntu 22.04;
+- macOS x86-64 auf einem Intel-Läufer;
+- macOS arm64 auf einem Apple Silicon Runner.
+
+Laden Sie die Workflow-Artefakte herunter und überprüfen Sie deren Prüfsummen und Protokolle. Führen Sie den Workflow erneut mit aus
+Die Veröffentlichung wird erst aktiviert, nachdem jeder Build-Job erfolgreich abgeschlossen wurde. Veröffentlichte macOS-Vorschauen sind Ad-hoc-signiert,
+nicht von Apple notariell beglaubigt. Beschreiben Sie sie als Vorschau-Builds und verlinken Sie Tester darauf
+`docs/PLATFORM_TESTING.md` und das Problemformular **Plattform-Vorschautest**.

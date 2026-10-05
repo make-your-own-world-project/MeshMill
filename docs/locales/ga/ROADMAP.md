@@ -7,8 +7,10 @@ tras-ardán, agus ba cheart go gcuirfeadh eisiúintí sa todhchaí pacáistí d�
 áirítear pacáistiú, comhtháthú feidhmchlár, méadracht crua-earraí, iompar córas comhaid, agus uathoibrithe
 tástáil scaoileadh agus an tionscadal céanna agus sreafaí oibre STL á gcaomhnú ar gach córas tacaithe.
 
-- Cuir pacáistí Linux x86-64 agus clúdach CI leis.
-- Cuir macOS Apple sileacain agus pacáistí x86-64, síniú, notarization, agus clúdach CI.
+- Bailíochtaigh an pacáiste réamhamhairc Linux x86-64 trasna dáiltí, timpeallachtaí deisce, taispeáint
+  freastalaithe, agus tiománaithe GPU sula gcuirtear chun cinn é go cobhsaí.
+- Bailíochtaigh na pacáistí réamhamhairc macOS Apple sileacain agus x86-64 ar chrua-earraí fíor, ansin cuir Forbróir leis
+  síniú ID agus notarization roimh iad a chur chun cinn go cobhsaí.
 - Cuir soláthraithe méadrachta CPU, cuimhne, agus GPU bunaithe ar chomhéadan comhroinnte.
 - Coinnigh socruithe sábháilte, mapálacha méarchláir, iompar na n-orduithe, agus sonraí tionscadail iniompartha.
 
@@ -139,6 +141,10 @@ Tá an t-innéacs, sruthú, taisce, aonad oibre, agus conradh sábháilteachta d
 - Oscail comhaid dhénártha ró-mhóra STL mar a bhfuil teorainneacha, forbhreathnú loingseoireachta cothrom sampláilte.
 - Céimseata lántaifeach a dheighilt ina chiúbanna spáis le teorainneacha cinntitheacha forluí.
 - Ciúbanna neamhspleácha a léamh, a anailísiú agus a bharrfheabhsú i gcomhthráth laistigh de theorainneacha CPU agus cuimhne.
+- Tagarmharcáil GPU-ríomh feidhmiúcháin le haghaidh céimeanna laghdaithe mar mheastóireacht earráide, iarrthóir
+  scóráil, ceisteanna spásúlachta, agus próiseáil aonad oibre neamhspleách. Íosluchtaigh céim ach amháin nuair a bheidh sé
+  soláthraíonn sé luas intomhaiste deireadh-go-deireadh nó sochar cuimhne gan determinism, mogalra a laghdú
+  ráthaíochtaí cáilíochta, topology, nó comhoiriúnacht le córais nach bhfuil GPU oiriúnach acu.
 - Sruthaigh leibhéil amharc-amharc garbh go mín in ionad an mogalra iomlán a bheith riachtanach sa chuimhne.
 - Tarraing staid ciúb go díreach sa radharc: scuaine, léamh, próiseáil, críochnaithe, agus teipthe.
 - Taispeáin dul chun cinn in aghaidh an chiúbaigh trí gach ciúb a líonadh agus coinnigh radharc ardleibhéil lán-réada.

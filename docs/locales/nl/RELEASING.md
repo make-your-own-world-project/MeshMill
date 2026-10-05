@@ -1,7 +1,8 @@
 # MeshMill vrijgeven
 
-De releasepijplijn bouwt Windows-artefacten op door GitHub gehoste Windows-runners. Eindgebruikers ontvangen
-een op zichzelf staand installatieprogramma of een draagbare ZIP en installeer geen Python, Node.js of afhankelijkheden.
+De stabiele releasepijplijn bouwt Windows-artefacten op door GitHub gehoste Windows-hardware. Een aparte
+handmatige workflow bouwt niet-ondertekende Linux x86-64 en macOS Intel/Apple silicium previews op native
+Door GitHub gehoste hardlopers. Eindgebruikers installeren Python, Node.js of afhankelijkheden niet.
 
 Voordat u de lokalisatiebroncatalogi gaat bouwen, moet u deze vernieuwen en valideren:
 
@@ -74,3 +75,19 @@ Controleer het installatieprogramma en het draagbare archief op een schoon Windo
 Bewaar de broncode die overeenkomt met elk gedistribueerd binair bestand dat beschikbaar is onder dezelfde releasetag.
 Bevestig dat de knop GitHub naar de uiteindelijke URL van de openbare repository verwijst voordat u de eerste tagt
 loslaten.
+
+## Bouw Linux- en macOS-previews
+
+Open **Acties**, selecteer **Platformvoorbeeldbuilds** en kies **Workflow uitvoeren**. Voer een voorbeeld in
+versie zoals `0.2.0-preview.1`.
+
+Laat **Publiceer een openbare GitHub-prerelease** uitgeschakeld voor de eerste uitvoering. De workflow bouwt en test:
+
+- Linux x86-64 op Ubuntu 22.04;
+- macOS x86-64 op een Intel-runner;
+- macOS arm64 op een Apple siliconen runner.
+
+Download de werkstroomartefacten en inspecteer hun controlesommen en logboeken. Voer de workflow opnieuw uit met
+publiceren wordt alleen ingeschakeld nadat elke buildtaak is voltooid. Gepubliceerde macOS-previews zijn ad-hoc ondertekend,
+niet door Apple notarieel bekrachtigd. Beschrijf ze als preview-builds en koppel er testers aan
+`docs/PLATFORM_TESTING.md` en het probleemformulier **Platformvoorbeeldtest**.

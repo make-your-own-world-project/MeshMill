@@ -4,6 +4,8 @@ Tous les changements notables dans la version sont documentés ici.
 
 ## 0.1.0
 
+- Connexion du bouton de l'application GitHub au référentiel MeshMill.
+- Ajout des liens GitHub et Buy Me a Coffee à la boîte de dialogue À propos.
 - Ajout du chargement, de l'inspection, de la sélection, du recadrage, de la suppression, de l'optimisation et de l'exportation locaux du STL.
 - Ajout de Fast QEM, optimisation de densité équilibrée, de préservation de la forme et de préservation de la topologie.
 - Ajout des modes d'affichage ombré, densité, filaire et sommet.

@@ -1,7 +1,8 @@
 # MeshMill 출시
 
-릴리스 파이프라인은 GitHub 호스팅 Windows 실행기에서 Windows 아티팩트를 빌드합니다. 최종 사용자는
-독립형 설치 프로그램 또는 휴대용 ZIP을 사용하고 Python, Node.js 또는 종속 항목을 설치하지 마세요.
+안정적인 릴리스 파이프라인은 GitHub에서 호스팅되는 Windows 실행기에서 Windows 아티팩트를 빌드합니다. 별도의
+수동 작업 흐름은 서명되지 않은 Linux x86-64 및 macOS Intel/Apple 실리콘 미리 보기를 기본으로 구축합니다.
+GitHub에서 호스팅되는 실행기. 최종 사용자는 Python, Node.js 또는 종속 항목을 설치하지 않습니다.
 
 빌드하기 전에 현지화 소스 카탈로그를 새로 고치고 검증하십시오.
 
@@ -31,7 +32,7 @@ python tools/release_privacy_check.py
 
 ## 원본 스캔 및 Git LFS
 
-`samples/original-scan.stl`는 GitHub의 일반 100MiB를 초과하므로 Git LFS를 통해 추적됩니다.
+`samples/original-scan.stl`은 GitHub의 일반 100MiB를 초과하므로 Git LFS를 통해 추적됩니다. (100)
 파일 제한. 첫 번째 커밋 전에 다음을 확인하세요.
 
 ```powershell
@@ -74,3 +75,19 @@ git push origin v0.1.0
 동일한 릴리스 태그에서 사용 가능한 모든 배포 바이너리에 해당하는 소스를 유지하세요.
 첫 번째 태그를 지정하기 전에 GitHub 버튼이 최종 공개 저장소 URL을 가리키는지 확인하세요.
 릴리스.
+
+## Linux 및 macOS 미리보기 구축
+
+**작업**을 열고 **플랫폼 미리보기 빌드**를 선택한 다음 **워크플로 실행**을 선택합니다. 미리보기를 입력하세요
+`0.2.0-preview.1`과 같은 버전.
+
+처음 실행 시 **공개 GitHub 시험판 게시**를 꺼진 상태로 둡니다. 워크플로는 다음을 빌드하고 테스트합니다.
+
+- Ubuntu 22.04의 Linux x86-64;
+- Intel 러너의 macOS x86-64;
+- Apple Silicon Runner의 macOS arm64.
+
+워크플로 아티팩트를 다운로드하고 해당 체크섬과 로그를 검사합니다. 다음을 사용하여 워크플로를 다시 실행합니다.
+모든 빌드 작업이 완료된 후에만 게시가 활성화됩니다. 게시된 macOS 미리보기는 임시 서명되어 있습니다.
+Apple 공증을 받지 않았습니다. 미리보기 빌드로 설명하고 테스터를 연결합니다.
+`docs/PLATFORM_TESTING.md` 및 **플랫폼 미리보기 테스트** 문제 양식.

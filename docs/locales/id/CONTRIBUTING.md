@@ -24,6 +24,12 @@ Teks sumber UI bahasa Inggris disimpan di `locales/en-US.json`. Metadata lokal d
 `<locale>.json`. Dokumentasi yang diterjemahkan menggunakan nama file root yang cocok di bawah
 `docs/locales/<locale>/`.
 
+Terjemahan awalnya diproduksi dengan layanan terjemahan mesin eksternal dan diterima
+validasi struktural otomatis. Proses tersebut tidak dapat menjamin kealamian, ketepatan teknis, atau
+bahasa yang benar secara kontekstual. Penutur asli didorong untuk meninjau dan mengoreksi UI yang diterjemahkan
+teks dan dokumentasi. Koreksi terjemahan harus mempertahankan kunci katalog, placeholder,
+perintah, tautan, pengukuran, nama produk, dan struktur penurunan harga.
+
 Setelah mengubah label, keterangan alat, dialog, atau teks lain yang terlihat oleh pengguna, jalankan:
 
 ```powershell

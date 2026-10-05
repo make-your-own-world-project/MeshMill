@@ -7,8 +7,10 @@ Windows là nền tảng đóng gói ban đầu. Kiến trúc ứng dụng và c
 bao gồm đóng gói, tích hợp ứng dụng, số liệu phần cứng, hành vi hệ thống tập tin và tự động
 phát hành thử nghiệm trong khi vẫn duy trì cùng một dự án và quy trình công việc STL trên mọi hệ thống được hỗ trợ.
 
-- Thêm các gói Linux x86-64 và phạm vi bảo hiểm CI.
-- Thêm macOS Apple silicon và các gói x86-64, ký, công chứng và bảo hiểm CI.
+- Xác thực gói xem trước Linux x86-64 trên các bản phân phối, môi trường máy tính để bàn, màn hình
+  máy chủ và trình điều khiển GPU trước khi nâng cấp nó lên mức ổn định.
+- Xác thực các gói xem trước macOS Apple silicon và x86-64 trên phần cứng thực, sau đó thêm Nhà phát triển
+  Ký CMND và công chứng trước khi thăng hạng lên ổn định.
 - Thêm các nhà cung cấp số liệu CPU, bộ nhớ và GPU gốc nền tảng đằng sau một giao diện dùng chung.
 - Giữ các cài đặt đã lưu, ánh xạ bàn phím, hành vi dòng lệnh và dữ liệu dự án ở dạng di động.
 
@@ -139,6 +141,10 @@ Chỉ mục, phát trực tuyến, bộ đệm, đơn vị công việc và hợ
 - Mở các tệp STL nhị phân quá khổ dưới dạng tổng quan về điều hướng được lấy mẫu đồng đều, có giới hạn.
 - Phân vùng hình học có độ phân giải đầy đủ thành các khối không gian có ranh giới chồng chéo xác định.
 - Đọc, phân tích và tối ưu hóa các khối độc lập đồng thời trong giới hạn bộ nhớ và CPU.
+- Việc triển khai tính toán GPU điểm chuẩn cho các giai đoạn giảm thiểu như đánh giá lỗi, đánh giá ứng cử viên
+  tính điểm, truy vấn không gian và xử lý đơn vị công việc độc lập. Chỉ giảm tải một giai đoạn khi nó
+  cung cấp lợi ích về bộ nhớ hoặc tốc độ từ đầu đến cuối có thể đo lường được mà không làm giảm tính xác định, tính lưới
+  chất lượng, đảm bảo cấu trúc liên kết hoặc khả năng tương thích với các hệ thống thiếu GPU phù hợp.
 - Truyền phát các cấp độ khung nhìn từ thô đến mịn thay vì yêu cầu lưới hoàn chỉnh trong bộ nhớ.
 - Vẽ trạng thái khối trực tiếp trong khung nhìn: xếp hàng, đọc, xử lý, hoàn thành và không thành công.
 - Hiển thị tiến trình trên mỗi khối bằng cách lấp đầy từng khối và duy trì chế độ xem toàn bộ đối tượng ở cấp độ cao.

@@ -1,12 +1,14 @@
-# MeshMill
-
-![Vizualizare umbrită MeshMill](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill este o aplicație desktop specializată pentru gestionarea geometriilor de tip mesh
 de dimensiuni mari, cu densitate ridicată sau complexe. Oferă funcții de inspecție rapidă, analiză a densității, selecție pe regiuni, decupare, ștergere,
 precum și reducere controlată a mesh-ului, fără a necesita crearea unui cont sau încărcarea geometriei.
 
-Randarea OpenGL accelerată de GPU menține receptive navigarea în fereastra de vizualizare, selecția hardware, vizualizarea densității și inspecția interactivă. Reducerea mesh-ului rulează în prezent în procese CPU native separate, astfel încât calculele geometrice de durată să nu blocheze interfața.
+Redarea OpenGL accelerată de GPU păstrează navigarea în fereastra de vizualizare, alegerea hardware-ului, vizualizarea densității,
+și receptiv la inspecție interactivă. Reducerea rețelei se execută în prezent în lucrători nativi separati ai procesorului, (CPU)
+ținând calculele lungi de geometrie departe de interfață.
 
 MeshMill funcționează cu mesh-uri provenite de la scanere 3D, exporturi CAD și de modelare, fluxuri de lucru de reconstrucție,
 geometrii generate și alte surse STL. Pregătește geometria pentru editoare ulterioare,
@@ -23,11 +25,15 @@ Descărcați unul dintre aceste fișiere din secțiunea [Lansări GitHub](../../
   apoi rulați `MeshMill.exe`.
 
 Ambele pachete includ mediul de rulare (runtime) al aplicației. Utilizatorii finali nu instalează dependențele Python, Node.js sau
-ale acestora. Versiunea inițială suportă Windows 10 și Windows 11 pe hardware x64. Sunt planificate pachetele Linux și
-macOS; formatele produsului și ale fișierelor nu sunt specifice Windows.
+dependențe. Versiunea stabilă acceptă Windows 10 și Windows 11 pe hardware x64.
 
-Build-urile comunității nesemnate pot declanșa o avertizare SmartScreen legată de Windows. Sumele de control (checksums) ale versiunilor sunt listate
-în `SHA256SUMS.txt`, lângă fiecare versiune.
+Pachetele de previzualizare Linux x86-64 și macOS Intel/Apple silicon nesemnate pot apărea și în versiuni.
+Acestea sunt construite pe rulare native găzduite de GitHub și trec teste de fum CLI și eșantion-mesh.
+dar mai trebuie testat pe hardware real. Consultați [Testarea de previzualizare Linux și macOS](../../PLATFORM_TESTING.md)
+înainte de instalare sau raportare rezultate.
+
+Compilările comunității nesemnate pot afișa un avertisment Windows SmartScreen sau macOS Gatekeeper. Eliberare
+sumele de verificare sunt listate lângă fiecare lansare.
 
 ## Pornire rapidă
 
@@ -44,6 +50,8 @@ MeshMill nu inițiază niciodată optimizarea doar pentru că s-a modificat un f
 
 - Intrare STL în format binar și ASCII, ieșire STL în format binar
 - Reducere Fast QEM cu păstrarea densității, a formei și a topologiei
+- Vizualizare OpenGL accelerată de GPU, alegere hardware și vizualizare a densității
+- Lucrători nativi cu geometrie de fundal pentru reducerea ochiurilor
 - Moduri de afișare: umbrit, densitate, cadru de sârmă (wireframe) și noduri (vertex)
 - Ținte automate derivate din geometrie, nu dintr-o limită fixă ​​a numărului de triunghiuri
 - Selectarea poligoanelor cu opțiune de selecție aditivă pe mai multe regiuni
@@ -57,7 +65,41 @@ MeshMill nu inițiază niciodată optimizarea doar pentru că s-a modificat un f
 - Aplicații cu interfață grafică (GUI) și linie de comandă
 - Procesare locală, fără dependență de cont, telemetrie, încărcare de date sau cloud
 
-![Afișare densitate MeshMill](../../images/meshmill-density.png)
+## Inspectați geometria înainte de a o reduce
+
+Ecranul Shaded oferă o vedere clară a suprafeței și a siluetei. Este util pentru comparare
+conservarea formei înainte de aplicarea unei treceri de optimizare.
+
+![Port de vizualizare umbrit MeshMill care arată rețeaua de probă grupată](../../images/meshmill-shaded.png)
+
+Ecranul Vertices expune distribuția reală a punctelor. Regiuni dense de scanare, zone rare și
+modificările bruște ale eșantionării sunt vizibile fără modificarea geometriei. Panoul de valori extins
+urmărește CPU, memorie, GPU și activitatea de procesare a geometriei în timp ce lucrezi cu rețeaua.
+
+![Afișează MeshMill Vertices cu valori de performanță extinse](../../images/meshmill-vertices.png)
+
+Afișajul Wireframe arată direct structura triunghiului. Ajută la identificarea densității inutile,
+triangulație neregulată și regiuni în care simplificarea poate elimina geometrie substanțială.
+
+![Afișajul MeshMill Wireframe care arată variația densității triunghiului](../../images/meshmill-wireframe.png)
+
+## Analizați densitatea ochiurilor
+
+Afișarea Density hărți densitatea locală relativă pe întreg modelul. Regiunile rare rămân reci în timp ce
+regiunile din ce în ce mai dense se deplasează prin culori mai strălucitoare, făcând eșantionarea neuniformă vizibilă dintr-o privire.
+
+![Afișarea densității MeshMill care arată densitatea relativă a ochiurilor](../../images/meshmill-density.png)
+
+Densitatea rămâne disponibilă în timp ce se evaluează o optimizare provizorie. Cutia de instrumente raportează
+algoritm, țintă, triunghiul rezultat și numărul de vârfuri, procentul de reducere, dimensiunile și
+dimensiunea estimată a ieșirii înainte de aplicarea trecerii.
+
+![Afișajul MeshMill Density care arată o optimizare provizorie](../../images/meshmill-density-overview.png)
+
+Țineți apăsat butonul din dreapta al mouse-ului pentru a inspecta o regiune prin lupa circulară. Vederea mărită
+rămâne centrat pe indicator și dezvăluie densitatea locală fără a schimba poziția principală a camerei.
+
+![Afișarea densității MeshMill cu lupa de vizualizare](../../images/meshmill-density-zoom.png)
 
 ## Comenzi pentru vizualizare
 
@@ -109,6 +151,12 @@ poligonul ecran-spațiu păstrând în același timp geometria selectată.
 Optimizarea cu o selecție activă afectează numai selecția respectivă. Rezultatul rămâne provizoriu
 până când este selectat **Aplicare**. **Anulare** renunță la rezultatul provizoriu și reține selecția
 se poate incerca o alta configuratie. Operațiunile de decupare și ștergere devin editări normale de rețea care nu pot fi anulate.
+
+Panoul de selecție raportează vârfurile, triunghiurile, cota de plasă, estimate cumulate selectate
+dimensiune și dimensiuni. Acțiunile sale decupează, adaugă, optimizează, șterg, dau înapoi sau șterg cele reținute
+selecție fără a ascunde geometria înconjurătoare.
+
+![MeshMill afișând o selecție regională păstrată și statisticile de geometrie ale acesteia](../../images/meshmill-crop-selection.png)
 
 ## Ochiuri mari
 
@@ -174,6 +222,11 @@ Pentru depanarea de diagnosticare, dezvoltatorii pot porni GUI cu
 dezactivat în timpul utilizării normale.
 
 ## Dezvoltare și lansare
+
+Textul și documentația UI localizate sunt inițial produse cu traducere automată externă
+servicii și verificate automat pentru daune structurale. Traducerea automată poate fi încă
+nenaturale sau incorecte. Vorbitorii nativi sunt încurajați să revizuiască și să corecteze traducerile
+procesul de contribuție.
 
 - [Contribuie](CONTRIBUTING.md)
 - [Proces de lansare](RELEASING.md)

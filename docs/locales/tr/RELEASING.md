@@ -1,7 +1,8 @@
 # MeshMill serbest bırakılıyor
 
-Sürüm işlem hattı, GitHub tarafından barındırılan Windows çalıştırıcılarında Windows yapıtlarını oluşturur. Son kullanıcılar alır
-bağımsız bir yükleyici veya taşınabilir ZIP kullanın ve Python, Node.js veya bağımlılıkları yüklemeyin.
+Kararlı sürüm ardışık düzeni, GitHub tarafından barındırılan Windows çalıştırıcıları üzerinde Windows yapıtları oluşturur. Ayrı bir
+manuel iş akışı, imzasız Linux x86-64 ve macOS Intel/Apple silikon önizlemelerini yerel olarak oluşturur
+GitHub tarafından barındırılan koşucular. Son kullanıcılar Python, Node.js veya bağımlılıkları yüklemez.
 
 Yerelleştirme kaynak kataloglarını oluşturmadan önce yenileyin ve doğrulayın:
 
@@ -74,3 +75,19 @@ Sürümü duyurmadan önce yükleyiciyi ve taşınabilir arşivi temiz bir Windo
 Kaynağı aynı sürüm etiketi altında mevcut olan her dağıtılmış ikili dosyaya karşılık gelen şekilde tutun.
 İlkini etiketlemeden önce GitHub düğmesinin nihai genel depo URL'sine işaret ettiğini doğrulayın
 serbest bırakın.
+
+## Linux ve macOS önizlemeleri oluşturun
+
+**Eylemler**'i açın, **Platform önizleme derlemeleri**'ni seçin ve **İş akışını çalıştır**'ı seçin. Bir önizleme girin
+'0.2.0-preview.1' gibi bir sürüm.
+
+İlk çalıştırma için **Genel GitHub ön sürümünü yayınlayın** seçeneğini kapalı bırakın. İş akışı şunları oluşturur ve test eder:
+
+- Ubuntu 22.04'te Linux x86-64;
+- Intel çalıştırıcısında macOS x86-64;
+- Apple silikon kızakta macOS arm64.
+
+İş akışı yapıtlarını indirin ve bunların sağlama toplamlarını ve günlüklerini inceleyin. İş akışını yeniden çalıştırın
+yayınlama yalnızca her derleme işi geçtikten sonra etkinleştirilir. Yayınlanan macOS önizlemeleri geçici olarak imzalanır,
+Apple noter tasdikli değil. Bunları önizleme yapıları olarak tanımlayın ve test kullanıcılarını bunlara bağlayın
+`docs/PLATFORM_TESTING.md` ve **Platform önizleme testi** sorun formu.

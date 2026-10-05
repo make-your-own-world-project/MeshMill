@@ -35,7 +35,7 @@
   "discard.the.optimized.result.and.return.to.the.original.mesh": "最適化された結果を破棄し、元のメッシュに戻します。",
   "display.type": "表示タイプ",
   "estimated.binary.stl.size.at.the.current.target": "現在のターゲットでの推定バイナリ STL サイズ。",
-  "estimated.from.currently.available.memory.the.configured.memory.budget.c": "現在利用可能なメモリ、構成されたメモリ バジェット、CPU カウント、および概要チャンク サイズから推定されます。現在、ジオメトリ操作は一度に 1 つずつ実行されます。",
+  "estimated.from.currently.available.memory.the.configured.memory.budget.c": "現在利用可能なメモリ、設定されたメモリ バジェット、CPU 数、および概要のチャンク サイズから推定されます。現在、ジオメトリ操作は一度に 1 つずつ実行されます。",
   "estimated.output": "推定出力:",
   "finish.the.current.operation.before.loading.another.mesh": "別のメッシュをロードする前に、現在の操作を終了してください。",
   "full.mesh": "フルメッシュ",

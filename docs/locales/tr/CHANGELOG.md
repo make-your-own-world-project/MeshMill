@@ -4,6 +4,8 @@ Tüm önemli sürüm değişiklikleri burada belgelenmiştir.
 
 ## 0.1.0
 
+- Uygulama GitHub düğmesini MeshMill deposuna bağladı.
+- Hakkında iletişim kutusuna GitHub ve Bana Bir Kahve Al bağlantıları eklendi.
 - Yerel STL yükleme, inceleme, seçme, kırpma, silme, optimizasyon ve dışa aktarma eklendi.
 - Fast QEM, yoğunluk dengeli, şekil koruyucu ve topoloji koruyucu optimizasyon eklendi.
 - Gölgeli, yoğunluk, tel çerçeve ve köşe görüntüleme modları eklendi.

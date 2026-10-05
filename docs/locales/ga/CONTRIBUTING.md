@@ -24,6 +24,12 @@ Stóráiltear téacs foinse Chomhéadain Bhéarla i `locales/en-US.json`. Stór�
 `<locale>.json`. Úsáideann doiciméadú aistrithe an fhréamhainm comhoiriúnach faoi
 `docs/locales/<locale>/`.
 
+Táirgtear aistriúcháin ar dtús le seirbhísí meaisín-aistriúcháin seachtracha agus faightear iad
+bailíochtú struchtúrach uathoibrithe. Ní féidir leis an bpróiseas sin ráthaíocht a thabhairt go nádúrtha, go beacht go teicniúil, nó
+teanga cheart i gcomhthéacs. Spreagtar cainteoirí dúchais chun an Chomhéadain Aistrithe a athbhreithniú agus a cheartú
+téacs agus doiciméadú. Ba cheart go gcaomhnódh ceartúcháin aistriúcháin eochracha catalóige, sealbhóirí áite,
+orduithe, naisc, tomhais, ainmneacha táirge, agus struchtúr Markdown....
+
 Tar éis duit lipéid, leideanna uirlisí, dialóga nó téacs eile atá le feiceáil ag an úsáideoir a athrú, rith:
 
 ```powershell

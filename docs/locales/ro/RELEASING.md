@@ -1,7 +1,8 @@
 # Lansarea MeshMill
 
-Canalul de lansare construiește artefacte Windows pe runneri Windows găzduiți de GitHub. Utilizatorii finali primesc
-un program de instalare autonom sau ZIP portabil și nu instalați Python, Node.js sau dependențe.
+Conducta de lansare stabilă construiește artefacte Windows pe runnerele Windows găzduite de GitHub. Un separat
+fluxul de lucru manual creează previzualizări nesemnate Linux x86-64 și macOS Intel/Apple silicon pe nativ
+alergători găzduiți de GitHub. Utilizatorii finali nu instalează Python, Node.js sau dependențe.
 
 Înainte de a construi, reîmprospătați și validați cataloagele surselor de localizare:
 
@@ -74,3 +75,19 @@ Verificați instalatorul și arhiva portabilă pe un sistem curat Windows înain
 Păstrați sursa corespunzătoare fiecărui binar distribuit disponibil sub aceeași etichetă de lansare.
 Confirmați că butonul GitHub indică adresa URL finală a depozitului public înainte de a eticheta primul
 eliberare.
+
+## Creați previzualizări Linux și macOS
+
+Deschideți **Acțiuni**, selectați **Compilări de previzualizare platformă** și alegeți **Run workflow**. Introduceți o previzualizare
+versiune precum `0.2.0-preview.1`.
+
+Lăsați dezactivat **Publicați o versiune preliminară GitHub publică** pentru prima rulare. Fluxul de lucru creează și testează:
+
+- Linux x86-64 pe Ubuntu 22.04;
+- macOS x86-64 pe un rulant Intel;
+- macOS arm64 pe un rulant de silicon Apple.
+
+Descărcați artefactele fluxului de lucru și inspectați-le sumele de verificare și jurnalele. Rulați din nou fluxul de lucru cu
+publicarea este activată numai după trecerea fiecărei lucrări de construcție. Previzualizările macOS publicate sunt semnate ad-hoc,
+nu notariat Apple. Descrieți-le ca versiuni de previzualizare și conectați testerii la
+`docs/PLATFORM_TESTING.md` și formularul de emisiune **Testul de previzualizare a platformei**.

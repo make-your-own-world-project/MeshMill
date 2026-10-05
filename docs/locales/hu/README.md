@@ -1,12 +1,14 @@
-# MeshMill
-
-![MeshMill árnyékolt nézet](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 A MeshMill egy célzott asztali alkalmazás, amely lehetővé teszi a túlméretezett, nagy sűrűségű vagy összetett hálógeometriák
 kezelését. Gyors ellenőrzést, sűrűségelemzést, régiókijelölést, vágást, törlést,
 valamint szabályozott hálóegyszerűsítést kínál anélkül, hogy fiókra vagy a geometria feltöltésére lenne szükség.
 
-A GPU-gyorsítású OpenGL-megjelenítés gördülékenyen tartja a nézet navigációját, a hardveres kijelölést, a sűrűségábrázolást és az interaktív vizsgálatot. A hálócsökkentés jelenleg külön natív CPU-folyamatokban fut, így a hosszú geometriai számítások nem blokkolják a felületet.
+A GPU-gyorsítású OpenGL-megjelenítés lehetővé teszi a nézetablak navigációját, a hardveres kijelölést, a sűrűség megjelenítését,
+és interaktív ellenőrzésre reagáló. A hálócsökkentés jelenleg különálló natív CPU-munkásokon fut,
+távol tartva a hosszú geometriai számításokat az interfésztől.
 
 A MeshMill együttműködik a 3D szkennerekből, CAD- és modellezőszoftverek exportjaiból, rekonstrukciós folyamatokból,
 generált geometriákból és egyéb STL-forrásokból származó hálókkal. Előkészíti a geometriát további szerkesztőprogramok,
@@ -23,11 +25,15 @@ Töltse le az alábbi fájlok egyikét a [GitHub kiadások](../../releases) köz
   majd futtassa a `MeshMill.exe`-t.
 
 Mindkét csomag tartalmazza az alkalmazás futtatásához szükséges összetevőket. A végfelhasználók nem telepítik a Python, Node.js vagy
-függőségeket. A kezdeti kiadás támogatja a Windows 10 és Windows 11 verziókat x64 hardveren. Tervezik a Linux és
-macOS csomagok kiadását; a termék- és fájlformátumok nem Windows-specifikusak.
+függőségek. A stabil kiadás támogatja a Windows 10 és Windows 11 operációs rendszert x64-es hardveren.
 
-Az aláíratlan közösségi buildek esetén megjelenhet egy Windows SmartScreen figyelmeztetés. A kiadások ellenőrző összegei
-a `SHA256SUMS.txt`-ben, az egyes kiadások mellett találhatók meg.
+Aláíratlan Linux x86-64 és macOS Intel/Apple Silicon előnézeti csomagok is megjelenhetnek a kiadásokban.
+Natív GitHub által hosztolt futókra épülnek, és megfelelnek a csomagolt CLI és mintaháló füstteszteken,
+de még mindig tesztelni kell valódi hardveren. Lásd: [Linux és macOS előzetes tesztelése] (docs/PLATFORM_TESTING.md)
+a telepítés vagy az eredmények jelentése előtt.
+
+Az aláíratlan közösségi buildek Windows SmartScreen vagy macOS Gatekeeper figyelmeztetést jeleníthetnek meg. Kiadás
+Az ellenőrző összegek az egyes kiadások mellett szerepelnek.
 
 ## Gyors útmutató
 
@@ -44,6 +50,8 @@ A MeshMill soha nem indítja el az optimalizálást pusztán azért, mert egy f�
 
 - Bináris és ASCII STL bemenet, bináris STL kimenet
 - Fast QEM: sűrűségkiegyenlített, alak- és topológiamegtartó redukció
+- GPU-gyorsított OpenGL nézet, hardveres kiválasztás és sűrűség-vizualizáció
+- Natív háttérgeometriai munkások a hálók csökkentésére
 - Árnyékolt, sűrűség, drótváz és vertex megjelenítési módok
 - Automatikus célbeállítások geometria alapján, fix háromszögszám-korlát helyett
 - Poligonkijelölés, több régióra kiterjedő, összeadódó kijelölési lehetőséggel
@@ -57,7 +65,41 @@ A MeshMill soha nem indítja el az optimalizálást pusztán azért, mert egy f�
 - GUI- és parancssori alkalmazások
 - Helyi feldolgozás; nincs szükség fiókra, telemetriára, feltöltésre vagy felhőalapú szolgáltatásra
 
-![MeshMill sűrűségmegjelenítés](../../images/meshmill-density.png)
+## Ellenőrizze a geometriát, mielőtt kicsinyítené
+
+Az árnyékolt kijelző tiszta képet ad a felületről és a sziluettről. Hasznos az összehasonlításhoz
+alakmegőrzés az optimalizálási lépés alkalmazása előtt.
+
+![MeshMill árnyékolt nézetablak, amely a kötegelt mintahálót mutatja](../../images/meshmill-shaded.png)
+
+A Csúcsok képernyő megjeleníti az aktuális ponteloszlást. Sűrű letapogatási régiók, ritka területek és
+a mintavétel hirtelen változásai a geometria megváltoztatása nélkül láthatók. A kibontott metrikapanel
+nyomon követi a CPU, a memória, a GPU és a geometria-feldolgozási tevékenységet, miközben dolgozik a hálóval.
+
+![MeshMill Vertices kijelző kiterjesztett teljesítménymutatókkal](../../images/meshmill-vertices.png)
+
+A Wireframe kijelző közvetlenül a háromszög szerkezetet mutatja. Segít azonosítani a szükségtelen sűrűséget,
+szabálytalan háromszögelés, és olyan területek, ahol az egyszerűsítés jelentős geometriát eltávolíthat.
+
+![MeshMill Wireframe kijelző a háromszög sűrűségének változását mutatja](../../images/meshmill-wireframe.png)
+
+## Elemezze a hálósűrűséget
+
+A Sűrűség kijelző leképezi a relatív helyi sűrűséget a modellben. A ritka régiók hűvösek maradnak
+az egyre sűrűbb területek élénkebb színeken mozognak, így egy pillantással láthatóvá válik az egyenetlen mintavétel.
+
+![MeshMill sűrűségű kijelző, amely a relatív hálósűrűséget mutatja] (docs/images/meshmill-density.png)
+
+A sűrűség elérhető marad az ideiglenes optimalizálás kiértékelése közben. Az eszköztár beszámol a
+algoritmus, cél, az eredményül kapott háromszög- és csúcsszámok, csökkentési százalék, méretek és
+becsült kimeneti méret az átigazolás alkalmazása előtt.
+
+![MeshMill Density kijelző ideiglenes optimalizálást mutat](../../images/meshmill-density-overview.png)
+
+Tartsa lenyomva a jobb egérgombot, hogy megvizsgáljon egy területet a kör alakú nagyítón keresztül. A nagyított kilátás
+a mutató középpontjában marad, és a fő kamera pozíciójának megváltoztatása nélkül felfedi a helyi sűrűséget.
+
+![MeshMill Density kijelző a nézetablak nagyítójával](../../images/meshmill-density-zoom.png)
 
 ## Nézetvezérlők
 
@@ -110,6 +152,12 @@ Az aktív kijelöléssel végzett optimalizálás csak erre a kijelölésre van 
 amíg az **Alkalmaz** ki nem választja. A **Mégse** elveti az ideiglenes eredményt, és megtartja a kijelölést
 más konfiguráció is kipróbálható. A vágási és törlési műveletek normál, visszavonhatatlan hálószerkesztésekké válnak.
 
+A kijelölőpanel jelenti az összesített kiválasztott csúcsokat, háromszögeket, hálómegosztást, becsült értéket
+méretek és méretek. Műveletei levágják, hozzáadják, optimalizálják, törlik, visszalépnek vagy törlik a megtartottakat
+kijelölés a környező geometria elrejtése nélkül.
+
+![A MeshMill egy megtartott regionális kijelölést és annak geometriai statisztikáit mutatja](../../images/meshmill-crop-selection.png)
+
 ## Nagy hálók
 
 A bináris STL lefoglalása előtt a MeshMill összehasonlítja a becsült munkamemóriáját a konfigurált memóriával.
@@ -140,7 +188,7 @@ reális eszköz az algoritmusok összehasonlításához, a sűrűség vizsgálat
 
 | Fájl | Háromszögek | Méret | Szállítás | Legjobb a |
 | --- | ---: | ---: | --- | --- |
-| [`sample-scan.stl`](../../../samples/sample-scan.stl) | 249 999 | 11,9 MiB | Normál Git | Gyors kiértékelés, CI és a vezérlőelemek megtanulása |
+| [`sample-scan.stl`](../../../samples/sample-scan.stl) | 249 999 | 11,9 MiB | Normál Git | Gyors kiértékelés, CI és a vezérlőelemek megtanulása | (249,999)
 | [`original-scan.stl`](../../../samples/original-scan.stl) | 4,126,315 | 196,8 MiB | Git LFS | A sűrű forrásgeometria és a nagy hálós teljesítmény tesztelése |
 
 A kisebb minta minden normál klónnal letöltődik. Az érintetlen eredeti opcionális és
@@ -174,6 +222,11 @@ A diagnosztikai hibaelhárításhoz a fejlesztők elindíthatják a grafikus fel
 normál használat során le van tiltva.
 
 ## Fejlesztés és kiadás
+
+A lokalizált felhasználói felület szövege és dokumentációja kezdetben külső gépi fordítással készül
+szolgáltatást, és automatikusan ellenőrizni kell a szerkezeti sérüléseket. A gépi fordítás még mindig lehet
+természetellenes vagy helytelen. Az anyanyelvi beszélőket arra biztatjuk, hogy nézzék át és javítsák ki a fordításokat
+a hozzájárulási folyamat.
 
 - [Hozzájárulás] (CONTRIBUTING.md)
 - [Kiadási folyamat] (RELEASING.md)

@@ -7,8 +7,10 @@ multipiattaforma e le versioni future dovrebbero aggiungere pacchetti nativi Lin
 include packaging, integrazione delle applicazioni, metriche hardware, comportamento del file system e automazione
 test di rilascio preservando lo stesso progetto e i flussi di lavoro STL su ogni sistema supportato.
 
-- Aggiungi pacchetti Linux x86-64 e copertura CI.
-- Aggiungi macOS pacchetti Apple Silicon e x86-64, firma, autenticazione e copertura CI.
+- Convalida il pacchetto di anteprima Linux x86-64 tra distribuzioni, ambienti desktop e display
+  server e driver GPU prima di promuoverlo a stabile.
+- Convalida i pacchetti di anteprima macOS Apple Silicon e x86-64 su hardware reale, quindi aggiungi Developer
+  Firma e autenticazione dell'ID prima di promuoverli a stabili.
 - Aggiungi provider di metriche CPU, memoria e GPU nativi della piattaforma dietro un'interfaccia condivisa.
 - Mantieni portatili le impostazioni salvate, le mappature della tastiera, il comportamento della riga di comando e i dati di progetto.
 
@@ -139,6 +141,10 @@ L'indice, lo streaming, la cache, l'unità di lavoro e il contratto di sicurezza
 - Apri file binari STL di grandi dimensioni come panoramiche di navigazione delimitate e campionate uniformemente.
 - Partiziona la geometria a piena risoluzione in cubi spaziali con confini di sovrapposizione deterministica.
 - Leggi, analizza e ottimizza contemporaneamente cubi indipendenti entro CPU e limiti di memoria.
+- Confronta le implementazioni di calcolo GPU per le fasi di riduzione come la valutazione degli errori, il candidato
+  punteggio, query spaziali ed elaborazione indipendente delle unità di lavoro. Scarica una fase solo quando
+  fornisce una velocità end-to-end misurabile o un vantaggio di memoria senza ridurre il determinismo e la mesh
+  qualità, garanzie sulla topologia o compatibilità con sistemi privi di GPU adeguata.
 - Trasmetti in streaming livelli di visualizzazione da grossolani a fini invece di richiedere la mesh completa in memoria.
 - Disegna lo stato del cubo direttamente nella finestra: in coda, in lettura, in elaborazione, completato e non riuscito.
 - Mostra i progressi per cubo riempiendo ciascun cubo e mantieni una visualizzazione dell'intero oggetto di alto livello.

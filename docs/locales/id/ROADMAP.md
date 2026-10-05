@@ -7,8 +7,10 @@ lintas platform, dan rilis mendatang harus menambahkan paket asli Linux dan macO
 mencakup pengemasan, integrasi aplikasi, metrik perangkat keras, perilaku sistem file, dan otomatisasi
 pengujian rilis sambil mempertahankan proyek yang sama dan alur kerja STL di setiap sistem yang didukung.
 
-- Tambahkan paket Linux x86-64 dan cakupan CI.
-- Tambahkan paket silikon Apple macOS dan x86-64, penandatanganan, notaris, dan cakupan CI.
+- Validasi paket pratinjau Linux x86-64 di seluruh distribusi, lingkungan desktop, tampilan
+  server, dan driver GPU sebelum mempromosikannya ke stabil.
+- Validasi paket pratinjau MacOS Apple Silicon dan x86-64 pada perangkat keras sebenarnya, lalu tambahkan Pengembang (macOS)
+  Penandatanganan identitas dan notaris sebelum dipromosikan ke kandang.
 - Tambahkan penyedia metrik CPU, memori, dan GPU asli platform di belakang antarmuka bersama.
 - Simpan pengaturan tersimpan, pemetaan keyboard, perilaku baris perintah, dan data proyek tetap portabel.
 
@@ -139,6 +141,10 @@ Indeks, streaming, cache, unit kerja, dan kontrak keselamatan didokumentasikan d
 - Buka file biner STL yang berukuran besar sebagai ikhtisar navigasi berbatas dan sampelnya merata.
 - Partisi geometri resolusi penuh menjadi kubus spasial dengan batas tumpang tindih deterministik.
 - Membaca, menganalisis, dan mengoptimalkan kubus independen secara bersamaan dalam CPU dan batas memori.
+- Tolok ukur implementasi komputasi GPU untuk tahapan pengurangan seperti evaluasi kesalahan, kandidat
+  penilaian, pertanyaan spasial, dan pemrosesan unit kerja independen. Bongkar panggung hanya jika itu
+  memberikan kecepatan ujung ke ujung atau manfaat memori yang terukur tanpa mengurangi determinisme, mesh
+  kualitas, jaminan topologi, atau kompatibilitas dengan sistem yang tidak memiliki GPU yang sesuai.
 - Streaming tingkat area pandang kasar hingga halus alih-alih memerlukan mesh lengkap di memori.
 - Gambarkan status kubus langsung di area pandang: antri, membaca, memproses, selesai, dan gagal.
 - Tampilkan kemajuan per kubus dengan mengisi setiap kubus dan pertahankan tampilan seluruh objek tingkat tinggi.

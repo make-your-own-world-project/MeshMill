@@ -1,6 +1,6 @@
 {
-  "20": "%20",
-  "80": "%80",
+  "20": "%20 (20%)",
+  "80": "%80 (80%)",
   "about": "Hakkında",
   "absolute.change.in.the.optimized.result.s.x.y.and.z.bounding.box.dimensi": "Optimize edilmiş sonucun X, Y ve Z sınırlayıcı kutu boyutlarında mutlak değişiklik.",
   "action": "Eylem",
@@ -12,7 +12,7 @@
   "auto.checks.estimated.memory.before.loading.oversized.binary.stl.files.o": "Yüklemeden önce tahmini belleği otomatik olarak kontrol eder. Büyük boyutlu ikili STL dosyaları, sistem belleğini tüketmek yerine sınırlı bir genel bakış olarak açılır.",
   "auto.target": "Otomatik hedef",
   "automatic.density.level.used.when.calculating.a.target": "Bir hedef hesaplanırken kullanılan otomatik yoğunluk seviyesi.",
-  "automatic.target.density.draft.15.balanced.50.fine.75.maximum": "Otomatik hedef yoğunluğu: Taslak %15, Dengeli %50, İnce %75 maksimum.",
+  "automatic.target.density.draft.15.balanced.50.fine.75.maximum": "Otomatik hedef yoğunluğu: Taslak %15, Dengeli %50, İnce %75 maksimum. (15%) (50%) (75%)",
   "cpu.gpu.and.geometry.activity": "CPU, GPU ve geometri etkinliği.",
   "calculate.target.from.mesh.size.and.surface.area": "Hedefi ağ boyutundan ve yüzey alanından hesaplayın.",
   "camera.rotation.relative.to.the.mesh.s.current.x.y.and.z.axes": "Ağın mevcut X, Y ve Z eksenlerine göre kamera dönüşü.",

@@ -1,7 +1,8 @@
 # Rilascio di MeshMill
 
-La pipeline di rilascio crea artefatti Windows su runner Windows ospitati da GitHub. Gli utenti finali ricevono
-un programma di installazione autonomo o ZIP portatile e non installare Python, Node.js o dipendenze.
+La pipeline di rilascio stabile crea artefatti Windows su runner Windows ospitati su GitHub. Un separato
+il flusso di lavoro manuale crea anteprime di silicio Linux x86-64 e macOS Intel/Apple non firmate su nativi
+Corridori ospitati su GitHub. Gli utenti finali non installano Python, Node.js o dipendenze.
 
 Prima di creare, aggiornare e convalidare i cataloghi delle origini di localizzazione:
 
@@ -74,3 +75,19 @@ Verificare il programma di installazione e l'archivio portatile su un sistema Wi
 Mantieni il codice sorgente corrispondente a ogni binario distribuito disponibile sotto lo stesso tag di rilascio.
 Conferma che il pulsante GitHub punti all'URL del repository pubblico finale prima di taggare il primo
 rilasciare.
+
+## Crea anteprime Linux e macOS
+
+Apri **Azioni**, seleziona **Build di anteprima della piattaforma** e scegli **Esegui flusso di lavoro**. Inserisci un'anteprima
+versione come "0.2.0-preview.1".
+
+Lascia disattivata **Pubblica una prerelease GitHub pubblica** per la prima esecuzione. Il flusso di lavoro crea e testa:
+
+- Linux x86-64 su Ubuntu 22.04;
+- macOS x86-64 su un runner Intel;
+- macOS arm64 su un runner in silicio Apple.
+
+Scarica gli artefatti del flusso di lavoro e controlla i checksum e i log. Esegui nuovamente il flusso di lavoro con
+la pubblicazione è abilitata solo dopo il completamento di ogni processo di compilazione. Le anteprime macOS pubblicate sono firmate ad hoc,
+non autenticato da Apple. Descrivili come build di anteprima e collega i tester
+`docs/PLATFORM_TESTING.md` e il modulo di emissione del **test di anteprima della piattaforma**.

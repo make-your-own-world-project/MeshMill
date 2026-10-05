@@ -1,7 +1,8 @@
 # MeshMillの解放
 
-リリース パイプラインは、GitHub がホストする Windows ランナー上に Windows アーティファクトをビルドします。エンドユーザーが受け取るもの
-自己完結型インストーラーまたはポータブル ZIP を使用し、Python、Node.js、または依存関係をインストールしないでください。
+安定版リリース パイプラインは、GitHub でホストされている Windows ランナー上に Windows アーティファクトを構築します。別個の
+手動ワークフローは、未署名の Linux x86-64 および macOS Intel/Apple シリコン プレビューをネイティブでビルドします
+GitHub でホストされているランナー。エンド ユーザーは、Python、Node.js、または依存関係をインストールしません。
 
 構築する前に、ローカリゼーション ソース カタログを更新して検証します。
 
@@ -74,3 +75,19 @@ git push origin v0.1.0
 同じリリース タグで利用可能なすべての配布バイナリに対応するソースを保持します。
 最初のパブリック リポジトリ URL にタグを付ける前に、GitHub ボタンが最後のパブリック リポジトリ URL を指していることを確認します。
 解放する。
+
+## Build Linux and macOS previews
+
+**アクション**を開き、**プラットフォーム プレビュー ビルド**を選択し、**ワークフローの実行**を選択します。プレビューを入力してください
+version such as `0.2.0-preview.1`.
+
+最初の実行では、**パブリック GitHub プレリリースを公開** はオフのままにしておきます。 The workflow builds and tests:
+
+- Linux x86-64 on Ubuntu 22.04;
+- macOS x86-64 on an Intel runner;
+- Apple シリコン ランナー上の macOS arm64。
+
+ワークフロー アーティファクトをダウンロードし、そのチェックサムとログを検査します。 Run the workflow again with
+パブリッシュは、すべてのビルド ジョブが成功した後にのみ有効になります。 Published macOS previews are ad-hoc signed,
+Apple の公証を受けていません。それらをプレビュー ビルドとして説明し、テスターをリンクします。
+`docs/PLATFORM_TESTING.md` と **プラットフォーム プレビュー テスト** 発行フォーム。

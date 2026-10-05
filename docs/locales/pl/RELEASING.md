@@ -1,7 +1,8 @@
 # Zwalnianie MeshMill
 
-Potok wydań tworzy artefakty Windows na modułach Windows hostowanych przez GitHub. Użytkownicy końcowi otrzymują
-samodzielny instalator lub przenośny plik ZIP i nie instaluj Python, Node.js ani zależności.
+Potok wydania stabilnego tworzy artefakty systemu Windows na modułach wykonawczych systemu Windows hostowanych w serwisie GitHub. Oddzielny
+ręczny przepływ pracy umożliwia tworzenie niepodpisanych podglądów krzemowych systemów Linux x86-64 i macOS Intel/Apple w wersji natywnej
+Biegacze hostowani na GitHubie. Użytkownicy końcowi nie instalują języka Python, Node.js ani zależności.
 
 Przed budowaniem odśwież i sprawdź katalogi źródłowe lokalizacji:
 
@@ -74,3 +75,19 @@ Przed ogłoszeniem wydania sprawdź instalator i przenośne archiwum na czystym 
 Zachowaj źródło odpowiadające każdemu dostępnemu dystrybuowanemu plikowi binarnemu pod tym samym znacznikiem wydania.
 Upewnij się, że przycisk GitHub wskazuje końcowy adres URL publicznego repozytorium przed oznaczeniem pierwszego
 zwolnić.
+
+## Twórz podglądy systemów Linux i macOS
+
+Otwórz **Akcje**, wybierz **Kompilacje podglądu platformy** i wybierz **Uruchom przepływ pracy**. Wprowadź podgląd
+wersja taka jak `0.2.0-preview.1`.
+
+Przy pierwszym uruchomieniu pozostaw opcję **Opublikuj publiczną wersję wstępną GitHub**. Przepływ pracy kompiluje i testuje:
+
+- Linux x86-64 na Ubuntu 22.04;
+- macOS x86-64 na procesorze Intel;
+- macOS arm64 na silikonowej prowadnicy Apple.
+
+Pobierz artefakty przepływu pracy i sprawdź ich sumy kontrolne i dzienniki. Uruchom przepływ pracy ponownie za pomocą
+publikowanie włączone dopiero po zakończeniu każdego zadania kompilacji. Opublikowane podglądy systemu macOS są podpisywane ad hoc,
+nie poświadczone notarialnie przez Apple. Opisz je jako wersje zapoznawcze i testery łączy
+`docs/PLATFORM_TESTING.md` i formularz zgłoszenia **Test podglądu platformy**.

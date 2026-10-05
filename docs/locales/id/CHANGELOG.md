@@ -4,6 +4,8 @@ Semua perubahan rilis penting didokumentasikan di sini.
 
 ## 0.1.0
 
+- Menghubungkan aplikasi tombol GitHub ke repositori MeshMill.
+- Menambahkan tautan GitHub dan Belikan Saya Kopi ke dialog Tentang.
 - Menambahkan pemuatan, inspeksi, pemilihan, pemotongan, penghapusan, pengoptimalan, dan ekspor STL lokal.
 - Menambahkan Fast QEM, optimasi kepadatan seimbang, pelestarian bentuk, dan pelestarian topologi.
 - Menambahkan mode tampilan berbayang, kepadatan, gambar rangka, dan titik.

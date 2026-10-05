@@ -4,6 +4,8 @@ Az összes jelentős kiadási változás itt van dokumentálva.
 
 ## 0.1.0
 
+- Csatlakoztatta az alkalmazás GitHub gombját a MeshMill tárolóhoz.
+- A GitHub és a Buy Me a Coffee linkek hozzáadása a Névjegy párbeszédpanelhez.
 - Hozzáadott helyi STL betöltés, ellenőrzés, kiválasztás, kivágás, törlés, optimalizálás és exportálás.
 - Hozzáadott Fast QEM, sűrűségkiegyensúlyozott, alakmegőrző és topológiamegőrző optimalizálás.
 - Hozzáadott árnyékolt, sűrűség, drótváz és vertex megjelenítési módok.

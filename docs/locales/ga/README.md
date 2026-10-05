@@ -1,12 +1,14 @@
-# MeshMill
-
-![Radharc scáthaithe MeshMill](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 Is feidhmchlár deisce tiomnaithe é MeshMill chun geoiméadracht mhogalra atá ró-mhór, dlúth nó deacair a láimhseáil
 agus a dhéanamh níos soláimhsithe. Cuireann sé iniúchadh tapa, anailís dlúis, roghnú réigiún, bearradh, scriosadh,
 agus laghdú rialaithe ar an mogalra ar fáil, gan gá le cuntas ná le geoiméadracht a uaslódáil.
 
-Coinníonn rindreáil OpenGL luasghéaraithe ag an GPU nascleanúint an amhairc, piocadh crua-earraí, léirshamhlú dlúis agus iniúchadh idirghníomhach freagrúil. Ritheann laghdú mogail faoi láthair i bpróisis dhúchasacha CPU ar leith, ionas nach gcuireann ríomhanna fada geoiméadracha bac ar an gcomhéadan.
+Coinníonn rindreáil OpenGL luasghéaraithe GPU nascleanúint amharcport, piocadh crua-earraí, léirshamhlú dlúis,
+agus cigireacht idirghníomhach freagrúil. Tá laghdú mogall ar siúl faoi láthair in oibrithe LAP dúchasacha ar leith, (CPU)
+ríomhaireachtaí céimseata fada a choinneáil ar shiúl ón gcomhéadan.
 
 Oibríonn MeshMill le mogalraí ó scanóirí 3D, ó chomhaid easpórtáilte CAD agus samhaltú, ó phíblínte athchruthaithe,
 ó gheoiméadracht ghinte, agus ó fhoinsí eile STL. Ullmhaíonn sé geoiméadracht d’eagarthóirí iartheachtacha,
@@ -23,11 +25,15 @@ d’uirlisí déantúsaíochta, agus do shreafaí oibre mogalra eile. Ní bhaine
   agus ansin rith `MeshMill.exe`.
 
 Tá an t-am rite feidhmchláir san áireamh sa dá phacáiste. Ní shuiteálann úsáideoirí deiridh Python, Node.js, ná
-spleáchais. Tacaíonn an chéad eisiúint le Windows 10 agus Windows 11 ar chrua-earraí x64. Tá pacáistí (Linux)
- agus macOS beartaithe; níl formáidí an táirge ná na gcomhad sonrach do Windows.
+spleáchais. Tacaíonn an scaoileadh cobhsaí le Windows 10 agus Windows 11 ar chrua-earraí x64.
 
-D’fhéadfadh rabhadh SmartScreen Windows a bheith le feiceáil ar thógálacha pobail neamhshínithe. Tá suimeanna seiceála na n-eisiúintí liostaithe
-in `SHA256SUMS.txt` in aice le gach eisiúint.
+D’fhéadfadh pacáistí réamhamhairc sileacain Linux x86-64 agus macOS Intel/Apple gan síniú a bheith le feiceáil i Releases freisin.
+Tá siad tógtha ar reathaithe dúchais GitHub-óstaithe agus pas a fháil pacáistithe CLI agus tástálacha deataigh mogalra samplach,
+ach tá gá fós le tástáil ar chrua-earraí fíor. Féach [tástáil réamhamhairc Linux agus macOS] (docs/PLATFORM_TESTING.md)
+sula ndéantar torthaí a shuiteáil nó a thuairisciú.
+
+D’fhéadfadh go dtaispeánfaidh tógálacha pobail gan síniú rabhadh Windows SmartScreen nó macOS Gatekeeper. Scaoileadh
+tá seiceálacha liostaithe in aice le gach eisiúint.
 
 ## Tús tapa
 
@@ -44,6 +50,8 @@ Ní thosaíonn MeshMill an próiseas optamaithe riamh ach amháin toisc gur athr
 
 - Ionchur dénártha agus ASCII STL, aschur dénártha STL
 - Laghdú Fast QEM a choinníonn dlús, cruth agus topolaíocht cothrom
+- Radharc OpenGL luasghéaraithe GPU, piocadh crua-earraí, agus léirshamhlú dlúis
+- Oibrithe céimseata cúlra dúchasach le haghaidh laghdú mogalra
 - Modhanna taispeána: scáthaithe, dlús, fráma sreinge, agus veirteics
 - Spriocanna uathoibríocha bunaithe ar gheoiméadracht seachas ar uasteorainn shocraithe triantán
 - Roghnú polagán le roghnú breise ilréigiún
@@ -57,7 +65,41 @@ Ní thosaíonn MeshMill an próiseas optamaithe riamh ach amháin toisc gur athr
 - GUI agus feidhmchláir ordaithe
 - Próiseáil áitiúil gan spleáchas ar chuntas, teileaiméadracht, uaslódáil ná an néal
 
-![Taispeáint dlúis MeshMill](../../images/meshmill-density.png)
+## Déan iniúchadh ar an gcéimseata sula laghdaítear é
+
+Soláthraíonn an taispeáint Shaded radharc glan ar an dromchla agus ar an scáthchruth. Tá sé úsáideach chun comparáid a dhéanamh
+caomhnú cruth sula gcuirtear pas leas iomlán a bhaint i bhfeidhm.
+
+![Amharcmharc scáthaithe MeshMill a thaispeánann an mogall samplach cuachta](../../images/meshmill-shaded.png)
+
+Nochtann taispeáint Vertices an dáileadh pointe iarbhír. Réigiúin scanadh dlúth, limistéir tanaí, agus
+tá athruithe tobanna sa sampláil le feiceáil gan an chéimseata a athrú. An painéal méadrachta leathnaithe
+rianta LAP, cuimhne, GPU, agus gníomhaíocht próiseála céimseata agus iad ag obair leis an mogalra. (CPU)
+
+![Taispeánann MeshMill Vertices le méadracht feidhmíochta leathnaithe](../../images/meshmill-vertices.png)
+
+Taispeánann an taispeáint Wireframe struchtúr triantáin go díreach. Cuidíonn sé le dlús neamhriachtanach a aithint,
+triantánacht neamhrialta, agus réigiúin inar féidir le simpliú céimseata shubstaintiúil a bhaint.
+
+![Taispeántas Sreangfhráma MeshMill ag taispeáint éagsúlacht i ndlús triantáin](../../images/meshmill-wireframe.png)
+
+## Déan anailís ar dhlús mogalra
+
+Léiríonn an taispeántas Dlús an dlús áitiúil coibhneasta trasna an mhúnla. Fanann réigiúin tanaí fionnuar agus
+bogann réigiúin atá ag éirí níos dlúithe trí dathanna níos gile, rud a fhágann go bhfeictear sracfhéachaint ar shampláil míchothrom.
+
+![Taispeántas dlúis MeshMill ag taispeáint dlús mogaill choibhneasta](../../images/meshmill-density.png)
+
+Tá dlús fós ar fáil agus measúnú á dhéanamh ar bharrfheabhsú sealadach. Tuairiscíonn an bosca uirlisí an
+algartam, sprioc, comhaireamh triantán agus rinn mar thoradh air, céatadán laghdaithe, toisí, agus
+méid aschuir measta sula gcuirtear an pas i bhfeidhm.
+
+![Taispeántas Dlúis MeshMill ag taispeáint barrfheabhsú sealadach](../../images/meshmill-density-overview.png)
+
+Coinnigh an cnaipe ceart luiche chun réigiún a iniúchadh tríd an formhéadaitheoir ciorclach. An radharc méadaithe
+fanann sé dírithe ar an bpointeoir agus nochtann sé dlús áitiúil gan suíomh an phríomhcheamara a athrú.
+
+![Taispeántas dlúis MeshMill leis an formhéadaitheoir amhairc](../../images/meshmill-density-zoom.png)
 
 ## Rialuithe radhairc
 
@@ -109,6 +151,12 @@ an polagán spáis scáileáin agus an geoiméadracht roghnaithe á choinneáil.
 Ní bhíonn tionchar ag optamú le roghnú gníomhach ach ar an roghnú sin. Tá an toradh sealadach fós
 go dtí go roghnófar **Cuir i bhFeidhm**. Déanann **Cealaigh** an toradh sealadach a chaitheamh siar agus coimeádann an roghnúchán amhlaidh
 is féidir cumraíocht eile a thriail. Déantar gnáth-athruithe ar mhogall do-dhéanta as oibríochtaí barr agus scrios.
+
+Tuairiscíonn an painéal roghnúcháin na rinn, na triantáin, an sciar mogall, measta, carnach roghnaithe
+méid, agus toisí. Déanann a ghníomhartha barr, cuir leis, barrfheabhsú, scrios, céim siar nó glan an méid a coinnítear
+roghnú gan an geoiméadracht máguaird a cheilt.
+
+![MeshMill ag taispeáint rogha réigiúnach coinnithe agus a staitisticí céimseata](../../images/meshmill-crop-selection.png)
 
 ## Mogaill mhóra
 
@@ -174,6 +222,11 @@ Le haghaidh fabhtcheartaithe diagnóiseacha, is féidir le forbróirí an GUI a 
 díchumasaithe le linn gnáthúsáide.
 
 ## Forbairt agus scaoileadh
+
+Táirgtear téacs agus doiciméadú comhéadain logánta ar dtús le haistriú meaisín seachtrach
+seirbhísí agus a sheiceáil go huathoibríoch le haghaidh damáiste struchtúrach. Is féidir aistriúchán meaisín a bheith fós
+mínádúrtha nó mícheart. Spreagtar cainteoirí dúchais chun aistriúcháin a athbhreithniú agus a cheartú tríd
+an próiseas ranníocaíochta.
 
 - [Ag cur](CONTRIBUTING.md)
 - [Próiseas scaoilte](RELEASING.md)

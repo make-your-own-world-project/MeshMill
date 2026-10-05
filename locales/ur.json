@@ -82,7 +82,7 @@
   "overview.mode.is.for.navigation.load.the.full.mesh.to.edit": "جائزہ موڈ نیویگیشن کے لیے ہے۔ ترمیم کرنے کے لیے مکمل میش لوڈ کریں۔",
   "overview.only": "صرف جائزہ",
   "overview.triangles": "جائزہ مثلث",
-  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "پوائنٹ کی کثافت <span style='color:#123070'>Sparse</span> <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#123070>●</span> <span style='color:#199AD6'>●</span>",
+  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "POINT DENSITY   <span style='color:#123070'>Sparse</span>  <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#E23730'>● Dense</span>",
   "percentage.of.the.original.stl.triangles.removed.from.the.current.mesh": "موجودہ میش سے ہٹائے گئے اصل STL مثلث کا فیصد۔",
   "point.density.analysis.failed": "پوائنٹ کثافت کا تجزیہ ناکام ہو گیا۔",
   "point.density.ready": "پوائنٹ کثافت تیار ہے۔",

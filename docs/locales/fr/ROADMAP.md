@@ -7,8 +7,10 @@ multiplateforme et les versions futures devraient ajouter les packages natifs Li
 comprend l'empaquetage, l'intégration d'applications, les mesures matérielles, le comportement du système de fichiers et l'automatisation
 publier des tests tout en préservant le même projet et les mêmes flux de travail STL sur chaque système pris en charge.
 
-- Ajoutez les packages Linux x86-64 et la couverture CI.
-- Ajoutez les packages macOS Apple Silicon et x86-64, la signature, la notarisation et la couverture CI.
+- Validez le package de préversion Linux x86-64 sur les distributions, les environnements de bureau, l'affichage
+  serveurs et pilotes GPU avant de le promouvoir en stable.
+- Validez les packages de prévisualisation macOS Apple Silicon et x86-64 sur du matériel réel, puis ajoutez Developer
+  Signature d'identité et légalisation avant de les promouvoir en stable.
 - Ajoutez des fournisseurs de métriques CPU, de mémoire et GPU natifs de plate-forme derrière une interface partagée.
 - Conservez les paramètres enregistrés, les mappages de clavier, le comportement de la ligne de commande et les données du projet portables.
 
@@ -139,6 +141,10 @@ L'index, le streaming, le cache, l'unité de travail et le contrat de sécurité
 - Ouvrez des fichiers binaires STL surdimensionnés sous forme d'aperçus de navigation limités et uniformément échantillonnés.
 - Partitionnez la géométrie pleine résolution en cubes spatiaux avec des limites de chevauchement déterministes.
 - Lisez, analysez et optimisez simultanément les cubes indépendants dans les limites de CPU et de mémoire.
+- Benchmark des implémentations de calcul GPU pour les étapes de réduction telles que l'évaluation des erreurs, le candidat
+  notation, requêtes spatiales et traitement indépendant des unités de travail. Décharger une étape uniquement lorsqu'elle
+  fournit une vitesse de bout en bout mesurable ou un avantage en mémoire sans réduire le déterminisme, le maillage
+  qualité, garanties de topologie ou compatibilité avec les systèmes dépourvus de GPU adapté.
 - Diffusez des niveaux de fenêtre grossiers à fins au lieu de nécessiter le maillage complet en mémoire.
 - Dessinez l'état du cube directement dans la fenêtre : en file d'attente, en lecture, en traitement, terminé et échoué.
 - Affichez la progression par cube en remplissant chaque cube et conservez une vue globale de l'objet de haut niveau.

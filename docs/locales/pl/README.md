@@ -1,12 +1,14 @@
-# MeshMill
-
-![MeshMill – widok z cieniowaniem](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill to specjalistyczna aplikacja desktopowa służąca do pracy z geometrią siatkową, która jest
 zbyt duża, zbyt gęsta lub trudna w obróbce. Umożliwia szybką inspekcję, analizę gęstości, zaznaczanie obszarów, przycinanie, usuwanie elementów
 oraz kontrolowaną redukcję siatki – a wszystko to bez konieczności zakładania konta czy przesyłania geometrii na serwer.
 
-Renderowanie OpenGL przyspieszane przez GPU zapewnia płynną nawigację w widoku, wybieranie sprzętowe, wizualizację gęstości i interaktywną inspekcję. Redukcja siatki działa obecnie w oddzielnych natywnych procesach CPU, dzięki czemu długie obliczenia geometrii nie blokują interfejsu.
+Akcelerowane przez GPU renderowanie OpenGL umożliwia nawigację w rzutni, wybieranie sprzętu, wizualizację gęstości,
+i interaktywna kontrola responsywna. Redukcja siatki działa obecnie w oddzielnych natywnych procesach roboczych procesora, (CPU)
+utrzymywanie obliczeń długich geometrii z dala od interfejsu.
 
 MeshMill obsługuje siatki pochodzące ze skanerów 3D, plików eksportowanych z systemów CAD i programów do modelowania,
 procesów rekonstrukcji, wygenerowanej geometrii oraz innych źródeł. Przygotowuje geometrię do dalszej obróbki w innych edytorach, (STL)
@@ -23,11 +25,15 @@ Pobierz jeden z poniższych plików z sekcji [Wydania GitHub](../../releases):
   a następnie uruchom `MeshMill.exe`.
 
 Oba pakiety zawierają niezbędne środowisko uruchomieniowe aplikacji. Użytkownicy końcowi nie instalują zależności Python, Node.js ani
-innych. Pierwsza wersja obsługuje Windows 10 i Windows 11 na sprzęcie x64. Planowane są pakiety Linux i
-macOS; formaty produktu i plików nie są specyficzne dla Windows.
+zależności. Wersja stabilna obsługuje systemy Windows 10 i Windows 11 na sprzęcie x64.
 
-Niepodpisane kompilacje społecznościowe mogą wywoływać ostrzeżenie funkcji SmartScreen dotyczące Windows. Sumy kontrolne wydań podano
-w `SHA256SUMS.txt` obok każdego wydania.
+Niepodpisane pakiety podglądu krzemu dla systemów Linux x86-64 i macOS Intel/Apple mogą również pojawić się w wydaniach.
+Są zbudowane na natywnych modułach uruchamiających hostowanych na GitHubie i przechodzą pakiety testów CLI i próbnych dymów z siatki,
+ale nadal wymaga testów na prawdziwym sprzęcie. Zobacz [testowanie podglądu Linuksa i macOS](../../PLATFORM_TESTING.md) (Linux)
+przed instalacją lub raportowaniem wyników.
+
+Niepodpisane kompilacje społeczności mogą wyświetlać ostrzeżenie Windows SmartScreen lub macOS Gatekeeper. Zwolnij
+sumy kontrolne są wymienione obok każdego wydania.
 
 ## Szybki start
 
@@ -44,6 +50,8 @@ MeshMill nigdy nie rozpoczyna optymalizacji tylko dlatego, że zmienił się pli
 
 - Obsługa danych wejściowych w formatach binarnym i ASCII (STL) oraz wyjściowych w formacie binarnym (STL)
 - Redukcja Fast QEM z zachowaniem gęstości, kształtu i topologii
+- Akcelerowany przez GPU rzutnia OpenGL, wybieranie sprzętu i wizualizacja gęstości
+- Natywne procesy robocze geometrii tła do redukcji siatki
 - Tryby wyświetlania: cieniowany, gęstość, szkieletowy (wireframe) i wierzchołkowy
 - Automatyczne cele redukcji wyznaczane na podstawie geometrii, a nie sztywnego limitu liczby trójkątów
 - Wybór wielokątów z możliwością dodawania kolejnych obszarów do zaznaczenia
@@ -57,7 +65,41 @@ MeshMill nigdy nie rozpoczyna optymalizacji tylko dlatego, że zmienił się pli
 - Aplikacje z interfejsem graficznym (GUI) oraz wierszem poleceń
 - Przetwarzanie lokalne bez konieczności posiadania konta, przesyłania danych (telemetrii/uploadu) czy korzystania z chmury
 
-![Wyświetlanie gęstości MeshMill](../../images/meshmill-density.png)
+## Sprawdź geometrię przed jej zmniejszeniem
+
+Zacieniony wyświetlacz zapewnia wyraźny widok powierzchni i sylwetki. Przydaje się do porównań
+zachowanie kształtu przed zastosowaniem przejścia optymalizacyjnego.
+
+![Zacieniony widok MeshMill pokazujący dołączoną przykładową siatkę](../../images/meshmill-shaded.png)
+
+Wyświetlacz wierzchołków przedstawia rzeczywisty rozkład punktów. Gęste obszary skanowania, obszary rzadkie i
+nagłe zmiany w próbkowaniu są widoczne bez zmiany geometrii. Rozwinięty panel metryk
+śledzi aktywność procesora, pamięci, procesora graficznego i przetwarzania geometrii podczas pracy z siatką. (GPU) (CPU)
+
+![Wyświetlanie wierzchołków MeshMill z rozszerzonymi metrykami wydajności](../../images/meshmill-vertices.png)
+
+Wyświetlacz Wireframe bezpośrednio pokazuje strukturę trójkąta. Pomaga zidentyfikować niepotrzebne zagęszczenie,
+nieregularna triangulacja oraz obszary, w których uproszczenie może spowodować usunięcie znacznej geometrii.
+
+![Ekran szkieletowy MeshMill pokazujący różnice w gęstości trójkątów](../../images/meshmill-wireframe.png)
+
+## Przeanalizuj gęstość siatki
+
+Ekran Gęstość odwzorowuje względną gęstość lokalną w całym modelu. Rzadkie regiony pozostają chłodne
+coraz gęstsze obszary przechodzą przez jaśniejsze kolory, dzięki czemu nierówne próbkowanie jest widoczne na pierwszy rzut oka.
+
+![Wyświetlacz gęstości MeshMill pokazujący względną gęstość siatki](../../images/meshmill-density.png)
+
+Gęstość pozostaje dostępna podczas oceny tymczasowej optymalizacji. Zestaw narzędzi zgłasza
+algorytm, cel, wynikowa liczba trójkątów i wierzchołków, procent redukcji, wymiary i
+szacowany rozmiar wyjściowy przed zastosowaniem przejścia.
+
+![Ekran MeshMill Density pokazujący tymczasową optymalizację](../../images/meshmill-density-overview.png)
+
+Przytrzymaj prawy przycisk myszy, aby sprawdzić region za pomocą okrągłej lupy. Powiększony widok
+pozostaje wyśrodkowany na wskaźniku i ukazuje lokalną gęstość bez zmiany pozycji głównej kamery.
+
+![Wyświetlanie gęstości MeshMill za pomocą lupy w rzutni](../../images/meshmill-density-zoom.png)
 
 ## Sterowanie widokiem
 
@@ -110,6 +152,12 @@ Optymalizacja z aktywnym wyborem wpływa tylko na ten wybór. Wynik pozostaje ty
 aż zostanie wybrana opcja **Zastosuj**. **Anuluj** odrzuca tymczasowy wynik i zachowuje wybór
 można spróbować innej konfiguracji. Operacje przycinania i usuwania stają się normalnymi, cofalnymi edycjami siatki.
 
+Panel wyboru podaje skumulowane wybrane wierzchołki, trójkąty, udział siatki, oszacowane
+rozmiar i wymiary. Jego działania przycinają, dodają, optymalizują, usuwają, cofają lub usuwają zachowane
+zaznaczenie bez ukrywania otaczającej geometrii.
+
+![MeshMill przedstawiający zachowany wybór regionalny i statystyki dotyczące jego geometrii](../../images/meshmill-crop-selection.png)
+
 ## Duże siatki
 
 Przed przydzieleniem binarnego STL, MeshMill porównuje swoją szacunkową pamięć roboczą ze skonfigurowaną
@@ -140,8 +188,8 @@ i opracowywanie funkcji planu działania. MeshMill nie wymaga zeskanowanych dany
 
 | Plik | Trójkąty | Rozmiar | Dostawa | Najlepsze dla |
 | --- | ---: | ---: | --- | --- |
-| [`sample-scan.stl`](../../../samples/sample-scan.stl) | 249 999 | 11,9 MB | Normalny Git | Szybka ocena, CI i nauka kontroli |
-| [`original-scan.stl`](../../../samples/original-scan.stl) | 4 126 315 | 196,8 MB | Git LFS | Testowanie gęstej geometrii źródła i wydajności dużych oczek |
+| [`sample-scan.stl`](../../../samples/sample-scan.stl) | 249 999 | 11,9 MB | Normalny Git | Szybka ocena, CI i nauka kontroli | (249,999)
+| [`oryginalny-skan.stl`](../../../samples/original-scan.stl) | 4 126 315 | 196,8 MB | Git LFS | Testowanie gęstej geometrii źródła i wydajności dużych oczek | (4,126,315)
 
 Mniejsza próbka jest pobierana z każdym normalnym klonem. Nienaruszony oryginał jest opcjonalny i
 zarządzane przez Git LFS, więc nie zawyża zwykłej historii repozytorium. Pulpit GitHub zawiera
@@ -174,6 +222,11 @@ Aby rozwiązać problemy diagnostyczne, programiści mogą uruchomić GUI za pom
 wyłączone podczas normalnego użytkowania.
 
 ## Rozwój i wydanie
+
+Zlokalizowany tekst interfejsu użytkownika i dokumentacja są początkowo tworzone przy użyciu zewnętrznego tłumaczenia maszynowego
+usług i automatycznie sprawdzane pod kątem uszkodzeń konstrukcyjnych. Tłumaczenie maszynowe nadal może być
+nienaturalne lub nieprawidłowe. Zachęcamy native speakerów do sprawdzania i poprawiania tłumaczeń
+proces wkładu.
 
 - [Wkład](CONTRIBUTING.md)
 - [Proces wydania](RELEASING.md)

@@ -1,7 +1,8 @@
 # Liberando MeshMill
 
-O pipeline de lançamento cria artefatos Windows em executores Windows hospedados em GitHub. Os usuários finais recebem
-um instalador independente ou ZIP portátil e não instale Python, Node.js ou dependências.
+O pipeline de lançamento estável cria artefatos do Windows em executores do Windows hospedados no GitHub. Um separado
+fluxo de trabalho manual cria visualizações não assinadas de Linux x86-64 e macOS Intel/Apple Silicon em nativo
+Corredores hospedados no GitHub. Os usuários finais não instalam Python, Node.js ou dependências.
 
 Antes de criar, atualize e valide os catálogos de origem de localização:
 
@@ -74,3 +75,19 @@ Verifique o instalador e o arquivo portátil em um sistema Windows limpo antes d
 Mantenha a fonte correspondente a cada binário distribuído disponível sob a mesma tag de lançamento.
 Confirme se o botão GitHub aponta para o URL final do repositório público antes de marcar o primeiro
 lançamento.
+
+## Crie visualizações do Linux e do macOS
+
+Abra **Ações**, selecione **Compilações de visualização da plataforma** e escolha **Executar fluxo de trabalho**. Insira uma visualização
+versão como `0.2.0-preview.1`.
+
+Deixe a opção **Publicar um pré-lançamento público do GitHub** desativada na primeira execução. O fluxo de trabalho cria e testa:
+
+- Linux x86-64 no Ubuntu 22.04;
+- macOS x86-64 em um processador Intel;
+- macOS arm64 em um executor de silício da Apple.
+
+Baixe os artefatos de fluxo de trabalho e inspecione suas somas de verificação e logs. Execute o fluxo de trabalho novamente com
+publicação habilitada somente após cada trabalho de construção ser aprovado. As visualizações publicadas do macOS são assinadas ad hoc,
+não autenticado pela Apple. Descreva-os como versões de visualização e vincule testadores a
+`docs/PLATFORM_TESTING.md` e o formulário de emissão **Teste de visualização da plataforma**.

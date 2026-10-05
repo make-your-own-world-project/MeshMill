@@ -1,7 +1,8 @@
 # Liberando MeshMill
 
-La canalización de lanzamiento crea artefactos Windows en ejecutores Windows alojados en GitHub. Los usuarios finales reciben
-un instalador autónomo o ZIP portátil y no instale Python, Node.js ni dependencias.
+La canalización de versiones estables crea artefactos de Windows en ejecutores de Windows alojados en GitHub. un separado
+El flujo de trabajo manual crea vistas previas de Linux x86-64 y macOS Intel/Apple Silicon sin firmar en formato nativo.
+Corredores alojados en GitHub. Los usuarios finales no instalan Python, Node.js ni dependencias.
 
 Antes de crear, actualice y valide los catálogos de fuentes de localización:
 
@@ -74,3 +75,19 @@ Verifique el instalador y el archivo portátil en un sistema Windows limpio ante
 Mantenga la fuente correspondiente a cada binario distribuido disponible bajo la misma etiqueta de versión.
 Confirme que el botón GitHub apunte a la URL final del repositorio público antes de etiquetar el primero.
 liberación.
+
+## Cree vistas previas de Linux y macOS
+
+Abra **Acciones**, seleccione **Compilaciones de vista previa de plataforma** y elija **Ejecutar flujo de trabajo**. Introduzca una vista previa
+versión como `0.2.0-preview.1`.
+
+Deje **Publicar una versión preliminar pública de GitHub** desactivado para la primera ejecución. El flujo de trabajo crea y prueba:
+
+- Linux x86-64 en Ubuntu 22.04;
+- macOS x86-64 en un ejecutor Intel;
+- macOS arm64 en un eje de silicona de Apple.
+
+Descargue los artefactos del flujo de trabajo e inspeccione sus sumas de verificación y registros. Ejecute el flujo de trabajo nuevamente con
+La publicación se habilita solo después de que pasa cada trabajo de compilación. Las vistas previas publicadas de macOS están firmadas ad hoc,
+no certificado por Apple. Descríbalos como versiones preliminares y vincule a los probadores a
+`docs/PLATFORM_TESTING.md` y el formulario de problema **Prueba de vista previa de plataforma**.

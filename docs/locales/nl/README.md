@@ -1,12 +1,14 @@
-# MeshMill
-
-![MeshMill shaded viewport](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill is een gespecialiseerde desktopapplicatie om zeer grote, complexe of
 dichte mesh-geometrie hanteerbaar te maken. Het biedt snelle inspectie, dichtheidsanalyse,
 selectie van gebieden, bijsnijden, verwijderen en gecontroleerde mesh-reductie, zonder dat een account of upload van geometrie nodig is.
 
-GPU-versnelde OpenGL-rendering houdt viewportnavigatie, hardwareselectie, dichtheidsweergave en interactieve inspectie responsief. Mesh-reductie wordt momenteel uitgevoerd in afzonderlijke native CPU-processen, zodat langdurige geometrieberekeningen de interface niet blokkeren.
+GPU-versnelde OpenGL-rendering houdt viewport-navigatie, hardware-picking, dichtheidsvisualisatie,
+en interactieve, responsieve inspectie. Mesh-reductie wordt momenteel uitgevoerd in afzonderlijke native CPU-werknemers,
+lange geometrieberekeningen buiten de interface houden.
 
 MeshMill werkt met meshes van 3D-scanners, CAD- en modelleerexportbestanden, reconstructiepipelines,
 gegenereerde geometrie en andere STL-bronnen. Het bereidt geometrie voor op verdere verwerking in editors,
@@ -23,11 +25,15 @@ Download een van deze bestanden via [GitHub Releases](../../releases):
   en start vervolgens `MeshMill.exe`.
 
 Beide pakketten bevatten de runtime voor de applicatie. Eindgebruikers installeren geen Python-, Node.js- of
-afhankelijkheden. De eerste release ondersteunt Windows 10 en Windows 11 op x64-hardware. Linux- en
-macOS-pakketten staan ​​gepland; de product- en bestandsformaten zijn niet specifiek voor Windows.
+afhankelijkheden. De stabiele release ondersteunt Windows 10 en Windows 11 op x64-hardware.
 
-Niet-ondertekende community-builds kunnen een Windows SmartScreen-waarschuwing weergeven. Release-checksums staan ​​vermeld
-in `SHA256SUMS.txt` naast elke release.
+Niet-ondertekende Linux x86-64- en macOS Intel/Apple Silicon-previewpakketten kunnen ook in releases verschijnen.
+Ze zijn gebouwd op native door GitHub gehoste runners en doorstaan verpakte CLI- en sample-mesh-rooktests.
+maar moet nog steeds worden getest op echte hardware. Zie [Linux en macOS preview testen](../../PLATFORM_TESTING.md)
+voordat u resultaten installeert of rapporteert.
+
+Bij niet-ondertekende communitybuilds kan een Windows SmartScreen- of macOS Gatekeeper-waarschuwing worden weergegeven. Laat los
+controlesommen worden naast elke release vermeld.
 
 ## Snelstart
 
@@ -44,6 +50,8 @@ MeshMill start nooit automatisch een optimalisatie enkel omdat een bestand of in
 
 - Invoer in binair en ASCII STL-formaat, uitvoer in binair STL-formaat
 - Fast QEM-reductie met behoud van dichtheid, vorm en topologie
+- GPU-versnelde OpenGL-viewport, hardware-picking en dichtheidsvisualisatie
+- Native achtergrondgeometriewerkers voor maasreductie
 - Weergavemodi: gearceerd, dichtheid, draadmodel (wireframe) en hoekpunten (vertex)
 - Automatische doelwaarden afgeleid van de geometrie in plaats van een vast maximumaantal driehoeken
 - Polygoonselectie met mogelijkheid tot additieve selectie van meerdere regio's
@@ -57,7 +65,41 @@ MeshMill start nooit automatisch een optimalisatie enkel omdat een bestand of in
 - Toepassingen met GUI en opdrachtregelinterface
 - Lokale verwerking zonder afhankelijkheid van accounts, telemetrie, uploads of de cloud
 
-![MeshMill-dichtheidsweergave](../../images/meshmill-density.png)
+## Inspecteer de geometrie voordat u deze verkleint
+
+Het schaduwrijke display biedt een helder zicht op het oppervlak en het silhouet. Het is handig om te vergelijken
+vormbehoud voordat een optimalisatiepas wordt toegepast.
+
+![MeshMill gearceerd venster met het gebundelde voorbeeldgaas](../../images/meshmill-shaded.png)
+
+Het Hoekpunten-display toont de feitelijke puntenverdeling. Dichte scangebieden, schaarse gebieden en
+abrupte veranderingen in de bemonstering zijn zichtbaar zonder de geometrie te veranderen. Het uitgebreide deelvenster Metrieken
+houdt CPU-, geheugen-, GPU- en geometrieverwerkingsactiviteiten bij tijdens het werken met de mesh.
+
+![MeshMill Vertices worden weergegeven met uitgebreide prestatiestatistieken](../../images/meshmill-vertices.png)
+
+Het Wireframe-display toont de driehoeksstructuur direct. Het helpt bij het identificeren van onnodige dichtheid,
+onregelmatige triangulatie, en gebieden waar vereenvoudiging substantiële geometrie kan verwijderen.
+
+![MeshMill Wireframe-weergave toont variatie in driehoeksdichtheid](../../images/meshmill-wireframe.png)
+
+## Analyseer de maasdichtheid
+
+De weergave Densiteit brengt de relatieve lokale dichtheid in het hele model in kaart. Schaarse gebieden blijven koel terwijl
+steeds dichtere gebieden bewegen zich door helderdere kleuren, waardoor ongelijkmatige bemonstering in één oogopslag zichtbaar wordt.
+
+![MeshMill-dichtheidsweergave toont de relatieve mesh-dichtheid](../../images/meshmill-density.png)
+
+De dichtheid blijft beschikbaar tijdens het evalueren van een voorlopige optimalisatie. De toolbox rapporteert de
+algoritme, doel, resulterende aantallen driehoeken en hoekpunten, reductiepercentage, afmetingen en
+geschatte uitvoergrootte voordat de doorgang wordt toegepast.
+
+![MeshMill Density-weergave toont een voorlopige optimalisatie](../../images/meshmill-density-overview.png)
+
+Houd de rechtermuisknop ingedrukt om een gebied te inspecteren via het ronde vergrootglas. Het vergrote beeld
+blijft gecentreerd op de aanwijzer en onthult de lokale dichtheid zonder de hoofdcamerapositie te veranderen.
+
+![MeshMill-dichtheidsweergave met het vergrootglas](../../images/meshmill-density-zoom.png)
 
 ## Weergavebediening
 
@@ -109,6 +151,12 @@ de schermruimtepolygoon terwijl de geselecteerde geometrie behouden blijft.
 Optimalisatie met een actieve selectie heeft alleen invloed op die selectie. Het resultaat blijft voorlopig
 totdat **Toepassen** is geselecteerd. **Annuleren** verwijdert het voorlopige resultaat en behoudt de selectie
 een andere configuratie kan worden geprobeerd. Bijsnijden en verwijderen worden normale, ongedaan te maken mesh-bewerkingen.
+
+Het selectiepaneel rapporteert de cumulatief geselecteerde hoekpunten, driehoeken, mesh-aandeel, geschat
+maat en afmetingen. De acties bijsnijden, toevoegen, optimaliseren, verwijderen, een stap terug doen of de bewaarde bestanden wissen
+selecteren zonder de omringende geometrie te verbergen.
+
+![MeshMill toont een behouden regionale selectie en de bijbehorende geometriestatistieken](../../images/meshmill-crop-selection.png)
 
 ## Grote mazen
 
@@ -174,6 +222,11 @@ Voor diagnostische probleemoplossing kunnen ontwikkelaars de GUI starten met
 uitgeschakeld tijdens normaal gebruik.
 
 ## Ontwikkeling en uitgave
+
+Gelokaliseerde UI-tekst en documentatie worden in eerste instantie geproduceerd met externe machinevertaling
+diensten en automatisch gecontroleerd op structurele schade. Machinevertaling kan nog steeds
+onnatuurlijk of onjuist. Moedertaalsprekers worden aangemoedigd vertalingen te beoordelen en te corrigeren
+het contributieproces.
 
 - [Bijdragen](CONTRIBUTING.md)
 - [Vrijgaveproces](RELEASING.md)

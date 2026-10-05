@@ -24,6 +24,12 @@ Englischer UI-Quelltext wird in `locales/en-US.json` gespeichert. Gebietsschema-
 `<locale>.json`. In der übersetzten Dokumentation wird der entsprechende Root-Dateiname verwendet
 `docs/locales/<locale>/`.
 
+Übersetzungen werden zunächst mit externen maschinellen Übersetzungsdiensten erstellt und erhalten
+automatisierte Strukturvalidierung. Dieser Prozess kann keine natürliche, technisch präzise oder einwandfreie Qualität gewährleisten
+kontextuell korrekte Sprache. Muttersprachler werden ermutigt, die übersetzte Benutzeroberfläche zu überprüfen und zu korrigieren
+Text und Dokumentation. Bei Übersetzungskorrekturen sollten Katalogschlüssel, Platzhalter usw. erhalten bleiben.
+Befehle, Links, Messungen, Produktnamen und Markdown-Struktur.
+
 Führen Sie nach dem Ändern von Beschriftungen, QuickInfos, Dialogen oder anderem für den Benutzer sichtbaren Text Folgendes aus:
 
 ```powershell

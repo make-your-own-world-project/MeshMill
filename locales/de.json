@@ -1,6 +1,6 @@
 {
-  "20": "20 %",
-  "80": "80 %",
+  "20": "20 % (20%)",
+  "80": "80 % (80%)",
   "about": "Über",
   "absolute.change.in.the.optimized.result.s.x.y.and.z.bounding.box.dimensi": "Absolute Änderung der X-, Y- und Z-Begrenzungsrahmenabmessungen des optimierten Ergebnisses.",
   "action": "Aktion",
@@ -12,7 +12,7 @@
   "auto.checks.estimated.memory.before.loading.oversized.binary.stl.files.o": "Prüft vor dem Laden automatisch den geschätzten Speicher. Übergroße binäre STL-Dateien werden als begrenzte Übersicht geöffnet, anstatt den Systemspeicher zu erschöpfen.",
   "auto.target": "Automatisches Ziel",
   "automatic.density.level.used.when.calculating.a.target": "Automatischer Dichtewert, der bei der Berechnung eines Ziels verwendet wird.",
-  "automatic.target.density.draft.15.balanced.50.fine.75.maximum": "Automatische Zieldichte: Entwurf 15 %, Ausgewogen 50 %, Fein maximal 75 %.",
+  "automatic.target.density.draft.15.balanced.50.fine.75.maximum": "Automatische Zieldichte: Entwurf 15 %, Ausgewogen 50 %, Fein maximal 75 %. (15%) (50%) (75%)",
   "cpu.gpu.and.geometry.activity": "CPU, GPU und Geometrieaktivität.",
   "calculate.target.from.mesh.size.and.surface.area": "Ziel aus Maschenweite und Oberfläche berechnen.",
   "camera.rotation.relative.to.the.mesh.s.current.x.y.and.z.axes": "Kameradrehung relativ zur aktuellen X-, Y- und Z-Achse des Netzes.",

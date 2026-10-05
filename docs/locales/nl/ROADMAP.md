@@ -7,8 +7,10 @@ platformonafhankelijk, en toekomstige releases zouden native Linux- en macOS-pak
 omvat verpakking, applicatie-integratie, hardwarestatistieken, gedrag van bestandssystemen en geautomatiseerd
 releasetests met behoud van dezelfde project- en STL-workflows op elk ondersteund systeem.
 
-- Voeg Linux x86-64-pakketten en CI-dekking toe.
-- Voeg macOS Apple silicium- en x86-64-pakketten, ondertekening, notariële bekrachtiging en CI-dekking toe.
+- Valideer het Linux x86-64 preview-pakket voor distributies, desktopomgevingen en beeldschermen
+  servers en GPU-stuurprogramma's voordat u deze naar stable promoveert.
+- Valideer de macOS Apple Silicon- en x86-64 preview-pakketten op echte hardware en voeg vervolgens Developer toe
+  ID-ondertekening en notariële bekrachtiging voordat ze naar stabiel worden gepromoveerd.
 - Voeg platform-native CPU-, geheugen- en GPU-metriekenproviders toe achter een gedeelde interface.
 - Houd opgeslagen instellingen, toetsenbordtoewijzingen, opdrachtregelgedrag en projectgegevens draagbaar.
 
@@ -139,6 +141,10 @@ Het index-, streaming-, cache-, werkeenheid- en veiligheidscontract zijn gedocum
 - Open extra grote binaire STL-bestanden als begrensde, gelijkmatig bemonsterde navigatieoverzichten.
 - Verdeel geometrie met volledige resolutie in ruimtelijke kubussen met deterministische overlappende grenzen.
 - Lees, analyseer en optimaliseer gelijktijdig onafhankelijke kubussen binnen de CPU- en geheugenlimieten.
+- Benchmark GPU-compute-implementaties voor reductiefasen zoals foutevaluatie, kandidaat
+  scores, ruimtelijke zoekopdrachten en onafhankelijke verwerking van werkeenheden. Offload een fase alleen wanneer deze is bereikt
+  biedt een meetbaar end-to-end snelheids- of geheugenvoordeel zonder het determinisme, mesh, te verminderen
+  kwaliteit, topologiegaranties of compatibiliteit met systemen die geen geschikte GPU hebben.
 - Stream grof-naar-fijn viewport-niveaus in plaats van dat u de volledige mesh in het geheugen nodig heeft.
 - Teken de kubusstatus rechtstreeks in de viewport: in de wachtrij, lezen, verwerken, voltooid en mislukt.
 - Toon de voortgang per kubus door elke kubus te vullen en een overzicht van het hele object op hoog niveau te behouden.

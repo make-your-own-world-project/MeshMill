@@ -24,6 +24,12 @@ English UI source text is stored in `locales/en-US.json`. Locale metadata is sto
 `<locale>.json`. Translated documentation uses the matching root filename under
 `docs/locales/<locale>/`.
 
+Translations are initially produced with external machine-translation services and receive
+automated structural validation. That process cannot guarantee natural, technically precise, or
+contextually correct language. Native speakers are encouraged to review and correct translated UI
+text and documentation. Translation corrections should preserve catalog keys, placeholders,
+commands, links, measurements, product names, and Markdown structure.
+
 After changing labels, tooltips, dialogs, or other user-visible text, run:
 
 ```powershell

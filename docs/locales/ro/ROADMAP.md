@@ -7,8 +7,10 @@ multi-platformă, iar versiunile viitoare ar trebui să adauge pachete native Li
 include ambalarea, integrarea aplicațiilor, valorile hardware, comportamentul sistemului de fișiere și automatizarea
 testarea lansării, păstrând în același timp același proiect și fluxurile de lucru STL pe fiecare sistem acceptat.
 
-- Adăugați pachete Linux x86-64 și acoperire CI.
-- Adăugați macOS pachete Apple silicon și x86-64, semnare, notarizare și acoperire CI.
+- Validați pachetul de previzualizare Linux x86-64 în distribuții, medii desktop, afișaj
+  servere și drivere GPU înainte de a-l promova la stabil.
+- Validați pachetele de previzualizare macOS Apple și x86-64 pe hardware real, apoi adăugați Dezvoltator
+  Semnarea actului de identitate și legalizarea înainte de a le promova la stabil.
 - Adăugați furnizori de valori CPU, memorie și GPU nativi pentru platformă în spatele unei interfețe partajate.
 - Păstrați setările salvate, mapările tastaturii, comportamentul liniei de comandă și datele de proiect portabile.
 
@@ -139,6 +141,10 @@ Indexul, streamingul, memoria cache, unitatea de lucru și contractul de siguran
 - Deschideți fișiere STL binare supradimensionate ca prezentări de navigare delimitate, eșantionate uniform.
 - Partiționați geometria cu rezoluție completă în cuburi spațiale cu granițe de suprapunere deterministe.
 - Citiți, analizați și optimizați cuburile independente simultan în limitele CPU și de memorie.
+- Evaluați implementări de calcul GPU pentru etapele de reducere, cum ar fi evaluarea erorilor, candidat
+  punctare, interogări spațiale și procesare independentă a unității de lucru. Descărcați o etapă numai atunci când aceasta
+  oferă o viteză măsurabilă de la capăt la capăt sau un beneficiu de memorie fără a reduce determinismul, plasa
+  calitate, garanții de topologie sau compatibilitate cu sistemele cărora le lipsește un GPU adecvat.
 - Transmiteți în flux niveluri de vizualizare grosieră până la fine, în loc să solicitați rețeaua completă în memorie.
 - Desenați starea cubului direct în fereastra de vizualizare: în coadă, citit, procesare, finalizat și eșuat.
 - Afișați progresul pe cub umplând fiecare cub și păstrați o vizualizare la nivel înalt a întregului obiect.

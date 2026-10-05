@@ -1,12 +1,14 @@
-# MeshMill
-
-![Cửa sổ hiển thị dạng khối đặc (shaded viewport) của MeshMill](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill là ứng dụng máy tính chuyên dụng giúp xử lý các mô hình lưới (mesh) có kích thước lớn,
 mật độ cao hoặc cấu trúc phức tạp. Ứng dụng hỗ trợ kiểm tra nhanh, phân tích mật độ, chọn vùng, cắt, xóa,
 và giảm số lượng lưới có kiểm soát mà không yêu cầu tài khoản hay tải dữ liệu hình học lên máy chủ.
 
-Kết xuất OpenGL tăng tốc bằng GPU giúp thao tác trong khung nhìn, chọn bằng phần cứng, hiển thị mật độ và kiểm tra tương tác luôn phản hồi nhanh. Việc giảm lưới hiện chạy trong các tiến trình CPU gốc riêng biệt, nhờ đó các phép tính hình học kéo dài không chặn giao diện.
+Kết xuất OpenGL được GPU tăng tốc giúp điều hướng khung nhìn, chọn phần cứng, trực quan hóa mật độ,
+và kiểm tra tương tác đáp ứng. Tính năng giảm lưới hiện đang chạy trong các trình chạy CPU gốc riêng biệt,
+giữ các phép tính hình học dài ra khỏi giao diện.
 
 MeshMill hoạt động với dữ liệu lưới từ máy quét 3D, tệp xuất từ ​​CAD và phần mềm mô hình hóa, quy trình tái tạo,
 dữ liệu hình học được tạo tự động và các nguồn khác. Ứng dụng chuẩn bị dữ liệu cho các công cụ chỉnh sửa, (STL)
@@ -23,11 +25,15 @@ Tải xuống một trong các tệp sau từ mục [Phát hành GitHub](../../r
   sau đó chạy `MeshMill.exe`.
 
 Cả hai gói đều đã bao gồm môi trường thực thi (runtime) cần thiết cho ứng dụng. Người dùng cuối không cần cài đặt Python, Node.js hoặc
-các thành phần phụ thuộc. Bản phát hành đầu tiên hỗ trợ Windows 10 và Windows 11 trên phần cứng x64. Các gói Linux và
-macOS đang được lên kế hoạch; định dạng sản phẩm và tệp tin không bị giới hạn riêng cho Windows.
+sự phụ thuộc. Bản phát hành ổn định hỗ trợ Windows 10 và Windows 11 trên phần cứng x64.
 
-Các bản dựng cộng đồng chưa được ký số có thể hiển thị cảnh báo SmartScreen của Windows. Các mã kiểm tra (checksum) của bản phát hành được liệt kê
-trong `SHA256SUMS.txt` bên cạnh mỗi bản phát hành.
+Các gói xem trước silicon Intel/Apple chưa được ký tên của Linux x86-64 và macOS cũng có thể xuất hiện trong Bản phát hành.
+Chúng được xây dựng trên các trình chạy được lưu trữ trên GitHub và vượt qua các thử nghiệm CLI đóng gói và khói lưới mẫu,
+nhưng vẫn cần thử nghiệm trên phần cứng thực sự. Xem [thử nghiệm xem trước Linux và macOS](../../PLATFORM_TESTING.md)
+trước khi cài đặt hoặc báo cáo kết quả.
+
+Các bản dựng cộng đồng chưa được ký có thể hiển thị cảnh báo Windows SmartScreen hoặc macOS Gatekeeper. Phát hành
+tổng kiểm tra được liệt kê bên cạnh mỗi bản phát hành.
 
 ## Hướng dẫn nhanh
 
@@ -44,6 +50,8 @@ MeshMill không bao giờ tự động bắt đầu tối ưu hóa chỉ vì t�
 
 - Nhập dữ liệu STL định dạng nhị phân và ASCII, xuất dữ liệu STL định dạng nhị phân
 - Giảm thiểu dữ liệu Fast QEM nhưng vẫn cân bằng mật độ, bảo toàn hình dạng và cấu trúc topo
+- Cổng xem OpenGL được GPU tăng tốc, chọn phần cứng và trực quan hóa mật độ
+- Công cụ hình học nền gốc để giảm lưới
 - Các chế độ hiển thị: tô bóng (shaded), mật độ, khung dây (wireframe) và đỉnh (vertex)
 - Các mục tiêu tự động dựa trên hình học thay vì giới hạn số lượng tam giác cố định
 - Chọn đa giác với tính năng chọn cộng dồn nhiều vùng
@@ -57,7 +65,41 @@ MeshMill không bao giờ tự động bắt đầu tối ưu hóa chỉ vì t�
 - Các ứng dụng có giao diện đồ họa (GUI) và dòng lệnh
 - Xử lý cục bộ, không phụ thuộc vào tài khoản, dữ liệu từ xa (telemetry), tải lên hay đám mây
 
-![Hiển thị mật độ MeshMill](../../images/meshmill-density.png)
+## Kiểm tra hình học trước khi giảm nó
+
+Màn hình bóng mờ cung cấp một cái nhìn rõ ràng về bề mặt và hình bóng. Nó rất hữu ích cho việc so sánh
+bảo toàn hình dạng trước khi áp dụng thẻ tối ưu hóa.
+
+![Chế độ xem bóng mờ MeshMill hiển thị lưới mẫu được gói](../../images/meshmill-shaded.png)
+
+Màn hình Vertices hiển thị phân phối điểm thực tế. Các vùng quét dày đặc, các vùng thưa thớt và
+những thay đổi đột ngột trong việc lấy mẫu có thể nhìn thấy được mà không thay đổi hình dạng. Bảng chỉ số mở rộng
+theo dõi hoạt động của CPU, bộ nhớ, GPU và xử lý hình học trong khi làm việc với lưới.
+
+![MeshMill Vertices hiển thị với số liệu hiệu suất mở rộng](../../images/meshmill-vertices.png)
+
+Màn hình Wireframe hiển thị trực tiếp cấu trúc tam giác. Nó giúp xác định mật độ không cần thiết,
+tam giác không đều và các vùng mà việc đơn giản hóa có thể loại bỏ hình học đáng kể.
+
+![MeshMill Wireframe hiển thị sự thay đổi về mật độ tam giác](../../images/meshmill-wireframe.png)
+
+## Phân tích mật độ lưới
+
+Màn hình Mật độ ánh xạ mật độ cục bộ tương đối trên toàn mô hình. Các vùng thưa thớt vẫn mát mẻ trong khi
+các vùng ngày càng dày đặc di chuyển qua các màu sáng hơn, khiến cho việc lấy mẫu không đồng đều có thể nhìn thấy được trong nháy mắt.
+
+![Hiển thị mật độ MeshMill hiển thị mật độ lưới tương đối](../../images/meshmill-density.png)
+
+Mật độ vẫn có sẵn trong khi đánh giá tối ưu hóa tạm thời. Hộp công cụ báo cáo
+thuật toán, mục tiêu, kết quả là số lượng tam giác và đỉnh, tỷ lệ phần trăm giảm, kích thước và
+kích thước đầu ra ước tính trước khi áp dụng thẻ.
+
+![Hiển thị mật độ MeshMill hiển thị mức tối ưu hóa tạm thời](../../images/meshmill-density-overview.png)
+
+Giữ nút chuột phải để kiểm tra một vùng thông qua kính lúp tròn. Chế độ xem phóng to
+vẫn tập trung vào con trỏ và hiển thị mật độ cục bộ mà không thay đổi vị trí camera chính.
+
+![Hiển thị mật độ MeshMill với kính lúp khung nhìn](../../images/meshmill-density-zoom.png)
 
 ## Các điều khiển hiển thị
 
@@ -109,6 +151,12 @@ Giữ Ctrl và kéo sang trái để vẽ đa giác. Kéo các góc để địn
 Việc tối ưu hóa với lựa chọn đang hoạt động chỉ ảnh hưởng đến lựa chọn đó. Kết quả vẫn tạm thời
 cho đến khi **Áp dụng** được chọn. **Hủy** loại bỏ kết quả tạm thời và giữ lại lựa chọn để
 cấu hình khác có thể được thử. Các thao tác cắt và xóa trở thành các chỉnh sửa lưới không thể hoàn tác thông thường.
+
+Bảng lựa chọn báo cáo các đỉnh, hình tam giác, chia lưới đã chọn tích lũy, ước tính
+kích thước, và kích thước. Hành động của nó cắt, thêm, tối ưu hóa, xóa, lùi lại hoặc xóa phần được giữ lại
+lựa chọn mà không ẩn hình học xung quanh.
+
+![MeshMill hiển thị lựa chọn khu vực được giữ lại và số liệu thống kê hình học của nó](../../images/meshmill-crop-selection.png)
 
 ## Mắt lưới lớn
 
@@ -174,6 +222,11 @@ quầy. Các nhà cung cấp số liệu gốc tương đương được lên k�
 bị vô hiệu hóa trong quá trình sử dụng bình thường.
 
 ## Phát triển và phát hành
+
+Văn bản và tài liệu giao diện người dùng được bản địa hóa ban đầu được tạo bằng bản dịch máy bên ngoài
+dịch vụ và tự động kiểm tra hư hỏng cấu trúc. Dịch máy vẫn có thể
+không tự nhiên hoặc không chính xác. Người bản ngữ được khuyến khích xem xét và sửa bản dịch thông qua
+quá trình đóng góp.
 
 - [Đóng góp](CONTRIBUTING.md)
 - [Quy trình phát hành](RELEASING.md)

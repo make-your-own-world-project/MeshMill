@@ -82,7 +82,7 @@
   "overview.mode.is.for.navigation.load.the.full.mesh.to.edit": "Η λειτουργία επισκόπησης είναι για πλοήγηση. Φορτώστε το πλήρες πλέγμα για επεξεργασία.",
   "overview.only": "Επισκόπηση μόνο",
   "overview.triangles": "Επισκόπηση τρίγωνων",
-  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "ΠΥΚΝΟΤΗΤΑ ΣΗΜΕΙΟΥ <span style='color:#123070'>Αραιά</span> <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'> <span style='color:#E23730'>● Πυκνό</span>",
+  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "POINT DENSITY   <span style='color:#123070'>Sparse</span>  <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#E23730'>● Dense</span>",
   "percentage.of.the.original.stl.triangles.removed.from.the.current.mesh": "Ποσοστό των αρχικών τριγώνων STL που αφαιρέθηκαν από το τρέχον πλέγμα.",
   "point.density.analysis.failed": "Η ανάλυση σημειακής πυκνότητας απέτυχε",
   "point.density.ready": "Έτοιμη η πυκνότητα του σημείου",

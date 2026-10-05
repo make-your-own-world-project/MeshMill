@@ -82,7 +82,7 @@
   "overview.mode.is.for.navigation.load.the.full.mesh.to.edit": "Modul de prezentare generală este pentru navigare. Încărcați rețeaua completă de editat.",
   "overview.only": "Numai prezentare generală",
   "overview.triangles": "Privire de ansamblu triunghiuri",
-  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "DENSITATE DE PUNCT <span style='color:#123070'>Spars</span> <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#E2373</span>●",
+  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "POINT DENSITY   <span style='color:#123070'>Sparse</span>  <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#E23730'>● Dense</span>",
   "percentage.of.the.original.stl.triangles.removed.from.the.current.mesh": "Procentul de triunghiuri STL originale eliminate din rețeaua curentă.",
   "point.density.analysis.failed": "Analiza densității punctelor nu a reușit",
   "point.density.ready": "Densitatea punctului este gata",

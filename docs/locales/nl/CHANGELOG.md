@@ -4,6 +4,8 @@ Alle opmerkelijke releasewijzigingen worden hier gedocumenteerd.
 
 ## 0.1.0
 
+- De applicatie GitHub-knop verbonden met de MeshMill-repository.
+- Links naar GitHub en Buy Me a Coffee toegevoegd aan het dialoogvenster Over.
 - Lokaal STL laden, inspectie, selectie, bijsnijden, verwijderen, optimalisatie en exporteren toegevoegd.
 - Fast QEM, dichtheidsgebalanceerde, vormbehoudende en topologiebehoudende optimalisatie toegevoegd.
 - Weergavemodi voor schaduw, dichtheid, draadframe en hoekpunt toegevoegd.

@@ -24,6 +24,12 @@ Textul sursă al interfeței de utilizare în limba engleză este stocat în `lo
 `<locale>.json`. Documentația tradusă folosește numele de fișier rădăcină potrivit sub
 `docs/locales/<locale>/`.
 
+Traducerile sunt inițial produse cu servicii externe de traducere automată și primesc
+validare structurală automată. Acest proces nu poate garanta natural, precis din punct de vedere tehnic sau
+limbaj corect din punct de vedere contextual. Vorbitorii nativi sunt încurajați să revizuiască și să corecteze interfața de utilizare tradusă
+text și documentație. Corecțiile de traducere ar trebui să păstreze cheile de catalog, substituenții,
+comenzi, linkuri, măsurători, nume de produse și structură Markdown.
+
 După ce schimbați etichetele, sfaturile cu instrumente, casetele de dialog sau alt text vizibil de utilizator, rulați:
 
 ```powershell

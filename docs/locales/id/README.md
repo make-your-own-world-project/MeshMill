@@ -1,12 +1,14 @@
-# MeshMill
-
-![Viewport berbayang MeshMill](../../images/meshmill-shaded.png)
+<p align="center">
+  <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
+</p>
 
 MeshMill adalah aplikasi desktop khusus untuk mengolah geometri mesh yang berukuran sangat besar, padat, atau rumit
 agar lebih mudah dikelola. Aplikasi ini menyediakan fitur inspeksi cepat, analisis kepadatan, pemilihan area, pemotongan, penghapusan,
 serta pengurangan mesh secara terkontrol tanpa perlu membuat akun atau mengunggah geometri.
 
-Rendering OpenGL yang dipercepat GPU menjaga navigasi viewport, pemilihan berbasis perangkat keras, visualisasi kepadatan, dan pemeriksaan interaktif tetap responsif. Pengurangan mesh saat ini berjalan dalam proses CPU native terpisah agar perhitungan geometri yang panjang tidak memblokir antarmuka.
+Render OpenGL yang dipercepat GPU menjaga navigasi area pandang, pemilihan perangkat keras, visualisasi kepadatan,
+dan inspeksi interaktif responsif. Pengurangan mesh saat ini berjalan di pekerja CPU asli yang terpisah,
+menjauhkan perhitungan geometri panjang dari antarmuka.
 
 MeshMill dapat memproses mesh dari pemindai 3D, hasil ekspor CAD dan pemodelan, alur kerja rekonstruksi,
 geometri yang dihasilkan secara prosedural, dan sumber STL lainnya. Aplikasi ini menyiapkan geometri untuk editor tahap selanjutnya,
@@ -23,11 +25,15 @@ Unduh salah satu berkas berikut dari [Rilis GitHub](../../releases):
   lalu jalankan `MeshMill.exe`.
 
 Kedua paket tersebut sudah menyertakan runtime aplikasi. Pengguna akhir tidak menginstal dependensi Python, Node.js, atau
-dependensi. Rilis awal mendukung Windows 10 dan Windows 11 pada perangkat keras x64. Paket Linux dan
-macOS sedang direncanakan; format produk dan file tidak spesifik untuk Windows.
+ketergantungan. Rilis stabil mendukung Windows 10 dan Windows 11 pada perangkat keras x64.
 
-Build komunitas yang tidak ditandatangani mungkin menampilkan peringatan SmartScreen Windows. Checksum rilis tercantum
-di `SHA256SUMS.txt` di samping setiap rilis.
+Paket pratinjau silikon Linux x86-64 dan macOS Intel/Apple yang tidak ditandatangani juga dapat muncul di Rilis.
+Mereka dibangun di atas runner asli yang dihosting GitHub dan lulus CLI terpaket dan uji asap sampel-mesh,
+namun masih perlu pengujian pada perangkat keras sebenarnya. Lihat [Pengujian pratinjau Linux dan macOS](../../PLATFORM_TESTING.md)
+sebelum menginstal atau melaporkan hasilnya.
+
+Build komunitas yang tidak ditandatangani mungkin menampilkan peringatan Windows SmartScreen atau macOS Gatekeeper. Lepaskan
+checksum tercantum di samping setiap rilis.
 
 ## Panduan cepat
 
@@ -44,6 +50,8 @@ MeshMill tidak akan memulai optimisasi hanya karena adanya perubahan pada file a
 
 - Input STL biner dan ASCII, output STL biner
 - Reduksi Fast QEM yang menjaga keseimbangan kepadatan, bentuk, dan topologi
+- Area pandang OpenGL yang dipercepat GPU, pemilihan perangkat keras, dan visualisasi kepadatan
+- Pekerja geometri latar belakang asli untuk pengurangan mesh
 - Mode tampilan *shaded* (berbayang), kepadatan, *wireframe*, dan verteks
 - Target otomatis yang diturunkan dari geometri, bukan batas jumlah segitiga yang tetap
 - Seleksi poligon dengan fitur pemilihan multi-wilayah secara aditif
@@ -57,7 +65,41 @@ MeshMill tidak akan memulai optimisasi hanya karena adanya perubahan pada file a
 - Aplikasi berbasis GUI dan baris perintah (*command-line*)
 - Pemrosesan lokal tanpa ketergantungan pada akun, telemetri, unggahan, atau *cloud*
 
-![Tampilan kepadatan MeshMill](../../images/meshmill-density.png)
+## Periksa geometri sebelum menguranginya
+
+Layar Berbayang memberikan tampilan permukaan dan siluet yang bersih. Hal ini berguna untuk membandingkan
+pelestarian bentuk sebelum menerapkan izin pengoptimalan.
+
+![Area pandang berbayang MeshMill yang menampilkan mesh sampel yang dibundel](../../images/meshmill-shaded.png)
+
+Tampilan Vertices memperlihatkan distribusi titik sebenarnya. Daerah pemindaian padat, daerah jarang, dan
+perubahan mendadak dalam pengambilan sampel terlihat tanpa mengubah geometri. Panel metrik diperluas
+melacak aktivitas CPU, memori, GPU, dan pemrosesan geometri saat bekerja dengan mesh.
+
+![Tampilan Vertices MeshMill dengan metrik kinerja yang diperluas](../../images/meshmill-vertices.png)
+
+Tampilan Wireframe menunjukkan struktur segitiga secara langsung. Ini membantu mengidentifikasi kepadatan yang tidak perlu,
+triangulasi tidak teratur, dan wilayah di mana penyederhanaan dapat menghilangkan geometri substansial.
+
+![Tampilan Wireframe MeshMill menunjukkan variasi kepadatan segitiga](../../images/meshmill-wireframe.png)
+
+## Analisis kepadatan mesh
+
+Tampilan Kepadatan memetakan kepadatan lokal relatif di seluruh model. Daerah yang jarang tetap sejuk
+wilayah yang semakin padat bergerak melalui warna-warna yang lebih cerah, membuat pengambilan sampel yang tidak merata terlihat secara sekilas.
+
+![Tampilan kepadatan MeshMill menunjukkan kepadatan mesh relatif](../../images/meshmill-density.png)
+
+Kepadatan tetap tersedia saat mengevaluasi pengoptimalan sementara. Kotak alat melaporkan
+algoritma, target, jumlah segitiga dan titik sudut yang dihasilkan, persentase pengurangan, dimensi, dan
+perkiraan ukuran keluaran sebelum izin diterapkan.
+
+![Tampilan Kepadatan MeshMill menunjukkan pengoptimalan sementara](../../images/meshmill-density-overview.png)
+
+Tahan tombol kanan mouse untuk memeriksa suatu wilayah melalui kaca pembesar melingkar. Tampilan yang diperbesar
+tetap terpusat pada penunjuk dan menampilkan kepadatan lokal tanpa mengubah posisi kamera utama.
+
+![Tampilan Kepadatan MeshMill dengan kaca pembesar area pandang](../../images/meshmill-density-zoom.png)
 
 ## Kontrol tampilan
 
@@ -109,6 +151,12 @@ poligon ruang layar sambil mempertahankan geometri yang dipilih.
 Optimasi dengan pilihan aktif hanya mempengaruhi pilihan tersebut. Hasilnya masih bersifat sementara
 hingga **Terapkan** dipilih. **Batal** membuang hasil sementara dan mempertahankan pilihan tersebut
 konfigurasi lain dapat dicoba. Operasi potong dan hapus menjadi pengeditan mesh normal yang tidak dapat dilakukan.
+
+Panel seleksi melaporkan simpul, segitiga, bagian mesh yang dipilih secara kumulatif, perkiraan
+ukuran, dan dimensi. Tindakannya memotong, menambah, mengoptimalkan, menghapus, mundur, atau menghapus yang disimpan
+seleksi tanpa menyembunyikan geometri di sekitarnya.
+
+![MeshMill menampilkan seleksi regional yang dipertahankan dan statistik geometrinya](../../images/meshmill-crop-selection.png)
 
 ## Jerat besar
 
@@ -174,6 +222,11 @@ Untuk pemecahan masalah diagnostik, pengembang dapat memulai GUI dengan
 dinonaktifkan selama penggunaan normal.
 
 ## Pengembangan dan rilis
+
+Teks dan dokumentasi UI yang dilokalkan pada awalnya diproduksi dengan terjemahan mesin eksternal
+layanan dan diperiksa secara otomatis untuk kerusakan struktural. Terjemahan mesin masih bisa
+tidak wajar atau tidak benar. Penutur asli didorong untuk meninjau dan mengoreksi terjemahannya
+proses kontribusi.
 
 - [Berkontribusi](CONTRIBUTING.md)
 - [Proses rilis](RELEASING.md)

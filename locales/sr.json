@@ -82,7 +82,7 @@
   "overview.mode.is.for.navigation.load.the.full.mesh.to.edit": "Режим прегледа је за навигацију. Учитајте целу мрежу за уређивање.",
   "overview.only": "Само преглед",
   "overview.triangles": "Прегледни троуглови",
-  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "ГУСТИНА ТАЧКА <спан стиле='цолор:#123070'>Ретка</спан> <спан стиле='цолор:#199АД6'>●</спан> <спан стиле='цолор:#57Е0Б8'>●</спан> <спан стиле='цолор:#ФАЦЦ15'>●</спан> <спан стиле='цолор:#199АД6'>●</спан> <спан стиле='цолор:#57Е0Б8'>●</спан> <спан стиле='цолор:#ФАЦЦ15'>●</спан> <спан стиле='цолор:'3></спан>#Е23 Денсе",
+  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "POINT DENSITY   <span style='color:#123070'>Sparse</span>  <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#E23730'>● Dense</span>",
   "percentage.of.the.original.stl.triangles.removed.from.the.current.mesh": "Проценат оригиналних троуглова STL уклоњених из тренутне мреже.",
   "point.density.analysis.failed": "Анализа густине тачака није успела",
   "point.density.ready": "Густина тачака спремна",

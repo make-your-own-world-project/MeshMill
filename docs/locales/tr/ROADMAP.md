@@ -7,8 +7,10 @@ platformlar arasıdır ve gelecek sürümlerde yerel Linux ve macOS paketleri ek
 paketleme, uygulama entegrasyonu, donanım ölçümleri, dosya sistemi davranışı ve otomatikleştirmeyi içerir
 Desteklenen her sistemde aynı projeyi ve STL iş akışlarını korurken sürüm testi yapın.
 
-- Linux x86-64 paketlerini ve CI kapsamını ekleyin.
-- macOS Apple silikon ve x86-64 paketleri, imzalama, noter onayı ve CI kapsamını ekleyin.
+- Linux x86-64 önizleme paketini dağıtımlar, masaüstü ortamları ve ekran genelinde doğrulayın
+  kararlı hale getirmeden önce sunucular ve GPU sürücüleri.
+- macOS Apple silikon ve x86-64 önizleme paketlerini gerçek donanımda doğrulayın, ardından Geliştiriciyi ekleyin
+  Bunları istikrarlı hale getirmeden önce kimlik imzalama ve noter onayı.
 - Paylaşılan bir arayüzün arkasına platformda yerel CPU, bellek ve GPU ölçüm sağlayıcıları ekleyin.
 - Kaydedilen ayarları, klavye eşlemelerini, komut satırı davranışını ve proje verilerini taşınabilir tutun.
 
@@ -139,6 +141,10 @@ Dizin, akış, önbellek, iş birimi ve güvenlik sözleşmesi şurada belgelenm
 - Büyük boyutlu ikili STL dosyalarını sınırlı, eşit şekilde örneklenmiş gezinme genel bakışları olarak açın.
 - Tam çözünürlüklü geometriyi, deterministik örtüşme sınırlarıyla uzamsal küplere bölün.
 - CPU ve bellek sınırları dahilinde bağımsız küpleri aynı anda okuyun, analiz edin ve optimize edin.
+- Hata değerlendirmesi, adaylık gibi azaltma aşamaları için GPU hesaplama uygulamalarını karşılaştırın
+  puanlama, uzamsal sorgular ve bağımsız iş birimi işleme. Bir sahneyi yalnızca şu durumlarda boşaltın:
+  determinizmi, ağı azaltmadan ölçülebilir bir uçtan uca hız veya bellek avantajı sağlar
+  kalite, topoloji garantileri veya uygun bir GPU'ya sahip olmayan sistemlerle uyumluluk.
 - Bellekteki tüm mesh'i gerektirmek yerine, kabadan inceye görüntü alanı düzeylerini aktarın.
 - Küp durumunu doğrudan görünüm alanında çizin: sıraya alınmış, okunuyor, işleniyor, tamamlandı ve başarısız oldu.
 - Her küpü doldurarak küp başına ilerlemeyi gösterin ve yüksek düzeyde tam nesne görünümünü koruyun.

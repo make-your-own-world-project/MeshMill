@@ -82,7 +82,7 @@
   "overview.mode.is.for.navigation.load.the.full.mesh.to.edit": "ওভারভিউ মোড নেভিগেশন জন্য. সম্পাদনা করতে সম্পূর্ণ জাল লোড করুন।",
   "overview.only": "শুধুমাত্র ওভারভিউ",
   "overview.triangles": "ওভারভিউ ত্রিভুজ",
-  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "পয়েন্ট ঘনত্ব <span style='color:#123070'>স্পার্স</span> <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#12307>●</span> <span style='color:#199AD6'>●</span>",
+  "point.density.span.style.color.123070.sparse.span.span.style.color.199ad": "POINT DENSITY   <span style='color:#123070'>Sparse</span>  <span style='color:#199AD6'>●</span> <span style='color:#57E0B8'>●</span> <span style='color:#FACC15'>●</span> <span style='color:#E23730'>● Dense</span>",
   "percentage.of.the.original.stl.triangles.removed.from.the.current.mesh": "বর্তমান জাল থেকে সরানো আসল STL ত্রিভুজগুলির শতাংশ৷",
   "point.density.analysis.failed": "বিন্দু ঘনত্ব বিশ্লেষণ ব্যর্থ হয়েছে",
   "point.density.ready": "বিন্দু ঘনত্ব প্রস্তুত",

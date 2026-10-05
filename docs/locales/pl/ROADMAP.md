@@ -7,8 +7,10 @@ wieloplatformowe, a przyszłe wydania powinny zawierać natywne pakiety Linux i 
 obejmuje pakowanie, integrację aplikacji, metryki sprzętu, zachowanie systemu plików i automatyzację
 testowanie wersji przy jednoczesnym zachowaniu tego samego projektu i przepływów pracy STL w każdym obsługiwanym systemie.
 
-- Dodaj pakiety Linux x86-64 i obsługę CI.
-- Dodaj pakiety krzemowe macOS Apple i pakiety x86-64, podpisywanie, notarialne i ubezpieczenie CI.
+- Sprawdź pakiet podglądu systemu Linux x86-64 w różnych dystrybucjach, środowiskach graficznych i wyświetlaczach
+  serwerów i sterowników GPU przed promowaniem wersji stabilnej.
+- Sprawdź pakiety zapoznawcze macOS Apple Silicone i x86-64 na prawdziwym sprzęcie, a następnie dodaj programistę
+  Podpisanie dowodu osobistego i poświadczenie notarialne przed awansowaniem do stajni.
 - Dodaj natywnych dla platformy dostawców metryk CPU, pamięci i GPU za współdzielonym interfejsem.
 - Przechowuj zapisane ustawienia, mapowania klawiatury, zachowanie wiersza poleceń i dane projektu w sposób przenośny.
 
@@ -139,6 +141,10 @@ Indeks, przesyłanie strumieniowe, pamięć podręczna, jednostka robocza i umow
 - Otwieraj duże pliki binarne STL jako ograniczone, równomiernie próbkowane przeglądy nawigacji.
 - Podziel geometrię w pełnej rozdzielczości na przestrzenne kostki z deterministycznymi nakładającymi się granicami.
 - Odczytuj, analizuj i optymalizuj niezależne kostki jednocześnie w ramach CPU i limitów pamięci.
+- Porównaj implementacje obliczeń GPU na etapach redukcji, takich jak ocena błędów, kandydat
+  scoring, zapytania przestrzenne i niezależne przetwarzanie jednostek roboczych. Odciążaj scenę tylko wtedy, gdy jest
+  zapewnia mierzalną kompleksową korzyść w zakresie szybkości lub pamięci bez zmniejszania determinizmu i siatki
+  jakość, gwarancje topologii lub kompatybilność z systemami, które nie posiadają odpowiedniego procesora graficznego. (GPU)
 - Przesyłaj strumieniowo poziomy rzutni od zgrubnej do dokładnej, zamiast wymagać pełnej siatki w pamięci.
 - Narysuj stan kostki bezpośrednio w rzutni: w kolejce, odczyt, przetwarzanie, ukończona i nieudana.
 - Pokaż postęp w poszczególnych kostkach, wypełniając każdą kostkę i zachowując widok całego obiektu na wysokim poziomie.

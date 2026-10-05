@@ -12,7 +12,7 @@
   "auto.checks.estimated.memory.before.loading.oversized.binary.stl.files.o": "Vérifie automatiquement la mémoire estimée avant le chargement. Les fichiers binaires STL surdimensionnés s'ouvrent sous la forme d'un aperçu limité au lieu d'épuiser la mémoire système.",
   "auto.target": "Cible automatique",
   "automatic.density.level.used.when.calculating.a.target": "Niveau de densité automatique utilisé lors du calcul d'une cible.",
-  "automatic.target.density.draft.15.balanced.50.fine.75.maximum": "Densité cible automatique : Draft 15 %, Equilibré 50 %, Fin 75 % maximum.",
+  "automatic.target.density.draft.15.balanced.50.fine.75.maximum": "Densité cible automatique : Draft 15 %, Equilibré 50 %, Fin 75 % maximum. (15%) (50%) (75%)",
   "cpu.gpu.and.geometry.activity": "CPU, GPU et activité de géométrie.",
   "calculate.target.from.mesh.size.and.surface.area": "Calculez la cible à partir de la taille du maillage et de la surface.",
   "camera.rotation.relative.to.the.mesh.s.current.x.y.and.z.axes": "Rotation de la caméra par rapport aux axes X, Y et Z actuels du maillage.",

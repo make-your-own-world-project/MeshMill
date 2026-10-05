@@ -1,7 +1,8 @@
 # MeshMill kiadás
 
-A kiadási folyamat Windows műtermékeket épít a GitHub által hosztolt Windows futókra. A végfelhasználók megkapják
-egy önálló telepítő vagy hordozható ZIP, és ne telepítse a Python, Node.js vagy függőségeket.
+A stabil kiadási folyamat a Windows melléktermékeit GitHub által üzemeltetett Windows-futókon építi fel. Egy külön
+A kézi munkafolyamat aláírás nélküli Linux x86-64 és macOS Intel/Apple szilícium előnézeteket készít natív verzióra
+GitHub által üzemeltetett futók. A végfelhasználók nem telepítenek Pythont, Node.js-t vagy függőségeket.
 
 Építés előtt frissítse és érvényesítse a lokalizációs forráskatalógusokat:
 
@@ -74,3 +75,19 @@ A kiadás bejelentése előtt ellenőrizze a telepítőt és a hordozható arch�
 Tartsa meg minden elosztott binárisnak megfelelő forrást ugyanazon kiadási címke alatt.
 Győződjön meg arról, hogy a GitHub gomb a végső nyilvános adattár URL-címére mutat, mielőtt megcímkézi az első
 kiadás.
+
+## Linux és macOS előnézetek létrehozása
+
+Nyissa meg a **Műveletek** lehetőséget, válassza a **Platform-előnézeti összeállítások**, majd a **Munkafolyamat futtatása** lehetőséget. Adjon meg egy előnézetet
+verzió, például `0.2.0-preview.1`.
+
+Hagyja kikapcsolva a **Nyilvános GitHub-előkiadás közzétételét** az első futtatáshoz. A munkafolyamat összeállítja és teszteli:
+
+- Linux x86-64 Ubuntu 22.04-en;
+- macOS x86-64 Intel futón;
+- macOS arm64 Apple szilíciumfutón.
+
+Töltse le a munkafolyamat melléktermékeit, és ellenőrizze azok ellenőrző összegeit és naplóit. Futtassa újra a munkafolyamatot a következővel:
+a közzététel csak azután engedélyezett, hogy minden összeállítási feladat átment. A közzétett macOS előnézetek eseti aláírással vannak ellátva,
+nem Apple közjegyző által hitelesített. Jellemezze őket előnézeti buildként, és linkelje hozzá a tesztelőket
+"docs/PLATFORM_TESTING.md" és a **Platform előnézeti teszt** kibocsátási űrlapja.

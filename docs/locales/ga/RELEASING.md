@@ -1,7 +1,8 @@
 # MeshMill á scaoileadh
 
-Tógann an píblíne scaoileadh artifacts Windows ar rádala GitHub-óstáil Windows. Faigheann úsáideoirí deiridh
-suiteálaí féinchuimsitheach nó ZIP iniompartha agus ná suiteáil Python, Node.js, nó spleáchais.
+Tógann an píblíne scaoileadh cobhsaí déantáin Windows ar reathaithe Windows arna óstáil ag GitHub. A leithleach
+Tógann sreabhadh oibre láimhe réamhamhairc sileacain Linux x86-64 agus macOS Intel/Apple gan síniú ar dhúchas
+Ritheoirí arna óstáil ag GitHub. Ní shuiteálann úsáideoirí deiridh Python, Node.js, nó spleáchais.
 
 Sula ndéantar na catalóga foinse logánaithe a thógáil, a athnuachan agus a bhailíochtú:
 
@@ -74,3 +75,19 @@ Fíoraigh an suiteálaí agus an chartlann iniompartha ar chóras glan Windows s
 Coinnigh an fhoinse a fhreagraíonn do gach dénártha dáilte atá ar fáil faoin gclib scaoileadh céanna.
 Deimhnigh go díríonn an cnaipe GitHub chuig an URL taisclainne poiblí deiridh roimh chlibeáil an chéad cheann
 scaoileadh.
+
+## Tóg réamhamhairc Linux agus macOS
+
+Oscail **Gníomhartha**, roghnaigh **Tógann réamhamharc ardán**, agus roghnaigh **Rith sreabhadh oibre**. Cuir isteach réamhamharc
+leagan ar nós `0.2.0-réamhamharc.1`.
+
+Fág **Foilsigh réamheisiúint phoiblí GitHub** as don chéad rith. Tógann agus tástálacha an sreabhadh oibre:
+
+- Linux x86-64 ar Ubuntu 22.04;
+- macOS x86-64 ar rádala Intel;
+- macOS arm64 ar rádala sileacain Apple.
+
+Íoslódáil na déantáin sreafa oibre agus scrúdaigh a gcuid seiceálacha agus logaí. Rith an sreabhadh oibre arís le
+foilsiú cumasaithe ach amháin tar éis do gach post tógála pas a fháil. Tá réamhamhairc macOS foilsithe sínithe ad-hoc,
+ní Apple-notarized. Déan cur síos orthu mar thógáil réamhamhairc agus nascann na tástálaithe le
+`docs/PLATFORM_TESTING.md` agus an fhoirm eisiúna **Tástáil Réamhamhairc Ardáin**.

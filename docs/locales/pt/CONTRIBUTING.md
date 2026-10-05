@@ -24,6 +24,12 @@ O texto fonte da IU em inglês é armazenado em `locales/en-US.json`. Os metadad
 `<locale>.json`. A documentação traduzida usa o nome de arquivo raiz correspondente em
 `docs/locales/<locale>/`.
 
+As traduções são inicialmente produzidas com serviços externos de tradução automática e recebem
+validação estrutural automatizada. Esse processo não pode garantir resultados naturais, tecnicamente precisos ou
+linguagem contextualmente correta. Os falantes nativos são incentivados a revisar e corrigir a IU traduzida
+texto e documentação. As correções de tradução devem preservar as chaves do catálogo, espaços reservados,
+comandos, links, medidas, nomes de produtos e estrutura Markdown.
+
 Depois de alterar rótulos, dicas de ferramentas, caixas de diálogo ou outros textos visíveis ao usuário, execute:
 
 ```powershell

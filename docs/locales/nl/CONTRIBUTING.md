@@ -24,6 +24,12 @@ Engelse UI-brontekst is opgeslagen in `locales/en-US.json`. Metagegevens van lan
 `<locale>.json`. Vertaalde documentatie gebruikt de overeenkomende rootbestandsnaam onder
 `docs/locales/<locale>/`.
 
+Vertalingen worden in eerste instantie geproduceerd met externe machinevertaaldiensten en ontvangen
+geautomatiseerde structurele validatie. Dat proces kan geen natuurlijke, technisch nauwkeurige of
+contextueel correcte taal. Moedertaalsprekers worden aangemoedigd om de vertaalde gebruikersinterface te beoordelen en te corrigeren
+tekst en documentatie. Bij vertalingscorrecties moeten catalogussleutels, tijdelijke aanduidingen,
+opdrachten, koppelingen, metingen, productnamen en Markdown-structuur.
+
 Voer na het wijzigen van labels, tooltips, dialoogvensters of andere voor de gebruiker zichtbare tekst het volgende uit:
 
 ```powershell
