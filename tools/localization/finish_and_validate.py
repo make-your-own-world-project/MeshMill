@@ -17,6 +17,7 @@ MANIFEST_PATH = WORK / "source-manifest.json"
 CANDIDATE = WORK / "validated-candidate"
 BACKUP = WORK / "integration-backup"
 LINK_RE = re.compile(r"(?<=\]\()([^\n)]+)(?=\))")
+REFERENCE_LINK_RE = re.compile(r"\[([^\]\n]+)\]\s*\[([^\]\n]+)\]")
 URL_RE = re.compile(r"https?://[^\s)>]+")
 
 
@@ -56,6 +57,17 @@ def restore_link_targets(text: str, source: str) -> str:
         return text
     for match, target in reversed(list(zip(translated_targets, source_targets))):
         text = text[: match.start(1)] + target + text[match.end(1) :]
+    return text
+
+
+def restore_reference_targets(text: str, source: str) -> str:
+    source_targets = [match.group(2) for match in REFERENCE_LINK_RE.finditer(source)]
+    translated_targets = list(REFERENCE_LINK_RE.finditer(text))
+    if len(source_targets) != len(translated_targets):
+        return text
+    for match, target in reversed(list(zip(translated_targets, source_targets))):
+        replacement = f"[{match.group(1)}][{target}]"
+        text = text[: match.start()] + replacement + text[match.end() :]
     return text
 
 
@@ -108,6 +120,7 @@ def assemble_document(locale: str, name: str, cache: dict[str, str]) -> str:
             raise KeyError(f"missing cached passage: {locale} {name} {passage['source']!r}")
         translated = restore_tokens(cache[key], dict(passage["tokens"]))
         translated = restore_link_targets(translated, str(passage["source"]))
+        translated = restore_reference_targets(translated, str(passage["source"]))
         translated = normalize_protected_terms(translated, str(passage["source"]))
         if str(passage["source"]).startswith("|") and translated.count("|") != str(
             passage["source"]
@@ -186,6 +199,12 @@ def main() -> int:
                 failures.append([locale, name, "table structure"])
             if URL_RE.findall(source) != URL_RE.findall(translated):
                 failures.append([locale, name, "external URLs changed"])
+            source_references = [match.group(2) for match in REFERENCE_LINK_RE.finditer(source)]
+            translated_references = [
+                match.group(2) for match in REFERENCE_LINK_RE.finditer(translated)
+            ]
+            if source_references != translated_references:
+                failures.append([locale, name, "reference link targets changed"])
             if len(translated) < len(source) * 0.16:
                 failures.append([locale, name, "implausibly short"])
             if re.search(r"\[\[\d{8}\]\]|ZXQ\d{4}QXZ|\ufffd|\b(?:TODO|TBD)\b", translated):

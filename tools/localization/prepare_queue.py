@@ -16,6 +16,8 @@ TOKEN_RE = re.compile(
 FENCE_RE = re.compile(r"^\s*```")
 TABLE_RULE_RE = re.compile(r"^\s*\|?(?:\s*:?-{3,}:?\s*\|)+\s*$")
 LINK_REFERENCE_RE = re.compile(r"^\s*\[[^\]]+\]:\s+\S+")
+NAVIGATION_START = "<!-- localization-navigation:start -->"
+NAVIGATION_END = "<!-- localization-navigation:end -->"
 PREFIX_RE = re.compile(r"^(\s*(?:#{1,6}\s+|[-*+]\s+|\d+[.)]\s+|>\s+)?)")
 
 
@@ -37,15 +39,24 @@ def protect(text: str) -> tuple[str, dict[str, str]]:
 def markdown_passages(text: str) -> list[dict[str, object]]:
     passages: list[dict[str, object]] = []
     fenced = False
+    navigation = False
     offset = 0
     for line in text.splitlines(keepends=True):
         body = line.rstrip("\r\n")
         newline = line[len(body) :]
+        if body.strip() == NAVIGATION_START:
+            navigation = True
+            offset += len(line)
+            continue
+        if body.strip() == NAVIGATION_END:
+            navigation = False
+            offset += len(line)
+            continue
         if FENCE_RE.match(body):
             fenced = not fenced
             offset += len(line)
             continue
-        if fenced or not body.strip() or TABLE_RULE_RE.match(body) or LINK_REFERENCE_RE.match(body):
+        if navigation or fenced or not body.strip() or TABLE_RULE_RE.match(body) or LINK_REFERENCE_RE.match(body):
             offset += len(line)
             continue
         prefix = PREFIX_RE.match(body).group(1)

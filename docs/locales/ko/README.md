@@ -2,6 +2,38 @@
   <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
 </p>
 
+<!-- localization-navigation:start -->
+<p align="center">
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/README.md">English</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ar/README.md">العربية</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/bn/README.md">বাংলা</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/de/README.md">Deutsch</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/el/README.md">Ελληνικά</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/es/README.md">Español</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/fa/README.md">فارسی</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/fr/README.md">Français</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ga/README.md">Gaeilge</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/hi/README.md">हिन्दी</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/hu/README.md">Magyar</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/id/README.md">Bahasa Indonesia</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/it/README.md">Italiano</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ja/README.md">日本語</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ko/README.md">한국어</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/nl/README.md">Nederlands</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/pl/README.md">Polski</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/pt/README.md">Português</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ro/README.md">Română</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ru/README.md">Русский</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/sr/README.md">Српски</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/th/README.md">ไทย</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/tr/README.md">Türkçe</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/uk/README.md">Українська</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ur/README.md">اردو</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/vi/README.md">Tiếng Việt</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/zh-CN/README.md">简体中文</a>
+</p>
+<!-- localization-navigation:end -->
+
 MeshMill는 대형, 고밀도 또는 복잡한 메시(mesh) 형상을
 관리하기 쉽게 만들어주는 데 특화된 데스크톱 애플리케이션입니다. 빠른 검사, 밀도 분석, 영역 선택, 자르기, 삭제,
 그리고 계정 생성이나 형상 업로드 없이 제어 가능한 메시 축소 기능을 제공합니다.
@@ -35,9 +67,9 @@ Linux 및 macOS 패키지는 서명되지 않은 초기 미리 보기입니다. 
 패키지화된 연기 테스트이지만 여전히 실제 하드웨어 테스트가 필요합니다. 읽기
 [Linux 및 macOS 미리보기 참고 사항](../../PLATFORM_TESTING.md)을 설치하기 전에 확인하세요.
 
-Windows SmartScreen 또는 macOS Gatekeeper가 서명되지 않은 패키지에 대해 경고할 수 있습니다. 체크섬과
-optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
-checksums][all-releases] only if you need an older version or want to verify a download.
+Windows SmartScreen 또는 macOS Gatekeeper가 서명되지 않은 패키지에 대해 경고할 수 있습니다.
+지원되는 Windows 릴리스에는 선택적 샘플 메시가 포함되어 있습니다: [STL][sample-mesh].
+이전 버전과 다운로드 체크섬은 [GitHub 릴리스][all-releases]에서 사용할 수 있습니다.
 
 [windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
 [windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip

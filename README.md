@@ -2,35 +2,37 @@
   <img src="assets/meshmill-logo.svg" width="620" alt="MeshMill: Dirty geometry? Clean it up!">
 </p>
 
+<!-- localization-navigation:start -->
 <p align="center">
-  <a href="README.md">English</a> ·
-  <a href="docs/locales/ar/README.md">العربية</a> ·
-  <a href="docs/locales/bn/README.md">বাংলা</a> ·
-  <a href="docs/locales/de/README.md">Deutsch</a> ·
-  <a href="docs/locales/el/README.md">Ελληνικά</a> ·
-  <a href="docs/locales/es/README.md">Español</a> ·
-  <a href="docs/locales/fa/README.md">فارسی</a> ·
-  <a href="docs/locales/fr/README.md">Français</a> ·
-  <a href="docs/locales/ga/README.md">Gaeilge</a> ·
-  <a href="docs/locales/hi/README.md">हिन्दी</a> ·
-  <a href="docs/locales/hu/README.md">Magyar</a> ·
-  <a href="docs/locales/id/README.md">Bahasa Indonesia</a> ·
-  <a href="docs/locales/it/README.md">Italiano</a> ·
-  <a href="docs/locales/ja/README.md">日本語</a> ·
-  <a href="docs/locales/ko/README.md">한국어</a> ·
-  <a href="docs/locales/nl/README.md">Nederlands</a> ·
-  <a href="docs/locales/pl/README.md">Polski</a> ·
-  <a href="docs/locales/pt/README.md">Português</a> ·
-  <a href="docs/locales/ro/README.md">Română</a> ·
-  <a href="docs/locales/ru/README.md">Русский</a> ·
-  <a href="docs/locales/sr/README.md">Српски</a> ·
-  <a href="docs/locales/th/README.md">ไทย</a> ·
-  <a href="docs/locales/tr/README.md">Türkçe</a> ·
-  <a href="docs/locales/uk/README.md">Українська</a> ·
-  <a href="docs/locales/ur/README.md">اردو</a> ·
-  <a href="docs/locales/vi/README.md">Tiếng Việt</a> ·
-  <a href="docs/locales/zh-CN/README.md">简体中文</a>
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/README.md">English</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ar/README.md">العربية</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/bn/README.md">বাংলা</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/de/README.md">Deutsch</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/el/README.md">Ελληνικά</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/es/README.md">Español</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/fa/README.md">فارسی</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/fr/README.md">Français</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ga/README.md">Gaeilge</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/hi/README.md">हिन्दी</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/hu/README.md">Magyar</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/id/README.md">Bahasa Indonesia</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/it/README.md">Italiano</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ja/README.md">日本語</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ko/README.md">한국어</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/nl/README.md">Nederlands</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/pl/README.md">Polski</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/pt/README.md">Português</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ro/README.md">Română</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ru/README.md">Русский</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/sr/README.md">Српски</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/th/README.md">ไทย</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/tr/README.md">Türkçe</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/uk/README.md">Українська</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ur/README.md">اردو</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/vi/README.md">Tiếng Việt</a> ·
+  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/zh-CN/README.md">简体中文</a>
 </p>
+<!-- localization-navigation:end -->
 
 MeshMill is a focused desktop application for making oversized, dense, or difficult mesh geometry
 manageable. It provides fast inspection, density analysis, regional selection, cropping, deletion,
@@ -65,9 +67,9 @@ Linux and macOS packages are unsigned early previews. They pass automated native
 packaged smoke tests, but still need real-hardware testing. Read the
 [Linux and macOS preview notes](docs/PLATFORM_TESTING.md) before installing them.
 
-Windows SmartScreen or macOS Gatekeeper may warn about unsigned packages. Checksums and the
-optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
-checksums][all-releases] only if you need an older version or want to verify a download.
+Windows SmartScreen or macOS Gatekeeper may warn about unsigned packages.
+An optional sample mesh is included with the supported Windows release: [STL][sample-mesh].
+Older versions and download checksums are available on [GitHub Releases][all-releases].
 
 [windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
 [windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
