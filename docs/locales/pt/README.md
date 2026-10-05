@@ -71,12 +71,12 @@ O Windows SmartScreen ou o macOS Gatekeeper podem alertar sobre pacotes não ass
 Uma malha de amostra opcional está incluída na versão compatível do Windows: [STL][sample-mesh].
 Versões mais antigas e somas de verificação de download estão disponíveis em [Versões do GitHub][all-releases].
 
-[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
-[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-0.1.2-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-0.1.2-windows-x64-portable.zip
 [linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
 [mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
 [mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
-[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-sample-scan-original.stl
 [all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Início rápido

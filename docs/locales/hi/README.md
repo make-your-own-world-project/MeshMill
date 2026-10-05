@@ -71,12 +71,12 @@ Linux और macOS पैकेज अहस्ताक्षरित प्�
 समर्थित विंडोज़ रिलीज़ के साथ एक वैकल्पिक नमूना जाल शामिल है: [STL][sample-mesh]। <!-- Windows -->
 पुराने संस्करण और डाउनलोड चेकसम [GitHub रिलीज़][all-releases] पर उपलब्ध हैं।
 
-[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
-[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-0.1.2-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-0.1.2-windows-x64-portable.zip
 [linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
 [mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
 [mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
-[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-sample-scan-original.stl
 [all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## क्विक स्टार्ट

@@ -9,7 +9,7 @@ on:
       version:
         description: "Release version, for example 0.1.0"
         required: true
-        default: "0.1.0"
+        default: "0.1.2"
 
 permissions:
   contents: write
@@ -131,6 +131,7 @@ jobs:
           **Most users should download `MeshMill-${{ steps.version.outputs.version }}-windows-x64-setup.exe`.**
 
           - **Installer:** normal Windows installation with Start menu and optional desktop shortcuts.
+            Upgrades preserve settings and shortcut choices; uninstall removes MeshMill preferences.
           - **Portable ZIP:** no installation. Extract the complete ZIP, then run `MeshMill.exe`.
           - **Sample STL:** optional large test geometry for experimenting with MeshMill.
           - **SHA256SUMS.txt:** checksums for verifying downloads.

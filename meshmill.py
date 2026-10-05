@@ -110,7 +110,7 @@ from localization import DEFAULT_LOCALE, locale_manager, tr
 
 
 APP_NAME = "MeshMill"
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.1.2"
 REPOSITORY_URL = "https://github.com/make-your-own-world-project/MeshMill"
 SUPPORT_URL = "https://buymeacoffee.com/tednv"
 PRESETS = {"light": 50_000, "balanced": 200_000, "detailed": 400_000}
