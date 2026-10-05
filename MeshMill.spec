@@ -11,6 +11,7 @@ a = Analysis(
         ('ROADMAP.md', '.'),
         ('THIRD_PARTY_NOTICES.md', '.'),
         ('docs/OUT_OF_CORE.md', 'docs'),
+        ('docs/GPU_OUT_OF_CORE.md', 'docs'),
         ('assets/meshmill-mark.svg', 'assets'),
         ('assets/meshmill-logo.svg', 'assets'),
         ('locales', 'locales'),

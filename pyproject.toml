@@ -31,7 +31,7 @@ dependencies = [
 meshmill = "meshmill:main"
 
 [tool.setuptools]
-py-modules = ["meshmill"]
+py-modules = ["meshmill", "out_of_core", "gpu_resident"]
 
 [tool.ruff]
 line-length = 100

@@ -150,6 +150,10 @@ The index, streaming, cache, work-unit, and safety contract is documented in
 - Show per-cube progress by filling each cube and retain a high-level whole-object view.
 - Assemble processed cubes with boundary validation, duplicate removal, and reproducible settings.
 - Extend the local cube scheduler into distributed synthesis work units in later phases.
+- Reuse resident viewport buffers through a native graphics-compute interoperability layer when the
+  active system-default adapter supports it; retain validated CPU and staged-buffer fallbacks.
+- Use adaptive octree leaves so dense, overlapping, or disputed regions can expand independently
+  for multi-STL alignment, comparison, merge, and synthesis.
 
 ### Phase 1: versioned local foundation
 

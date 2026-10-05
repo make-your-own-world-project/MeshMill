@@ -10,19 +10,29 @@ next implementation phase.
 
 ## Index format
 
-Each source mesh receives a versioned `.meshmill-index` directory containing:
+The version 1 implementation gives each binary STL source a private, versioned `.meshmill-index`
+cache directory containing:
 
 - `manifest.json`, with the source size, modification time, sampled content hashes, bounds,
   triangle count, index version, coordinate precision, and level descriptions;
-- spatial tiles addressed by octree level and Morton code;
-- a coarse display mesh for every occupied parent tile;
+- adaptive spatial tiles addressed by octree level and Morton code;
 - full-resolution triangle records in leaf tiles; and
-- boundary ownership and overlap metadata used during regional operations and assembly.
+- an atomically published manifest with adaptive leaf metadata.
 
-Index creation reads the source sequentially in bounded blocks. It writes temporary tile runs and
-atomically publishes the manifest after every required file passes validation. An interrupted or
-stale index is detected from its manifest and can be resumed or rebuilt without opening the full
-mesh in memory.
+Later index versions will add coarse display meshes for occupied parents plus operation-specific
+boundary ownership and overlap metadata without changing existing source files.
+
+Index creation reads the source sequentially in bounded blocks. Dense octree leaves subdivide until
+they fit the configured work-unit target; sparse leaves remain coarse. This avoids forcing every
+part of an irregular scan to the resolution required by its densest region. It writes temporary
+tile runs and atomically publishes the manifest after every required file passes validation. An
+interrupted or stale index is detected from source metadata and bounded content hashes. The last
+complete index remains active until its replacement is published.
+
+The index uses source-neutral tile identities. A future multi-mesh workspace can overlay leaf sets
+from several source indexes, retain source provenance per contribution, and subdivide only tiles
+that require closer overlap comparison. Merge and synthesis therefore extend the same hierarchy
+instead of introducing a separate whole-mesh representation.
 
 ## Viewport streaming
 
@@ -45,6 +55,31 @@ capacity is an estimate until representative tiles have been measured.
 Operations retain one owner for every boundary element. Assembly validates shared boundaries,
 removes duplicates, checks counts and bounds, and records the exact parameters used. The same work
 unit and result format can later be scheduled across distributed synthesis nodes.
+
+## CPU, GPU, and resident geometry
+
+Storage reads, STL validation, index publication, queue ownership, topology changes, and boundary
+assembly remain CPU responsibilities. Parallel per-triangle or per-vertex calculations may run on
+the GPU when a measured work unit is large enough to recover dispatch and synchronization cost.
+
+The viewport already stores visible geometry in OpenGL buffers. A GPU backend should consume those
+resident buffers through a supported graphics-compute interoperability path instead of uploading a
+second copy. VTK exposes mapper vertex-buffer handles, while CUDA supports registering and mapping
+OpenGL buffers. Mapping is valid only while OpenGL is not using the resource, so ownership and
+synchronization belong to the render thread. This path is optional and requires a native boundary;
+the portable CPU path remains authoritative until equivalent results pass validation.
+
+Adapter selection follows the active graphics context. MeshMill must query the compute device that
+backs the current OpenGL context and must not enumerate or borrow other installed adapters. This
+keeps system-default behavior and avoids interfering with GPUs assigned to other services.
+
+For meshes larger than VRAM, the resident set contains a coarse whole-object representation plus
+visible or active full-resolution tiles. RAM and VRAM use separate least-recently-used budgets.
+Dirty tiles remain pinned until their result is applied or cancelled. Rendering and compute share
+the same resident-tile catalog even when a platform backend cannot share the same physical buffer.
+
+See [`GPU_OUT_OF_CORE.md`](GPU_OUT_OF_CORE.md) for measurements, decision thresholds, and the
+validation plan.
 
 ## Safety rules
 

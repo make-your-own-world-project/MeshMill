@@ -102,6 +102,14 @@ from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
 import vtkmodules.vtkInteractionStyle  # noqa: F401
 import vtkmodules.vtkRenderingOpenGL2  # noqa: F401
 
+from out_of_core import (
+    build_index,
+    default_index_directory,
+    index_matches,
+    load_manifest,
+)
+from gpu_resident import inspect_resident_vertices
+
 
 # Conservative allowance for source arrays, VTK objects, render data, and temporary work buffers.
 ESTIMATED_BYTES_PER_TRIANGLE = 220
@@ -889,6 +897,7 @@ def load_stl_smart(
     mode: str,
     memory_budget_bytes: int,
     overview_triangle_limit: int,
+    cancel_event: threading.Event | None = None,
 ) -> tuple[vtkPolyData, np.ndarray, np.ndarray, dict]:
     triangle_count = binary_stl_triangle_count(path)
     estimated_memory = (
@@ -909,10 +918,25 @@ def load_stl_smart(
         poly, points, faces = load_binary_stl_overview(
             path, triangle_count, overview_triangle_limit
         )
+        index_directory = default_index_directory(path)
+        try:
+            manifest = load_manifest(index_directory)
+        except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError):
+            manifest = None
+        if manifest is None or not index_matches(path, manifest):
+            manifest = build_index(
+                path,
+                index_directory,
+                target_triangles_per_tile=max(262_144, overview_triangle_limit),
+                cancel_event=cancel_event,
+            )
         return poly, points, faces, {
             "overview": True,
             "total_triangles": triangle_count,
             "estimated_memory": estimated_memory,
+            "index_directory": os.fspath(index_directory),
+            "index_tiles": len(manifest.tiles),
+            "index_max_depth": manifest.max_depth,
         }
     poly, points, faces = load_stl(path)
     return poly, points, faces, {
@@ -1661,6 +1685,7 @@ class MainWindow(QMainWindow):
         self.edit_generation = 0
         self.density_generation = 0
         self.density_cache: dict[int, np.ndarray] = {}
+        self.resident_vertex_buffers = {}
         self.pending_density_poly: vtkPolyData | None = None
         self.load_started_at = 0.0
         self.geometry_activity_until = 0.0
@@ -3679,6 +3704,7 @@ class MainWindow(QMainWindow):
             self.large_mesh_mode,
             memory_budget,
             self.overview_triangle_limit,
+            self.operation_cancel_event,
         )
         self.operation_future = future
 
@@ -3724,6 +3750,7 @@ class MainWindow(QMainWindow):
         self.preview_poly = None
         self.preview_is_selection = False
         self.density_cache.clear()
+        self.resident_vertex_buffers.clear()
         self.measure_points.clear()
         self.measure_hover_world = None
         if self.measure_info_frame is not None:
@@ -5631,6 +5658,9 @@ class MainWindow(QMainWindow):
             self.renderer.ResetCameraClippingRange()
         self._update_measure_overlay(render=False)
         self.vtk_widget.GetRenderWindow().Render()
+        resident = inspect_resident_vertices(actor)
+        if resident is not None:
+            self.resident_vertex_buffers[id(actor)] = resident
         density_visible = self._display_mode() == "Density"
         self.density_legend.setVisible(density_visible)
         if density_visible:
