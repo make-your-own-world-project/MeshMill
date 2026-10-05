@@ -17,23 +17,35 @@ la gestion des matériaux et la création de scènes sortent de son champ d'appl
 
 ## Téléchargement
 
-Téléchargez l'un de ces fichiers depuis la section [Releases de GitHub](../../releases) :
+Choisissez votre système d'exploitation. Chaque package est autonome. Python, Node.js et autres
+les dépendances de développement ne sont pas requises.
 
-- `MeshMill-<version>-windows-x64-setup.exe` : installateur par utilisateur avec intégration au menu Démarrer et création optionnelle
-  de raccourcis sur le bureau.
-- `MeshMill-<version>-windows-x64-portable.zip` : application portable. Extrayez l'intégralité de l'archive,
-  puis lancez `MeshMill.exe`.
+| Système | Téléchargement recommandé | Statut |
+| --- | --- | --- |
+| **Windows x64** | **[Téléchargez le programme d'installation de Windows][windows-installer]** | Version prise en charge |
+| Windows x64, aucune installation | [Télécharger le ZIP portable][windows-portable] | Version prise en charge |
+| Linux x86-64 | [Télécharger l'aperçu Linux][linux-preview] | Aperçu des premiers tests |
+| macOS Apple silicium | [Téléchargez l'aperçu du silicium Apple][mac-arm-preview] | Aperçu des premiers tests |
+| macOS Intel | [Télécharger l'aperçu Intel Mac][mac-intel-preview] | Aperçu des premiers tests |
 
-Les deux packages incluent l'environnement d'exécution de l'application. Les utilisateurs finaux n'installent pas les dépendances Python, Node.js ou
-dépendances. La version stable prend en charge Windows 10 et Windows 11 sur le matériel x64.
+**La plupart des utilisateurs de Windows devraient choisir le programme d'installation de Windows.** Utilisez le ZIP portable uniquement lorsque vous le faites
+Je ne veux pas que MeshMill soit installé ou je n'ai pas l'autorisation d'installer des applications.
 
-Les packages Linux x86-64 non signés et macOS Intel/Apple Silicon Preview peuvent également apparaître dans les versions.
-Ils sont construits sur des exécuteurs natifs hébergés sur GitHub et réussissent les tests de fumée packagés CLI et sample-mesh,
-mais il faut encore des tests sur du matériel réel. Voir [Tests préliminaires Linux et macOS](../../PLATFORM_TESTING.md)
-avant d'installer ou de rapporter les résultats.
+Les packages Linux et macOS sont des versions préliminaires non signées. Ils réussissent les builds natifs automatisés et
+des tests de fumée packagés, mais nécessitent toujours des tests sur le matériel réel. Lire le
+[Notes d'aperçu Linux et macOS](../../PLATFORM_TESTING.md) avant de les installer.
 
-Les versions de communauté non signées peuvent afficher un avertissement Windows SmartScreen ou macOS Gatekeeper. Libération
-les sommes de contrôle sont répertoriées à côté de chaque version.
+Windows SmartScreen ou macOS Gatekeeper peuvent avertir des packages non signés. Les sommes de contrôle et les
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Démarrage rapide
 

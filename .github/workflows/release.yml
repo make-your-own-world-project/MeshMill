@@ -120,4 +120,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ github.ref_name }}" release/* --verify-tag --generate-notes --title "MeshMill ${{ steps.version.outputs.version }}"
+          @"
+          ## Windows download
+
+          **Most users should download `MeshMill-${{ steps.version.outputs.version }}-windows-x64-setup.exe`.**
+
+          - **Installer:** normal Windows installation with Start menu and optional desktop shortcuts.
+          - **Portable ZIP:** no installation. Extract the complete ZIP, then run `MeshMill.exe`.
+          - **Sample STL:** optional large test geometry for experimenting with MeshMill.
+          - **SHA256SUMS.txt:** checksums for verifying downloads.
+
+          These packages are self-contained. Python, Node.js, and development dependencies are not required.
+
+          Linux and macOS downloads are published separately as clearly labeled preview releases.
+          "@ | Set-Content release-notes.md -Encoding utf8
+          gh release create "${{ github.ref_name }}" release/* --verify-tag --notes-file release-notes.md --title "MeshMill ${{ steps.version.outputs.version }} for Windows"

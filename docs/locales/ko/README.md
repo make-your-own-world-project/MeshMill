@@ -17,23 +17,35 @@ MeshMill는 3D 스캐너, CAD 및 모델링 내보내기 파일, 재구성 파�
 
 ## 다운로드
 
-[GitHub 릴리스](../../releases)에서 다음 파일 중 하나를 다운로드하세요:
+운영 체제를 선택하세요. 모든 패키지는 독립적입니다. Python, Node.js 및 기타
+개발 종속성은 필요하지 않습니다.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: 시작 메뉴 및 선택적
-  바탕 화면 바로 가기를 포함하는 사용자별 설치 프로그램.
-- `MeshMill-<version>-windows-x64-portable.zip`: 포터블 애플리케이션. 전체 아카이브의 압축을 풀고,
-  `MeshMill.exe`를 실행하세요.
+| 시스템 | 추천 다운로드 | 상태 |
+| --- | --- | --- |
+| **윈도우 x64** | **[Windows 설치 프로그램 다운로드][windows-installer]** | 지원되는 릴리스 | <!-- Windows -->
+| Windows x64, 설치 없음 | [휴대용 ZIP 다운로드][windows-portable] | 지원되는 릴리스 |
+| 리눅스 x86-64 | [Linux 미리보기 다운로드][linux-preview] | 초기 테스트 미리보기 | <!-- Linux -->
+| macOS 애플 실리콘 | [Apple Silicon 미리보기 다운로드][mac-arm-preview] | 초기 테스트 미리보기 |
+| macOS 인텔 | [Intel Mac 미리보기 다운로드][mac-intel-preview] | 초기 테스트 미리보기 |
 
-두 패키지 모두 애플리케이션 런타임을 포함하고 있습니다. 최종 사용자는 Python, Node.js 또는
-의존성. 안정 릴리스는 x64 하드웨어에서 Windows 10 및 Windows 11을 지원합니다.
+**대부분의 Windows 사용자는 Windows 설치 프로그램을 선택해야 합니다.** 해당하는 경우에만 휴대용 ZIP을 사용하십시오.
+MeshMill 설치를 원하지 않거나 애플리케이션을 설치할 권한이 없습니다.
 
-서명되지 않은 Linux x86-64 및 macOS Intel/Apple 실리콘 미리 보기 패키지도 릴리스에 나타날 수 있습니다.
-기본 GitHub에서 호스팅되는 실행기를 기반으로 구축되었으며 패키지된 CLI 및 샘플 메시 연기 테스트를 통과했습니다.
-하지만 실제 하드웨어에서는 여전히 테스트가 필요합니다. [Linux 및 macOS 미리보기 테스트](../../PLATFORM_TESTING.md)를 참조하세요.
-설치하거나 결과를 보고하기 전에
+Linux 및 macOS 패키지는 서명되지 않은 초기 미리 보기입니다. 자동화된 네이티브 빌드를 통과하고
+패키지화된 연기 테스트이지만 여전히 실제 하드웨어 테스트가 필요합니다. 읽기
+[Linux 및 macOS 미리보기 참고 사항](../../PLATFORM_TESTING.md)을 설치하기 전에 확인하세요.
 
-서명되지 않은 커뮤니티 빌드에는 Windows SmartScreen 또는 macOS Gatekeeper 경고가 표시될 수 있습니다. 출시
-체크섬은 각 릴리스 옆에 나열됩니다.
+Windows SmartScreen 또는 macOS Gatekeeper가 서명되지 않은 패키지에 대해 경고할 수 있습니다. 체크섬과
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## 빠른 시작
 

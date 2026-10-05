@@ -15,6 +15,7 @@ TOKEN_RE = re.compile(
 )
 FENCE_RE = re.compile(r"^\s*```")
 TABLE_RULE_RE = re.compile(r"^\s*\|?(?:\s*:?-{3,}:?\s*\|)+\s*$")
+LINK_REFERENCE_RE = re.compile(r"^\s*\[[^\]]+\]:\s+\S+")
 PREFIX_RE = re.compile(r"^(\s*(?:#{1,6}\s+|[-*+]\s+|\d+[.)]\s+|>\s+)?)")
 
 
@@ -44,7 +45,7 @@ def markdown_passages(text: str) -> list[dict[str, object]]:
             fenced = not fenced
             offset += len(line)
             continue
-        if fenced or not body.strip() or TABLE_RULE_RE.match(body):
+        if fenced or not body.strip() or TABLE_RULE_RE.match(body) or LINK_REFERENCE_RE.match(body):
             offset += len(line)
             continue
         prefix = PREFIX_RE.match(body).group(1)

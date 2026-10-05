@@ -161,9 +161,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="v${{ inputs.version }}"
+          cat > release-notes.md <<'EOF'
+          ## Linux and macOS testing previews
+
+          These downloads are for early testing on Linux and macOS. Windows users should use the supported Windows release shown as **Latest** on the Releases page.
+
+          - `linux-x86_64.tar.gz`: 64-bit Linux systems
+          - `macos-arm64.zip`: Apple silicon Macs
+          - `macos-x86_64.zip`: Intel Macs
+          - matching `SHA256SUMS` files: download verification
+
+          These packages are self-contained and unsigned. They passed automated native builds and packaged smoke tests, but have not received the same real-hardware coverage as the Windows release. See `docs/PLATFORM_TESTING.md` and report problems through the platform test issue form.
+          EOF
           gh release create "$tag" release/* \
             --repo "${{ github.repository }}" \
             --target "${{ github.sha }}" \
             --prerelease \
-            --title "MeshMill ${{ inputs.version }}" \
-            --notes "Unsigned Linux and macOS preview builds for community testing. See docs/PLATFORM_TESTING.md before installing and report results through the platform test issue form."
+            --title "MeshMill ${{ inputs.version }} Preview for Linux and macOS" \
+            --notes-file release-notes.md

@@ -17,23 +17,35 @@
 
 ## تنزيل
 
-قم بتنزيل أحد هذه الملفات من صفحة إصدارات  [GitHub Releases](../../releases):
+اختر نظام التشغيل الخاص بك. كل حزمة مكتفية ذاتيا. بايثون، Node.js، وغيرها <!-- Python -->
+تبعيات التنمية ليست مطلوبة.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: مُثبِّت خاص بالمستخدم يتضمن خيارات لقائمة "ابدأ" (Start menu)
-  واختصارات سطح المكتب.
-- `MeshMill-<version>-windows-x64-portable.zip`: تطبيق محمول (portable) لا يحتاج إلى تثبيت. قم باستخراج محتويات الأرشيف بالكامل،
-  ثم شغّل برنامج `MeshMill.exe`.
+| النظام | التنزيل الموصى به | الحالة |
+| --- | --- | --- |
+| **ويندوز x64** | **[تحميل مثبت الويندوز][windows-installer]** | الإصدار المدعوم | <!-- Windows Windows -->
+| ويندوز x64، بدون تثبيت | [تحميل ملف ZIP المحمول][windows-portable] | الإصدار المدعوم | <!-- Windows -->
+| لينكس x86- 64 | [تنزيل معاينة لينكس][linux-preview] | معاينة الاختبار المبكر | <!-- Linux Linux -->
+| ماك أبل السيليكون | [تحميل معاينة Apple silicon][mac-arm-preview] | معاينة الاختبار المبكر | <!-- macOS -->
+| ماك إنتل | [تنزيل معاينة Intel Mac][mac-intel-preview] | معاينة الاختبار المبكر | <!-- macOS -->
 
-تتضمن كلتا الحزمتين بيئة تشغيل التطبيق (runtime). لا يقوم المستخدمون النهائيون بتثبيت Python أو Node.js أو
-التبعيات. يدعم الإصدار الثابت نظامي التشغيل Windows 10 وWindows 11 على أجهزة x64.
+**يجب على معظم مستخدمي Windows اختيار برنامج تثبيت Windows.** استخدم ملف ZIP المحمول فقط عندما تفعل ذلك
+لا تريد تثبيت MeshMill أو ليس لديك إذن لتثبيت التطبيقات.
 
-قد تظهر أيضًا حزم معاينة Linux x86-64 وmacOS Intel/Apple Silicon غير الموقعة في الإصدارات.
-وهي مبنية على متسابقين محليين مستضافين على GitHub وتجتاز اختبارات CLI المعبأة واختبارات دخان الشبكة.
-ولكن لا تزال بحاجة إلى الاختبار على الأجهزة الحقيقية. راجع [اختبار معاينة Linux وmacOS](../../PLATFORM_TESTING.md)
-قبل التثبيت أو الإبلاغ عن النتائج.
+تعد حزم Linux وmacOS بمثابة معاينات مبكرة غير موقعة. إنهم يجتازون بنيات أصلية آلية و
+اختبارات الدخان المعبأة، ولكنها لا تزال بحاجة إلى اختبار الأجهزة الحقيقية. اقرأ
+[ملاحظات معاينة Linux وmacOS](../../PLATFORM_TESTING.md) قبل تثبيتها.
 
-قد تعرض إصدارات المجتمع غير الموقعة تحذير Windows SmartScreen أو macOS Gatekeeper. الافراج
-يتم إدراج المجاميع الاختبارية بجانب كل إصدار.
+قد يحذر Windows SmartScreen أو macOS Gatekeeper من الحزم غير الموقعة. المجموع الاختباري و
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## البدء السريع
 

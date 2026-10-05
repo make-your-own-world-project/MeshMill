@@ -17,23 +17,35 @@ pengaturan material, dan pembuatan adegan berada di luar cakupan aplikasi ini.
 
 ## Unduh
 
-Unduh salah satu berkas berikut dari [Rilis GitHub](../../releases):
+Pilih sistem operasi Anda. Setiap paket mandiri. Python, Node.js, dan lainnya
+ketergantungan pengembangan tidak diperlukan.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: installer per pengguna dengan menu Start dan pilihan
-  pintasan desktop.
-- `MeshMill-<version>-windows-x64-portable.zip`: aplikasi portabel. Ekstrak seluruh isi arsip,
-  lalu jalankan `MeshMill.exe`.
+| Sistem | Unduhan yang disarankan | Status |
+| --- | --- | --- |
+| **Windows x64** | **[Unduh penginstal Windows][windows-installer]** | Rilis yang didukung |
+| Windows x64, tanpa instalasi | [Unduh ZIP portabel][windows-portable] | Rilis yang didukung |
+| Linux x86-64 | [Unduh pratinjau Linux][linux-preview] | Pratinjau pengujian awal |
+| macOS Apple silikon | [Unduh pratinjau silikon Apple][mac-arm-preview] | Pratinjau pengujian awal |
+| macOS Intel | [Unduh pratinjau Intel Mac][mac-intel-preview] | Pratinjau pengujian awal |
 
-Kedua paket tersebut sudah menyertakan runtime aplikasi. Pengguna akhir tidak menginstal dependensi Python, Node.js, atau
-ketergantungan. Rilis stabil mendukung Windows 10 dan Windows 11 pada perangkat keras x64.
+**Sebagian besar pengguna Windows sebaiknya memilih penginstal Windows.** Gunakan ZIP portabel hanya jika Anda memilihnya
+tidak ingin MeshMill diinstal atau tidak memiliki izin untuk menginstal aplikasi.
 
-Paket pratinjau silikon Linux x86-64 dan macOS Intel/Apple yang tidak ditandatangani juga dapat muncul di Rilis.
-Mereka dibangun di atas runner asli yang dihosting GitHub dan lulus CLI terpaket dan uji asap sampel-mesh,
-namun masih perlu pengujian pada perangkat keras sebenarnya. Lihat [Pengujian pratinjau Linux dan macOS](../../PLATFORM_TESTING.md)
-sebelum menginstal atau melaporkan hasilnya.
+Paket Linux dan macOS adalah pratinjau awal yang tidak ditandatangani. Mereka melewati build asli otomatis dan
+pengujian asap yang dikemas, namun masih memerlukan pengujian perangkat keras yang sebenarnya. Baca
+[Catatan pratinjau Linux dan macOS](../../PLATFORM_TESTING.md) sebelum menginstalnya.
 
-Build komunitas yang tidak ditandatangani mungkin menampilkan peringatan Windows SmartScreen atau macOS Gatekeeper. Lepaskan
-checksum tercantum di samping setiap rilis.
+Windows SmartScreen atau macOS Gatekeeper mungkin memperingatkan tentang paket yang tidak ditandatangani. Checksum dan
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Panduan cepat
 

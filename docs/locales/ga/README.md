@@ -17,23 +17,35 @@ d’uirlisí déantúsaíochta, agus do shreafaí oibre mogalra eile. Ní bhaine
 
 ## Íoslódáil
 
-Íoslódáil ceann de na comhaid seo ó [Eisiúintí GitHub](../../releases):
+Roghnaigh do chóras oibriúcháin. Tá gach pacáiste féin-chuimsitheach. Python, Node.js, agus eile
+níl spleáchais forbartha ag teastáil.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: suiteálaí don úsáideoir aonair, le rogha don roghchlár Tosaigh agus
-  aicearraí deisce roghnacha.
-- `MeshMill-<version>-windows-x64-portable.zip`: feidhmchlár iniompartha. Bain an t-ábhar as an gcartlann ar fad,
-  agus ansin rith `MeshMill.exe`.
+| Córas | Íoslódáil Molta | Stádas |
+| --- | --- | --- |
+| **Windows x64** | **[Íoslódáil an suiteálaí Windows][windows-installer]** | Eisiúint tacaithe |
+| Windows x64, gan suiteáil | [Íoslódáil an ZIP iniompartha][windows-portable] | Eisiúint tacaithe |
+| Linux x86-64 | [Íoslódáil an réamhamharc Linux][linux-preview] | Réamhamharc ar thástáil luath |
+| macOS Apple sileacain | [Íoslódáil réamhamharc Apple silicon][mac-arm-preview] | Réamhamharc ar thástáil luath |
+| macOS Intel | [Íoslódáil réamhamharc Intel Mac][mac-intel-preview] | Réamhamharc ar thástáil luath |
 
-Tá an t-am rite feidhmchláir san áireamh sa dá phacáiste. Ní shuiteálann úsáideoirí deiridh Python, Node.js, ná
-spleáchais. Tacaíonn an scaoileadh cobhsaí le Windows 10 agus Windows 11 ar chrua-earraí x64.
+**Ba cheart d’fhormhór na n-úsáideoirí Windows an suiteálaí Windows a roghnú.** Bain úsáid as an ZIP iniompartha ach amháin nuair a dhéanann tú é
+níl mé ag iarraidh MeshMill suiteáilte nó níl cead agat feidhmchláir a shuiteáil.
 
-D’fhéadfadh pacáistí réamhamhairc sileacain Linux x86-64 agus macOS Intel/Apple gan síniú a bheith le feiceáil i Releases freisin.
-Tá siad tógtha ar reathaithe dúchais GitHub-óstaithe agus pas a fháil pacáistithe CLI agus tástálacha deataigh mogalra samplach,
-ach tá gá fós le tástáil ar chrua-earraí fíor. Féach [tástáil réamhamhairc Linux agus macOS] (docs/PLATFORM_TESTING.md)
-sula ndéantar torthaí a shuiteáil nó a thuairisciú.
+Is réamhamhairc luatha gan síniú iad pacáistí Linux agus macOS. Gabhann siad foirgnimh dhúchasacha uathoibrithe agus
+tástálacha deataigh pacáistithe, ach tá gá le tástáil fhíor-earraí fós. Léigh an
+[Nótaí réamhamhairc Linux agus macOS](../../PLATFORM_TESTING.md) roimh iad a shuiteáil.
 
-D’fhéadfadh go dtaispeánfaidh tógálacha pobail gan síniú rabhadh Windows SmartScreen nó macOS Gatekeeper. Scaoileadh
-tá seiceálacha liostaithe in aice le gach eisiúint.
+Féadfaidh Windows SmartScreen nó MacOS Gatekeeper rabhadh a thabhairt faoi phacáistí gan síniú. Checksums agus an <!-- macOS -->
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Tús tapa
 

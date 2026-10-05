@@ -17,23 +17,35 @@ anyagbeállítás és jelenetkészítés nem tartozik a funkciói közé.
 
 ## Letöltés
 
-Töltse le az alábbi fájlok egyikét a [GitHub kiadások](../../releases) közül:
+Válassza ki az operációs rendszert. Minden csomag önálló. Python, Node.js és egyéb
+fejlesztési függőségek nem szükségesek.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: felhasználóspecifikus telepítő Start menüvel és opcionális
-  asztali parancsikonokkal.
-- `MeshMill-<version>-windows-x64-portable.zip`: hordozható (portable) alkalmazás. Csomagolja ki a teljes archívumot,
-  majd futtassa a `MeshMill.exe`-t.
+| Rendszer | Ajánlott letöltés | Állapot |
+| --- | --- | --- |
+| **Windows x64** | **[A Windows telepítő letöltése][windows-installer]** | Támogatott kiadás |
+| Windows x64, telepítés nélkül | [Töltsd le a hordozható ZIP fájlt][windows-portable] | Támogatott kiadás |
+| Linux x86-64 | [A Linux előnézet letöltése][linux-preview] | Korai tesztelés előnézet |
+| macOS Apple szilícium | [Az Apple szilícium előnézetének letöltése][mac-arm-preview] | Korai tesztelés előnézet |
+| macOS Intel | [Az Intel Mac előnézetének letöltése][mac-intel-preview] | Korai tesztelés előnézet |
 
-Mindkét csomag tartalmazza az alkalmazás futtatásához szükséges összetevőket. A végfelhasználók nem telepítik a Python, Node.js vagy
-függőségek. A stabil kiadás támogatja a Windows 10 és Windows 11 operációs rendszert x64-es hardveren.
+**A legtöbb Windows-felhasználónak a Windows telepítőjét kell választania.** Csak akkor használja a hordozható ZIP-fájlt, ha ezt teszi
+nem szeretné, hogy a MeshMill telepítve legyen, vagy nincs engedélye alkalmazások telepítésére.
 
-Aláíratlan Linux x86-64 és macOS Intel/Apple Silicon előnézeti csomagok is megjelenhetnek a kiadásokban.
-Natív GitHub által hosztolt futókra épülnek, és megfelelnek a csomagolt CLI és mintaháló füstteszteken,
-de még mindig tesztelni kell valódi hardveren. Lásd: [Linux és macOS előzetes tesztelése] (docs/PLATFORM_TESTING.md)
-a telepítés vagy az eredmények jelentése előtt.
+A Linux és a macOS csomagok aláíratlan korai előzetesek. Átadják az automatizált natív buildeket és
+csomagolt füsttesztek, de továbbra is valódi hardver tesztelésre van szükség. Olvassa el a
+[Linux és macOS előnézeti megjegyzések] (docs/PLATFORM_TESTING.md) telepítésük előtt.
 
-Az aláíratlan közösségi buildek Windows SmartScreen vagy macOS Gatekeeper figyelmeztetést jeleníthetnek meg. Kiadás
-Az ellenőrző összegek az egyes kiadások mellett szerepelnek.
+A Windows SmartScreen vagy a macOS Gatekeeper figyelmeztethet az alá nem írt csomagokra. Ellenőrző összegek és a
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Gyors útmutató
 

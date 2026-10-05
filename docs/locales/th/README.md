@@ -17,23 +17,35 @@ MeshMill ทำงานร่วมกับตาข่ายจากเค�
 
 ## ดาวน์โหลด
 
-ดาวน์โหลดไฟล์ใดไฟล์หนึ่งต่อไปนี้จาก [GitHub Releases](../../releases):
+เลือกระบบปฏิบัติการของคุณ ทุกแพ็คเกจมีอยู่ในตัวเอง Python, Node.js และอื่นๆ
+ไม่จำเป็นต้องพึ่งพาการพัฒนา
 
-- `MeshMill-<version>-windows-x64-setup.exe`: ตัวติดตั้งสำหรับผู้ใช้แต่ละคน (per-user installer) พร้อมเมนู Start และตัวเลือก
-  สำหรับสร้างทางลัดบนเดสก์ท็อป
-- `MeshMill-<version>-windows-x64-portable.zip`: แอปพลิเคชันแบบพกพา (portable application) เพียงแตกไฟล์ทั้งหมดออกมา
-  แล้วเรียกใช้งาน `MeshMill.exe` ได้ทันที
+| ระบบ | แนะนำดาวน์โหลด | สถานะ |
+| --- | --- | --- |
+| **วินโดวส์ x64** | **[ดาวน์โหลดตัวติดตั้ง Windows][windows-installer]** | รุ่นที่รองรับ | <!-- Windows -->
+| Windows x64 ไม่มีการติดตั้ง | [ดาวน์โหลด ZIP แบบพกพา][windows-portable] | รุ่นที่รองรับ |
+| Linux x86-64 | [ดาวน์โหลดตัวอย่าง Linux][linux-preview] | ตัวอย่างการทดสอบเบื้องต้น |
+| macOS แอปเปิ้ลซิลิคอน | [ดาวน์โหลดตัวอย่าง Apple Silicon][mac-arm-preview] | ตัวอย่างการทดสอบเบื้องต้น |
+| macOS อินเทล | [ดาวน์โหลดตัวอย่าง Intel Mac][mac-intel-preview] | ตัวอย่างการทดสอบเบื้องต้น |
 
-แพ็กเกจทั้งสองรูปแบบมาพร้อมกับ runtime ของแอปพลิเคชันในตัว ผู้ใช้งานปลายทางไม่จำเป็นต้องติดตั้ง Python, Node.js หรือ
-การพึ่งพา รุ่นเสถียรรองรับ Windows 10 และ Windows 11 บนฮาร์ดแวร์ x64
+**ผู้ใช้ Windows ส่วนใหญ่ควรเลือกตัวติดตั้ง Windows** ใช้ ZIP แบบพกพาเฉพาะเมื่อคุณเลือกเท่านั้น
+ไม่ต้องการติดตั้ง MeshMill หรือไม่ได้รับอนุญาตให้ติดตั้งแอปพลิเคชัน
 
-แพ็คเกจตัวอย่าง Linux x86-64 และ macOS Intel/Apple Silicon ที่ไม่ได้ลงนามอาจปรากฏใน Releases ด้วย
-สร้างขึ้นจากรันเนอร์ที่โฮสต์โดย GitHub และผ่านการทดสอบ CLI แบบแพ็กเกจและตัวอย่างควันแบบตาข่าย
-แต่ยังต้องมีการทดสอบกับฮาร์ดแวร์จริง ดู [การทดสอบตัวอย่าง Linux และ macOS](../../PLATFORM_TESTING.md)
-ก่อนติดตั้งหรือรายงานผล
+แพ็คเกจ Linux และ macOS เป็นตัวอย่างก่อนกำหนดที่ไม่ได้ลงนาม พวกเขาผ่านการสร้างเนทิฟอัตโนมัติและ
+การทดสอบควันแบบแพ็กเกจ แต่ยังต้องมีการทดสอบฮาร์ดแวร์จริง อ่าน
+[บันทึกการแสดงตัวอย่าง Linux และ macOS](../../PLATFORM_TESTING.md) ก่อนทำการติดตั้ง
 
-การสร้างชุมชนที่ไม่ได้ลงนามอาจแสดงคำเตือน Windows SmartScreen หรือ macOS Gatekeeper ปล่อย
-เช็คซัมจะแสดงอยู่ข้างๆ แต่ละรุ่น
+Windows SmartScreen หรือ macOS Gatekeeper อาจเตือนเกี่ยวกับแพ็คเกจที่ไม่ได้ลงนาม เช็คซัมและ
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## การเริ่มต้นใช้งานอย่างรวดเร็ว
 

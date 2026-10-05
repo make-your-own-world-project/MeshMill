@@ -6,9 +6,9 @@ account are not required.
 
 ## Current packages
 
-- Linux x86-64: portable `tar.gz`, built on Ubuntu 22.04.
-- macOS Intel: `.app` bundle in a ZIP archive.
-- macOS Apple silicon: native arm64 `.app` bundle in a ZIP archive.
+- [Linux x86-64 preview](https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz): portable `tar.gz`, built on Ubuntu 22.04.
+- [macOS Intel preview](https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip): `.app` bundle in a ZIP archive.
+- [macOS Apple silicon preview](https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip): native arm64 `.app` bundle in a ZIP archive.
 
 The macOS previews are ad-hoc signed, not Apple-notarized. Gatekeeper may require the user to open
 the application from Finder's context menu or explicitly allow it in system settings. Do not

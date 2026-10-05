@@ -17,23 +17,35 @@ MeshMill با مش های اسکنرهای سه بعدی، CAD و صادرات �
 
 ## دانلود
 
-یکی از این فایل‌ها را از بخش [انتشارها (Releases) در GitHub](../../releases) دانلود کنید:
+سیستم عامل خود را انتخاب کنید. هر بسته به صورت مستقل است. Python، Node.js و غیره
+وابستگی توسعه مورد نیاز نیست.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: نصب‌کننده (installer) مخصوص کاربر با قابلیت افزودن به منوی Start و
-  ایجاد میانبرهای دسکتاپ (اختیاری).
-- `MeshMill-<version>-windows-x64-portable.zip`: برنامه قابل‌حمل (Portable). کل فایل فشرده را استخراج کنید،
-  سپس `MeshMill.exe` را اجرا نمایید.
+| سیستم | دانلود پیشنهادی | وضعیت |
+| --- | --- | --- |
+| **ویندوز x64** | **[دانلود Windows installer][windows-installer]** | نسخه پشتیبانی شده | <!-- Windows -->
+| ویندوز x64 بدون نصب | [دانلود ZIP قابل حمل][windows-portable] | نسخه پشتیبانی شده | <!-- Windows -->
+| لینوکس x86-64 | [دانلود پیش نمایش لینوکس][linux-preview] | پیش نمایش تست اولیه | <!-- Linux Linux -->
+| macOS اپل سیلیکون | [دانلود پیش نمایش سیلیکون اپل][mac-arm-preview] | پیش نمایش تست اولیه |
+| macOS Intel | [دانلود پیش نمایش Intel Mac][mac-intel-preview] | پیش نمایش تست اولیه |
 
-هر دو بسته شامل محیط اجرایی (runtime) برنامه هستند. کاربران نهایی نیازی به نصب Python، Node.js یا
-وابستگی ها نسخه پایدار از ویندوز 10 و ویندوز 11 روی سخت افزار x64 پشتیبانی می کند. (Windows) (Windows)
+**بیشتر کاربران ویندوز باید نصب کننده ویندوز را انتخاب کنند.** فقط زمانی که این کار را می کنید از ZIP قابل حمل استفاده کنید <!-- Windows Windows -->
+نمی خواهید MeshMill نصب شود یا اجازه نصب برنامه ها را ندارید.
 
-بسته‌های پیش‌نمایش سیلیکون لینوکس x86-64 و macOS Intel/Apple بدون امضا نیز ممکن است در نسخه‌ها ظاهر شوند. (Linux)
-آنها بر روی دونده های بومی میزبان GitHub ساخته شده اند و CLI بسته بندی شده و تست دود مش نمونه را پشت سر می گذارند.
-اما هنوز نیاز به تست روی سخت افزار واقعی دارد. [آزمایش پیش‌نمایش لینوکس و macOS] (docs/PLATFORM_TESTING.md) را ببینید (Linux)
-قبل از نصب یا گزارش نتایج
+بسته‌های لینوکس و macOS پیش‌نمایش‌های اولیه بدون امضا هستند. آنها از ساخت های بومی خودکار عبور می کنند و <!-- Linux -->
+تست های دود بسته بندی شده، اما هنوز به تست سخت افزاری واقعی نیاز دارد. را بخوانید
+[یادداشت‌های پیش‌نمایش لینوکس و macOS] (docs/PLATFORM_TESTING.md) قبل از نصب آنها. <!-- Linux -->
 
-بیلدهای انجمن بدون امضا ممکن است یک هشدار Windows SmartScreen یا macOS Gatekeeper را نمایش دهند. رها کنید
-چک سام ها در کنار هر نسخه ذکر شده است.
+Windows SmartScreen یا macOS Gatekeeper ممکن است در مورد بسته‌های بدون امضا هشدار دهند. جمع های چک و
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## شروع سریع
 

@@ -17,23 +17,35 @@ MeshMill বিভিন্ন উৎস থেকে প্রাপ্ত ম�
 
 ## ডাউনলোড
 
-[GitHub রিলিজ](../../releases) থেকে নিচের যেকোনো একটি ফাইল ডাউনলোড করুন:
+আপনার অপারেটিং সিস্টেম চয়ন করুন. প্রতিটি প্যাকেজ স্বয়ংসম্পূর্ণ। Python, Node.js, এবং অন্যান্য
+উন্নয়ন নির্ভরতা প্রয়োজন হয় না।
 
-- `MeshMill-<version>-windows-x64-setup.exe`: প্রতি-ব্যবহারকারী (per-user) ইনস্টলার, যাতে স্টার্ট মেনু এবং ঐচ্ছিক
-  ডেস্কটপ শর্টকাটের সুবিধা রয়েছে।
-- `MeshMill-<version>-windows-x64-portable.zip`: পোর্টেবল অ্যাপ্লিকেশন। সম্পূর্ণ আর্কাইভটি এক্সট্র্যাক্ট বা আনজিপ করুন,
-  তারপর `MeshMill.exe` চালান।
+| সিস্টেম | প্রস্তাবিত ডাউনলোড | স্ট্যাটাস |
+| --- | --- | --- |
+| **উইন্ডোজ x64** | **[উইন্ডোজ ইনস্টলারটি ডাউনলোড করুন][windows-installer]** | সমর্থিত মুক্তি | <!-- Windows Windows -->
+| Windows x64, কোনো ইনস্টলেশন নেই | [পোর্টেবল জিপ ডাউনলোড করুন][windows-portable] | সমর্থিত মুক্তি |
+| লিনাক্স x86-64 | [লিনাক্স প্রিভিউ ডাউনলোড করুন][linux-preview] | প্রাথমিক পরীক্ষার পূর্বরূপ | <!-- Linux Linux -->
+| macOS অ্যাপল সিলিকন | [অ্যাপল সিলিকন প্রিভিউ ডাউনলোড করুন][mac-arm-preview] | প্রাথমিক পরীক্ষার পূর্বরূপ |
+| macOS ইন্টেল | [Intel Mac প্রিভিউ ডাউনলোড করুন][mac-intel-preview] | প্রাথমিক পরীক্ষার পূর্বরূপ |
 
-উভয় প্যাকেজেই অ্যাপ্লিকেশন রানটাইম অন্তর্ভুক্ত রয়েছে। সাধারণ ব্যবহারকারীরা Python, Node.js বা
-নির্ভরতা স্থিতিশীল রিলিজ x64 হার্ডওয়্যারে Windows 10 এবং Windows 11 সমর্থন করে।
+**অধিকাংশ উইন্ডোজ ব্যবহারকারীদের উইন্ডোজ ইনস্টলার বেছে নেওয়া উচিত।** পোর্টেবল জিপ ব্যবহার করুন শুধুমাত্র যখন আপনি করবেন <!-- Windows Windows -->
+MeshMill ইনস্টল করতে চান না বা অ্যাপ্লিকেশন ইনস্টল করার অনুমতি নেই।
 
-স্বাক্ষরবিহীন Linux x86-64 এবং macOS Intel/Apple সিলিকন প্রিভিউ প্যাকেজগুলিও রিলিজে উপস্থিত হতে পারে।
-এগুলি নেটিভ গিটহাব-হোস্টেড রানারদের উপর নির্মিত এবং প্যাকেজড সিএলআই এবং নমুনা-জাল ধোঁয়া পরীক্ষা পাস করে, (GitHub)
-কিন্তু এখনও বাস্তব হার্ডওয়্যার পরীক্ষা প্রয়োজন. দেখুন [Linux এবং macOS পূর্বরূপ পরীক্ষা](../../PLATFORM_TESTING.md)
-ফলাফল ইনস্টল বা রিপোর্ট করার আগে।
+Linux এবং macOS প্যাকেজগুলি স্বাক্ষরবিহীন প্রাথমিক পূর্বরূপ। তারা স্বয়ংক্রিয় দেশীয় বিল্ড এবং পাস
+প্যাকেজড ধোঁয়া পরীক্ষা, কিন্তু এখনও বাস্তব-হার্ডওয়্যার পরীক্ষার প্রয়োজন. পড়ুন
+[Linux এবং macOS প্রিভিউ নোট](../../PLATFORM_TESTING.md) ইনস্টল করার আগে।
 
-স্বাক্ষরবিহীন সম্প্রদায় বিল্ডগুলি একটি উইন্ডোজ স্মার্টস্ক্রিন বা ম্যাকোস গেটকিপার সতর্কতা প্রদর্শন করতে পারে। মুক্তি (Windows) (macOS)
-চেকসাম প্রতিটি রিলিজের পাশে তালিকাভুক্ত করা হয়।
+Windows SmartScreen বা macOS গেটকিপার স্বাক্ষরবিহীন প্যাকেজ সম্পর্কে সতর্ক করতে পারে। চেকসাম এবং
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## দ্রুত শুরু (Quick start)
 

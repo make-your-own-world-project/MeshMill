@@ -17,23 +17,35 @@ MeshMill ради са мрежама добијеним из 3D скенера,
 
 ## Преузимање
 
-Преузмите једну од ових датотека са странице [GitHub издања](../../releases):
+Изаберите свој оперативни систем. Сваки пакет је самосталан. Питхон, Ноде.јс и други <!-- Python Node.js -->
+развојне зависности нису потребне.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: инсталациони пакет за корисника, са опцијама за „Старт” мени и
-  пречице на радној површини.
-- `MeshMill-<version>-windows-x64-portable.zip`: преносива (portable) апликација. Распакујте целу архиву,
-  а затим покрените `MeshMill.exe`.
+| Систем | Препоручено преузимање | Статус |
+| --- | --- | --- |
+| **Виндовс к64** | **[Преузмите Виндовс инсталатер][windows-installer]** | Подржано издање | <!-- Windows Windows -->
+| Виндовс к64, без инсталације | [Преузмите преносиви ЗИП][windows-portable] | Подржано издање | <!-- Windows -->
+| Линук к86-64 | [Преузмите Линук преглед][linux-preview] | Преглед раног тестирања | <!-- Linux Linux -->
+| мацОС Аппле силицон | [Преузмите Аппле силиконски преглед][mac-arm-preview] | Преглед раног тестирања | <!-- macOS -->
+| мацОС Интел | [Преузмите Интел Мац преглед][mac-intel-preview] | Преглед раног тестирања | <!-- macOS -->
 
-Оба пакета садрже неопходно окружење за покретање апликације. Крајњи корисници не инсталирају Python, Node.js или
-зависности. Стабилно издање подржава Виндовс 10 и Виндовс 11 на к64 хардверу. (Windows) (Windows)
+**Већина корисника Виндовс-а би требало да изабере Виндовс инсталатер.** Користите преносиви ЗИП само када то урадите <!-- Windows Windows -->
+не желите MeshMill инсталирати или немате дозволу за инсталирање апликација.
 
-Непотписани Линук к86-64 и мацОС Интел/Аппле пакети за преглед силикона се такође могу појавити у Издањима. (Linux) (macOS)
-Изграђени су на изворним тркачима које хостује ГитХуб и пролазе упаковане ЦЛИ и тестове дима са узорком мреже, (GitHub)
-али још увек је потребно тестирање на стварном хардверу. Погледајте [тестирање прегледа за Линук и мацОС](../../PLATFORM_TESTING.md) (Linux) (macOS)
-пре инсталирања или извештавања о резултатима.
+Линук и мацОС пакети су непотписани рани прегледи. Они пролазе аутоматизоване изворне верзије и <!-- Linux macOS -->
+упаковане тестове дима, али и даље је потребно тестирање стварног хардвера. Прочитајте
+[Белешке о прегледу за Линук и мацОС](../../PLATFORM_TESTING.md) пре него што их инсталирате. <!-- Linux macOS -->
 
-Непотписане верзије заједнице могу приказати упозорење Виндовс СмартСцреен или мацОС Гатекеепер. Релеасе (Windows) (macOS)
-контролне суме су наведене поред сваког издања.
+Виндовс СмартСцреен или мацОС Гатекеепер могу упозорити на непотписане пакете. Контролне суме и <!-- Windows macOS -->
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Брзи почетак
 

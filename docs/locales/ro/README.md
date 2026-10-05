@@ -17,23 +17,35 @@ materialele și crearea de scene nu fac parte din domeniul său de aplicare.
 
 ## Descărcare
 
-Descărcați unul dintre aceste fișiere din secțiunea [Lansări GitHub](../../releases):
+Alegeți sistemul dvs. de operare. Fiecare pachet este autonom. Python, Node.js și altele
+dependențele de dezvoltare nu sunt necesare.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: instalator per utilizator, cu integrare în meniul Start și opțiune
-  pentru comenzi rapide pe desktop.
-- `MeshMill-<version>-windows-x64-portable.zip`: aplicație portabilă. Extrageți întreaga arhivă,
-  apoi rulați `MeshMill.exe`.
+| Sistem | Descărcare recomandată | Stare |
+| --- | --- | --- |
+| **Windows x64** | **[Descărcați programul de instalare Windows][windows-installer]** | Versiune acceptată |
+| Windows x64, fără instalare | [Descărcați fișierul ZIP portabil][windows-portable] | Versiune acceptată |
+| Linux x86-64 | [Descărcați previzualizarea Linux][linux-preview] | Previzualizarea testării timpurii |
+| macOS Apple silicon | [Descărcați previzualizarea Apple silicon][mac-arm-preview] | Previzualizarea testării timpurii |
+| macOS Intel | [Descărcați previzualizarea Intel Mac][mac-intel-preview] | Previzualizarea testării timpurii |
 
-Ambele pachete includ mediul de rulare (runtime) al aplicației. Utilizatorii finali nu instalează dependențele Python, Node.js sau
-dependențe. Versiunea stabilă acceptă Windows 10 și Windows 11 pe hardware x64.
+**Majoritatea utilizatorilor Windows ar trebui să aleagă programul de instalare Windows.** Folosiți ZIP portabil numai atunci când o faceți
+nu doresc instalat MeshMill sau nu au permisiunea de a instala aplicații.
 
-Pachetele de previzualizare Linux x86-64 și macOS Intel/Apple silicon nesemnate pot apărea și în versiuni.
-Acestea sunt construite pe rulare native găzduite de GitHub și trec teste de fum CLI și eșantion-mesh.
-dar mai trebuie testat pe hardware real. Consultați [Testarea de previzualizare Linux și macOS](../../PLATFORM_TESTING.md)
-înainte de instalare sau raportare rezultate.
+Pachetele Linux și macOS sunt previzualizări timpurii nesemnate. Ei trec versiuni native automatizate și
+teste de fum ambalate, dar încă au nevoie de testare hardware reală. Citiți
+[Note de previzualizare Linux și macOS](../../PLATFORM_TESTING.md) înainte de a le instala.
 
-Compilările comunității nesemnate pot afișa un avertisment Windows SmartScreen sau macOS Gatekeeper. Eliberare
-sumele de verificare sunt listate lângă fiecare lansare.
+Windows SmartScreen sau macOS Gatekeeper pot avertiza despre pachetele nesemnate. Sumele de control și
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Pornire rapidă
 

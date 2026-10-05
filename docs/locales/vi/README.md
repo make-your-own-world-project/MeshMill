@@ -17,23 +17,35 @@ tạo vật liệu và dựng cảnh không nằm trong phạm vi chức năng c
 
 ## Tải xuống
 
-Tải xuống một trong các tệp sau từ mục [Phát hành GitHub](../../releases):
+Chọn hệ điều hành của bạn. Mỗi gói đều khép kín. Python, Node.js và các ngôn ngữ khác
+phụ thuộc phát triển là không cần thiết.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: trình cài đặt cho từng người dùng, bao gồm mục trong menu Start và tùy chọn
-  tạo lối tắt trên màn hình nền.
-- `MeshMill-<version>-windows-x64-portable.zip`: ứng dụng dạng portable (chạy trực tiếp không cần cài đặt). Giải nén toàn bộ tệp lưu trữ,
-  sau đó chạy `MeshMill.exe`.
+| Hệ thống | Đề xuất tải xuống | Trạng thái |
+| --- | --- | --- |
+| **Windows x64** | **[Tải xuống trình cài đặt Windows][windows-installer]** | Bản phát hành được hỗ trợ |
+| Windows x64, không cần cài đặt | [Tải xuống ZIP di động][windows-portable] | Bản phát hành được hỗ trợ |
+| Linux x86-64 | [Tải xuống bản xem trước Linux][linux-preview] | Xem trước thử nghiệm sớm |
+| macOS Apple silicon | [Tải xuống bản xem trước silicon của Apple][mac-arm-preview] | Xem trước thử nghiệm sớm |
+| macOS Intel | [Tải xuống bản xem trước Intel Mac][mac-intel-preview] | Xem trước thử nghiệm sớm |
 
-Cả hai gói đều đã bao gồm môi trường thực thi (runtime) cần thiết cho ứng dụng. Người dùng cuối không cần cài đặt Python, Node.js hoặc
-sự phụ thuộc. Bản phát hành ổn định hỗ trợ Windows 10 và Windows 11 trên phần cứng x64.
+**Hầu hết người dùng Windows nên chọn trình cài đặt Windows.** Chỉ sử dụng ZIP di động khi bạn chọn
+không muốn cài đặt hoặc không có quyền cài đặt ứng dụng. <!-- MeshMill -->
 
-Các gói xem trước silicon Intel/Apple chưa được ký tên của Linux x86-64 và macOS cũng có thể xuất hiện trong Bản phát hành.
-Chúng được xây dựng trên các trình chạy được lưu trữ trên GitHub và vượt qua các thử nghiệm CLI đóng gói và khói lưới mẫu,
-nhưng vẫn cần thử nghiệm trên phần cứng thực sự. Xem [thử nghiệm xem trước Linux và macOS](../../PLATFORM_TESTING.md)
-trước khi cài đặt hoặc báo cáo kết quả.
+Các gói Linux và macOS là các bản xem trước sớm chưa được ký. Họ vượt qua các bản dựng gốc tự động và
+thử nghiệm khói đóng gói, nhưng vẫn cần thử nghiệm phần cứng thực. Đọc
+[Ghi chú xem trước Linux và macOS](../../PLATFORM_TESTING.md) trước khi cài đặt chúng.
 
-Các bản dựng cộng đồng chưa được ký có thể hiển thị cảnh báo Windows SmartScreen hoặc macOS Gatekeeper. Phát hành
-tổng kiểm tra được liệt kê bên cạnh mỗi bản phát hành.
+Windows SmartScreen hoặc macOS Gatekeeper có thể cảnh báo về các gói chưa được ký. Tổng kiểm tra và
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Hướng dẫn nhanh
 

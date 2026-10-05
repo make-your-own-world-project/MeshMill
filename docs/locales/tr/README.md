@@ -17,23 +17,35 @@ malzeme ve sahne oluşturma işlemleri kapsamı dışındadır.
 
 ## İndir
 
-[GitHub Sürümleri](../../releases) sayfasından şu dosyalardan birini indirin:
+İşletim sisteminizi seçin. Her paket kendi kendine yetmektedir. Python, Node.js ve diğerleri
+geliştirme bağımlılıkları gerekli değildir.
 
-- `MeshMill-<version>-windows-x64-setup.exe`: Başlat menüsü ve isteğe bağlı
-  masaüstü kısayolları içeren, kullanıcıya özel yükleyici.
-- `MeshMill-<version>-windows-x64-portable.zip`: Taşınabilir uygulama. Arşivin tamamını çıkartın,
-  ardından `MeshMill.exe`'yi çalıştırın.
+| Sistem | Önerilen indirme | Durum |
+| --- | --- | --- |
+| **Windows x64** | **[Windows yükleyicisini indirin][windows-installer]** | Desteklenen sürüm |
+| Windows x64, kurulum yok | [Taşınabilir ZIP dosyasını indirin][windows-portable] | Desteklenen sürüm |
+| Linux x86-64 | [Linux önizlemesini indirin][linux-preview] | Erken test önizlemesi |
+| macOS Apple silikon | [Apple silikon önizlemesini indirin][mac-arm-preview] | Erken test önizlemesi |
+| macOS Intel | [Intel Mac önizlemesini indirin][mac-intel-preview] | Erken test önizlemesi |
 
-Her iki paket de uygulama çalışma zamanını (runtime) içerir. Son kullanıcılar Python, Node.js veya
-bağımlılıklar. Kararlı sürüm, x64 donanımında Windows 10 ve Windows 11'i destekler.
+**Çoğu Windows kullanıcısı Windows yükleyicisini seçmelidir.** Taşınabilir ZIP'i yalnızca aşağıdakileri yaptığınızda kullanın:
+MeshMill kurulmasını istemiyorsanız veya uygulama yükleme izniniz yoksa.
 
-İmzasız Linux x86-64 ve macOS Intel/Apple silikon önizleme paketleri de Sürümlerde görünebilir.
-Yerel GitHub tarafından barındırılan çalıştırıcılar üzerine kuruludurlar ve paketlenmiş CLI ve örnek ağ duman testlerini geçerler.
-ancak yine de gerçek donanım üzerinde test yapılması gerekiyor. Bkz. [Linux ve macOS önizleme testi](../../PLATFORM_TESTING.md)
-Sonuçları yüklemeden veya raporlamadan önce.
+Linux ve macOS paketleri imzasız erken önizlemelerdir. Otomatik yerel derlemeleri geçerler ve
+paketlenmiş duman testleri, ancak yine de gerçek donanım testlerine ihtiyaç var. Okuyun
+Yüklemeden önce [Linux ve macOS önizleme notları](../../PLATFORM_TESTING.md).
 
-İmzasız topluluk yapıları Windows SmartScreen veya macOS Gatekeeper uyarısı görüntüleyebilir. Sürüm
-sağlama toplamları her sürümün yanında listelenir.
+Windows SmartScreen veya macOS Gatekeeper imzasız paketler hakkında uyarı verebilir. Sağlama toplamları ve
+optional [sample mesh][sample-mesh] are available with the releases. [Browse all releases and
+checksums][all-releases] only if you need an older version or want to verify a download.
+
+[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-setup.exe
+[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-0.1.1-windows-x64-portable.zip
+[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
+[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
+[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
+[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.1/MeshMill-sample-scan-original.stl
+[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
 
 ## Hızlı başlangıç
 
