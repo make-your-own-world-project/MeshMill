@@ -21,9 +21,9 @@ jobs:
     name: Linux x86-64
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -75,7 +75,7 @@ jobs:
           tar -C dist -czf "release/MeshMill-${{ inputs.version }}-linux-x86_64.tar.gz" MeshMill
           sha256sum release/* > release/SHA256SUMS-linux-x86_64.txt
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: MeshMill-${{ inputs.version }}-linux-x86_64
           path: release/*
@@ -93,9 +93,9 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -138,7 +138,7 @@ jobs:
             "release/MeshMill-${{ inputs.version }}-macos-${{ matrix.arch }}.zip"
           shasum -a 256 release/* > "release/SHA256SUMS-macos-${{ matrix.arch }}.txt"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: MeshMill-${{ inputs.version }}-macos-${{ matrix.arch }}
           path: release/*
@@ -150,7 +150,7 @@ jobs:
     needs: [linux-x64, macos]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: MeshMill-${{ inputs.version }}-*
           path: release
