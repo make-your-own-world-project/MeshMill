@@ -115,6 +115,8 @@ cases = [
         Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier,
         "zoom-up",
     ),
+    (Qt.Key.Key_Plus, Qt.KeyboardModifier.ShiftModifier, "zoom-up"),
+    (Qt.Key.Key_Minus, Qt.KeyboardModifier.NoModifier, "zoom-down"),
     (
         Qt.Key.Key_Left,
         Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier,

@@ -6,18 +6,18 @@ work-unit boundary that rendering and optional GPU compute backends can share.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from hashlib import sha256
 import json
 import os
-from pathlib import Path
 import shutil
 import struct
 import threading
-from typing import Callable
+from collections.abc import Callable
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import asdict, dataclass
+from hashlib import sha256
+from pathlib import Path
 
 import numpy as np
-
 
 INDEX_VERSION = 1
 STL_RECORD_BYTES = 50
@@ -125,6 +125,154 @@ def _bounds(records: np.memmap, block_triangles: int, cancel_event, progress_cal
     return low, high
 
 
+def _analysis_ranges(total: int, block_triangles: int) -> list[tuple[int, int]]:
+    return [
+        (start, min(total, start + block_triangles))
+        for start in range(0, total, block_triangles)
+    ]
+
+
+def _worker_bounds(source: str, triangle_count: int, start: int, stop: int):
+    records = np.memmap(
+        source,
+        dtype=TRIANGLE_RECORD_DTYPE,
+        mode="r",
+        offset=STL_HEADER_BYTES,
+        shape=(triangle_count,),
+    )
+    vertices = records[start:stop]["vertices"]
+    return start, stop, vertices.min(axis=(0, 1)), vertices.max(axis=(0, 1))
+
+
+def _worker_tile_counts(
+    source: str,
+    triangle_count: int,
+    start: int,
+    stop: int,
+    low: np.ndarray,
+    extent: np.ndarray,
+    grid: int,
+):
+    records = np.memmap(
+        source,
+        dtype=TRIANGLE_RECORD_DTYPE,
+        mode="r",
+        offset=STL_HEADER_BYTES,
+        shape=(triangle_count,),
+    )
+    centroids = records[start:stop]["vertices"].mean(axis=1, dtype=np.float64)
+    cells = np.floor((centroids - low) / extent * grid).astype(np.int64)
+    np.clip(cells, 0, grid - 1, out=cells)
+    codes, counts = np.unique(
+        morton3(cells[:, 0], cells[:, 1], cells[:, 2]), return_counts=True
+    )
+    return start, stop, tuple(zip(codes.tolist(), counts.tolist()))
+
+
+def _parallel_bounds(
+    executor: ProcessPoolExecutor,
+    source: Path,
+    triangle_count: int,
+    ranges: list[tuple[int, int]],
+    cancel_event,
+    progress_callback,
+):
+    futures = [
+        executor.submit(_worker_bounds, os.fspath(source), triangle_count, start, stop)
+        for start, stop in ranges
+    ]
+    low = np.full(3, np.inf, dtype=np.float64)
+    high = np.full(3, -np.inf, dtype=np.float64)
+    done = 0
+    for future in as_completed(futures):
+        _cancelled(cancel_event)
+        start, stop, chunk_low, chunk_high = future.result()
+        low = np.minimum(low, chunk_low)
+        high = np.maximum(high, chunk_high)
+        done += stop - start
+        _progress(progress_callback, "bounds", done, triangle_count)
+    if not np.all(np.isfinite(low)) or np.any(high < low):
+        raise ValueError("The STL contains invalid coordinate bounds.")
+    return low, high
+
+
+def _parallel_tile_counts(
+    executor: ProcessPoolExecutor,
+    source: Path,
+    triangle_count: int,
+    ranges: list[tuple[int, int]],
+    low: np.ndarray,
+    extent: np.ndarray,
+    grid: int,
+    cancel_event,
+    progress_callback,
+) -> dict[int, int]:
+    futures = [
+        executor.submit(
+            _worker_tile_counts,
+            os.fspath(source),
+            triangle_count,
+            start,
+            stop,
+            low,
+            extent,
+            grid,
+        )
+        for start, stop in ranges
+    ]
+    merged: dict[int, int] = {}
+    done = 0
+    for future in as_completed(futures):
+        _cancelled(cancel_event)
+        start, stop, result = future.result()
+        for code, count in result:
+            merged[int(code)] = merged.get(int(code), 0) + int(count)
+        done += stop - start
+        _progress(progress_callback, "planning", done, triangle_count)
+    return merged
+
+
+def _parallel_plan_adaptive_tiles(
+    executor: ProcessPoolExecutor,
+    source: Path,
+    triangle_count: int,
+    ranges: list[tuple[int, int]],
+    low: np.ndarray,
+    extent: np.ndarray,
+    target: int,
+    cancel_event,
+    progress_callback,
+) -> tuple[int, dict[tuple[int, int], int]]:
+    if triangle_count <= target:
+        return 0, {(0, 0): triangle_count}
+    leaves: dict[tuple[int, int], int] = {}
+    split_parents = {0}
+    for level in range(1, 22):
+        counts = _parallel_tile_counts(
+            executor,
+            source,
+            triangle_count,
+            ranges,
+            low,
+            extent,
+            1 << level,
+            cancel_event,
+            progress_callback,
+        )
+        next_split: set[int] = set()
+        for code, count in counts.items():
+            if code >> 3 not in split_parents:
+                continue
+            if count > target:
+                next_split.add(code)
+            else:
+                leaves[(level, code)] = count
+        if not next_split:
+            return level, leaves
+        split_parents = next_split
+    raise ValueError("The mesh cannot be partitioned within the configured tile target.")
+
+
 def _tile_counts(
     records: np.memmap,
     low: np.ndarray,
@@ -219,6 +367,7 @@ def build_index(
     *,
     target_triangles_per_tile: int = 262_144,
     block_triangles: int = 262_144,
+    analysis_workers: int | None = None,
     cancel_event: threading.Event | None = None,
     progress_callback: Callable[[str, int, int], None] | None = None,
 ) -> IndexManifest:
@@ -235,17 +384,45 @@ def build_index(
         source, dtype=TRIANGLE_RECORD_DTYPE, mode="r", offset=STL_HEADER_BYTES,
         shape=(triangle_count,),
     )
-    low, high = _bounds(records, block_triangles, cancel_event, progress_callback)
-    extent = np.maximum(high - low, np.finfo(np.float64).eps)
-    max_depth, planned_counts = _plan_adaptive_tiles(
-        records,
-        low,
-        extent,
-        target_triangles_per_tile,
-        block_triangles,
-        cancel_event,
-        progress_callback,
-    )
+    block_count = max(1, (triangle_count + block_triangles - 1) // block_triangles)
+    if analysis_workers is None:
+        analysis_workers = min(8, max(1, (os.cpu_count() or 2) // 2), block_count)
+    analysis_workers = max(1, min(int(analysis_workers), block_count))
+    if analysis_workers > 1 and block_count > 1:
+        ranges = _analysis_ranges(triangle_count, block_triangles)
+        with ProcessPoolExecutor(max_workers=analysis_workers) as executor:
+            low, high = _parallel_bounds(
+                executor,
+                source,
+                triangle_count,
+                ranges,
+                cancel_event,
+                progress_callback,
+            )
+            extent = np.maximum(high - low, np.finfo(np.float64).eps)
+            max_depth, planned_counts = _parallel_plan_adaptive_tiles(
+                executor,
+                source,
+                triangle_count,
+                ranges,
+                low,
+                extent,
+                target_triangles_per_tile,
+                cancel_event,
+                progress_callback,
+            )
+    else:
+        low, high = _bounds(records, block_triangles, cancel_event, progress_callback)
+        extent = np.maximum(high - low, np.finfo(np.float64).eps)
+        max_depth, planned_counts = _plan_adaptive_tiles(
+            records,
+            low,
+            extent,
+            target_triangles_per_tile,
+            block_triangles,
+            cancel_event,
+            progress_callback,
+        )
 
     staging = index_directory.with_name(index_directory.name + ".building")
     staging.mkdir(parents=True, exist_ok=True)

@@ -2,33 +2,41 @@ from __future__ import annotations
 
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 MeshMill contributors
-
 import argparse
 import ctypes
+import hashlib
 import json
 import math
 import multiprocessing
 import os
+import platform
+import re
 import struct
+import subprocess
 import sys
+import tempfile
 import threading
 import time
 import traceback
 import warnings
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
-import numpy as np
 import fast_simplification
-
+import numpy as np
+import vtkmodules.vtkInteractionStyle
+import vtkmodules.vtkRenderingOpenGL2  # noqa: F401
 from PySide6.QtCore import (
     QEvent,
     QKeyCombination,
+    QLocale,
     QObject,
     QPoint,
     QPointF,
-    QLocale,
     QRect,
     QSettings,
     QSignalBlocker,
@@ -46,6 +54,7 @@ from PySide6.QtGui import (
     QKeySequence,
     QPainter,
     QPainterPath,
+    QPalette,
     QPen,
     QPixmap,
     QPolygonF,
@@ -62,35 +71,36 @@ from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
     QHBoxLayout,
+    QKeySequenceEdit,
     QLabel,
+    QLayout,
     QMainWindow,
     QMessageBox,
-    QPushButton,
     QProgressBar,
-    QKeySequenceEdit,
+    QPushButton,
     QScrollArea,
+    QSizePolicy,
     QSlider,
     QSpinBox,
     QToolTip,
     QVBoxLayout,
     QWidget,
 )
-
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.util.numpy_support import numpy_to_vtk, numpy_to_vtkIdTypeArray, vtk_to_numpy
 from vtkmodules.vtkCommonCore import vtkPoints
-from vtkmodules.vtkCommonDataModel import vtkCellArray, vtkPolyData
+from vtkmodules.vtkCommonDataModel import vtkCellArray, vtkPolyData, vtkStaticPointLocator
 from vtkmodules.vtkFiltersCore import (
     vtkDecimatePro,
     vtkPolyDataNormals,
     vtkQuadricDecimation,
     vtkTriangleFilter,
 )
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
 from vtkmodules.vtkIOGeometry import vtkSTLReader, vtkSTLWriter
 from vtkmodules.vtkRenderingCore import (
     vtkActor,
     vtkActor2D,
-    vtkCamera,
     vtkCoordinate,
     vtkHardwarePicker,
     vtkPolyDataMapper,
@@ -98,33 +108,44 @@ from vtkmodules.vtkRenderingCore import (
     vtkRenderer,
     vtkWindowToImageFilter,
 )
-from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
-import vtkmodules.vtkInteractionStyle  # noqa: F401
-import vtkmodules.vtkRenderingOpenGL2  # noqa: F401
 
+from depth_adaptive_qem import (
+    cuda_devices,
+    first_time_gpu_setup_needed,
+    gpu_backend_supported,
+    simplify_depth_adaptive_qem,
+)
+from gpu_resident import inspect_resident_vertices
 from out_of_core import (
     build_index,
     default_index_directory,
     index_matches,
     load_manifest,
 )
-from gpu_resident import inspect_resident_vertices
-
 
 # Conservative allowance for source arrays, VTK objects, render data, and temporary work buffers.
 ESTIMATED_BYTES_PER_TRIANGLE = 220
 
 from localization import DEFAULT_LOCALE, locale_manager, tr
-
+from meshmill_version import APP_VERSION
 
 APP_NAME = "MeshMill"
-APP_VERSION = "0.1.2"
-REPOSITORY_URL = "https://github.com/make-your-own-world-project/MeshMill"
+REPOSITORY_URL = "https://github.com/make-your-own-world/MeshMill"
+BUG_REPORT_URL = f"{REPOSITORY_URL}/issues/new?labels=bug&title=%5BBug%5D+"
+FEATURE_REQUEST_URL = f"{REPOSITORY_URL}/issues/new?labels=enhancement&title=%5BFeature%5D+"
+LATEST_RELEASE_API_URL = "https://api.github.com/repos/make-your-own-world/MeshMill/releases/latest"
 SUPPORT_URL = "https://buymeacoffee.com/tednv"
 PRESETS = {"light": 50_000, "balanced": 200_000, "detailed": 400_000}
 UNIT_MM = {"mm": 1.0, "cm": 10.0, "m": 1000.0, "in": 25.4, "ft": 304.8}
 SMART_DIVISORS = {"Draft": 160.0, "Balanced": 500.0, "Fine": 800.0}
-ALGORITHMS = ["Fast QEM", "Density balanced", "Shape preserving", "Preserve topology"]
+DEPTH_ADAPTIVE_LABEL = "Depth Adaptive QEM (GPU / Higher Quality)"
+ALGORITHMS = [
+    "Fast QEM",
+    DEPTH_ADAPTIVE_LABEL,
+    "Density balanced",
+    "Shape preserving",
+    "Preserve topology",
+]
 DISPLAY_MODES = ["Shaded", "Density", "Wireframe", "Vertices"]
 STANDARD_VIEWS = {
     "top": ((0, 0, 1), (0, 1, 0)),
@@ -178,6 +199,8 @@ SHORTCUT_DEFINITIONS = {
     "pan_down": ("Pan down", "Ctrl+Down"),
     "zoom_in": ("Zoom in", "Ctrl+Shift+Up"),
     "zoom_out": ("Zoom out", "Ctrl+Shift+Down"),
+    "zoom_in_alt": ("Zoom in (alternate)", "+"),
+    "zoom_out_alt": ("Zoom out (alternate)", "-"),
     "roll_counterclockwise": ("Roll counterclockwise", "Ctrl+Shift+Left"),
     "roll_clockwise": ("Roll clockwise", "Ctrl+Shift+Right"),
 }
@@ -187,6 +210,8 @@ CLI_ALGORITHMS = {
     "shape": "Shape preserving",
     "topology": "Preserve topology",
 }
+if gpu_backend_supported():
+    CLI_ALGORITHMS["depth-adaptive"] = DEPTH_ADAPTIVE_LABEL
 warnings.filterwarnings("ignore", message="Call to deprecated method.*", category=DeprecationWarning)
 
 
@@ -252,12 +277,13 @@ QCheckBox::indicator:checked { background: #2563FF; border: 1px solid #2563FF; b
 QProgressBar { border: 1px solid #D8DCE5; border-radius: 5px; background: #ECEAE6;
                text-align: center; min-height: 16px; }
 QProgressBar::chunk { background: #2563FF; border-radius: 4px; }
-QToolTip { background: #0B1B34; color: #F7F5F1; border: 1px solid #2563FF; padding: 5px; }
+QToolTip { background: #FBFAF8; color: #0B1B34; border: 1px solid #2563FF;
+           border-radius: 5px; padding: 7px; }
 """
 
 
 class ResultBridge(QObject):
-    done = Signal(int, object, object, object)
+    done = Signal(int, object, object, object, object)
 
 
 class LoadBridge(QObject):
@@ -270,6 +296,11 @@ class EditBridge(QObject):
 
 class DensityBridge(QObject):
     done = Signal(int, object, object, object)
+
+
+class UpdateBridge(QObject):
+    done = Signal(object, object, object)
+    install_done = Signal(object, object)
 
 
 class OperationCancelled(Exception):
@@ -435,7 +466,7 @@ class ViewButton(QPushButton):
         super().__init__(*args, **kwargs)
         self._orientation_press = False
 
-    def mousePressEvent(self, event) -> None:  # noqa: N802
+    def mousePressEvent(self, event) -> None:
         owner = self.window()
         control_held = bool(
             (event.modifiers() | QApplication.keyboardModifiers())
@@ -453,13 +484,24 @@ class ViewButton(QPushButton):
         self._orientation_press = False
         super().mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event) -> None:  # noqa: N802
+    def mouseReleaseEvent(self, event) -> None:
         if event.button() == Qt.MouseButton.LeftButton and self._orientation_press:
             self._orientation_press = False
             self.setDown(False)
             event.accept()
             return
         super().mouseReleaseEvent(event)
+
+
+class VersionButton(QPushButton):
+    rightClicked = Signal()
+
+    def mousePressEvent(self, event) -> None:
+        if event.button() == Qt.MouseButton.RightButton:
+            self.rightClicked.emit()
+            event.accept()
+            return
+        super().mousePressEvent(event)
 
 
 class DraggableOverlayFrame(QFrame):
@@ -471,7 +513,7 @@ class DraggableOverlayFrame(QFrame):
         super().__init__(parent)
         self._drag_global_offset: QPoint | None = None
 
-    def mousePressEvent(self, event) -> None:  # noqa: N802
+    def mousePressEvent(self, event) -> None:
         if event.button() == Qt.MouseButton.LeftButton:
             self._drag_global_offset = event.globalPosition().toPoint() - self.pos()
             self.raise_()
@@ -479,7 +521,7 @@ class DraggableOverlayFrame(QFrame):
             return
         super().mousePressEvent(event)
 
-    def mouseMoveEvent(self, event) -> None:  # noqa: N802
+    def mouseMoveEvent(self, event) -> None:
         if self._drag_global_offset is not None and bool(event.buttons() & Qt.MouseButton.LeftButton):
             parent = self.parentWidget()
             if parent is not None:
@@ -492,7 +534,7 @@ class DraggableOverlayFrame(QFrame):
             return
         super().mouseMoveEvent(event)
 
-    def mouseReleaseEvent(self, event) -> None:  # noqa: N802
+    def mouseReleaseEvent(self, event) -> None:
         if event.button() == Qt.MouseButton.LeftButton and self._drag_global_offset is not None:
             self._drag_global_offset = None
             event.accept()
@@ -526,7 +568,7 @@ class OrientationIndicator(QWidget):
         self._orientation = tuple(float(value) for value in orientation)
         self.update()
 
-    def paintEvent(self, event) -> None:  # noqa: N802
+    def paintEvent(self, event) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setPen(QPen(QColor("#425A78"), 1.0))
@@ -606,7 +648,7 @@ class ViewportScaleBar(QWidget):
         self._pixels = clamped_pixels
         self.update()
 
-    def paintEvent(self, event) -> None:  # noqa: N802
+    def paintEvent(self, event) -> None:
         painter = QPainter(self)
         painter.fillRect(self.rect(), QColor("#0B1B34"))
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -628,7 +670,7 @@ class ViewportScaleBar(QWidget):
 class ArrowComboBox(QComboBox):
     """Combo box with a theme-independent dropdown chevron."""
 
-    def paintEvent(self, event) -> None:  # noqa: N802
+    def paintEvent(self, event) -> None:
         super().paintEvent(event)
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
@@ -647,6 +689,40 @@ class ArrowComboBox(QComboBox):
         )
 
 
+class TooltipPopup(QLabel):
+    """Application-owned tooltip so Windows cannot replace the theme colors."""
+
+    def __init__(self) -> None:
+        super().__init__(None, Qt.WindowType.ToolTip)
+        self.setObjectName("meshmillTooltip")
+        self.setWordWrap(True)
+        self.setMaximumWidth(520)
+        self.setMargin(9)
+        self.setStyleSheet(
+            "QLabel#meshmillTooltip {"
+            "background-color: #FFFFFF; color: #0B1B34; "
+            "border: 1px solid #2563FF; border-radius: 5px; "
+            "font-size: 12px; font-weight: 500;"
+            "}"
+        )
+
+    def show_help(self, text: str, position: QPoint) -> None:
+        self.setText(text)
+        self.adjustSize()
+        screen = QApplication.screenAt(position) or QApplication.primaryScreen()
+        target = position + QPoint(12, 18)
+        if screen is not None:
+            available = screen.availableGeometry()
+            x = min(max(target.x(), available.left()), available.right() - self.width() + 1)
+            y = min(max(target.y(), available.top()), available.bottom() - self.height() + 1)
+            if y < position.y() < y + self.height():
+                y = max(available.top(), position.y() - self.height() - 12)
+            target = QPoint(x, y)
+        self.move(target)
+        self.show()
+        self.raise_()
+
+
 class DeferredTooltipFilter(QObject):
     """Quiet, two-second, movement-sensitive help without changing the cursor."""
 
@@ -658,8 +734,9 @@ class DeferredTooltipFilter(QObject):
         self.timer.setSingleShot(True)
         self.timer.setInterval(2000)
         self.timer.timeout.connect(self._show)
+        self.popup = TooltipPopup()
 
-    def eventFilter(self, watched, event) -> bool:  # noqa: N802
+    def eventFilter(self, watched, event) -> bool:
         if not isinstance(watched, QWidget) or not watched.toolTip():
             return False
         kind = event.type()
@@ -668,14 +745,13 @@ class DeferredTooltipFilter(QObject):
         if kind == QEvent.Type.Enter:
             self._arm(watched, QCursor.pos())
         elif kind == QEvent.Type.MouseMove:
-            QToolTip.hideText()
+            self.popup.hide()
             position = event.globalPosition().toPoint() if hasattr(event, "globalPosition") else QCursor.pos()
             self._arm(watched, position)
-        elif kind in (QEvent.Type.Leave, QEvent.Type.Hide, QEvent.Type.FocusOut):
-            if watched is self.widget:
-                self.timer.stop()
-                QToolTip.hideText()
-                self.widget = None
+        elif kind in (QEvent.Type.Leave, QEvent.Type.Hide, QEvent.Type.FocusOut) and watched is self.widget:
+            self.timer.stop()
+            self.popup.hide()
+            self.widget = None
         return False
 
     def _arm(self, widget: QWidget, position: QPoint) -> None:
@@ -685,7 +761,7 @@ class DeferredTooltipFilter(QObject):
 
     def _show(self) -> None:
         if self.widget is not None and self.widget.underMouse():
-            QToolTip.showText(self.position + QPoint(12, 18), self.widget.toolTip(), self.widget)
+            self.popup.show_help(self.widget.toolTip(), self.position)
 
 
 class CropPolygonOverlay(QWidget):
@@ -701,7 +777,7 @@ class CropPolygonOverlay(QWidget):
         self.show()
         self.raise_()
 
-    def paintEvent(self, _event) -> None:  # noqa: N802
+    def paintEvent(self, _event) -> None:
         painter = QPainter(self)
         painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
         painter.fillRect(self.rect(), QColor(0, 0, 0, 0))
@@ -752,7 +828,7 @@ class GeometryActivityGraph(QWidget):
         )
         self.update()
 
-    def paintEvent(self, _event) -> None:  # noqa: N802
+    def paintEvent(self, _event) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
         painter.fillRect(self.rect(), QColor("#FFFFFF"))
@@ -816,6 +892,114 @@ def fmt_bytes(value: int) -> str:
     return f"{value} bytes"
 
 
+def fmt_elapsed(seconds: float) -> str:
+    total_seconds = max(0, round(seconds))
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours:
+        return f"{hours:d}:{minutes:02d}:{seconds:02d}"
+    return f"{minutes:d}:{seconds:02d}"
+
+
+def version_key(value: str) -> tuple[int, ...]:
+    numbers = tuple(int(part) for part in re.findall(r"\d+", value))
+    return numbers or (0,)
+
+
+def fetch_latest_release() -> dict:
+    request = Request(
+        LATEST_RELEASE_API_URL,
+        headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": f"MeshMill/{APP_VERSION}",
+        },
+    )
+    with urlopen(request, timeout=8) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    version = str(payload.get("tag_name", "")).strip().lstrip("vV")
+    release_url = str(payload.get("html_url", "")).strip()
+    if not version or not release_url:
+        raise ValueError("The latest release did not include a version and download page.")
+    return {
+        "version": version,
+        "release_url": release_url,
+        "assets": [
+            {
+                "name": str(asset.get("name", "")),
+                "url": str(asset.get("browser_download_url", "")),
+                "size": int(asset.get("size", 0) or 0),
+                "digest": str(asset.get("digest", "") or ""),
+            }
+            for asset in payload.get("assets", [])
+            if isinstance(asset, dict)
+        ],
+    }
+
+
+def update_asset_for_current_platform(release: dict) -> dict | None:
+    """Return an installable asset, never a portable archive."""
+    version = re.escape(str(release.get("version", "")))
+    system = platform.system().lower()
+    machine = platform.machine().lower()
+    if system == "windows" and machine in {"amd64", "x86_64", "x64"}:
+        suffixes = ["windows-x64-setup.exe"]
+    elif system == "darwin" and machine in {"arm64", "aarch64"}:
+        suffixes = ["macos-arm64.pkg", "macos-universal.pkg"]
+    elif system == "darwin" and machine in {"amd64", "x86_64", "x64"}:
+        suffixes = ["macos-x64.pkg", "macos-universal.pkg"]
+    elif system == "linux" and machine in {"amd64", "x86_64", "x64"}:
+        suffixes = ["linux-x86_64.AppImage", "linux-x64.AppImage"]
+    else:
+        return None
+    assets = release.get("assets", [])
+    for suffix in suffixes:
+        pattern = rf"^MeshMill-{version}-{re.escape(suffix)}$"
+        for asset in assets:
+            if re.match(pattern, str(asset.get("name", "")), re.IGNORECASE):
+                return asset
+    return None
+
+
+def download_verified_update(
+    asset: dict,
+    destination: Path,
+    progress_callback=None,
+    cancel_event: threading.Event | None = None,
+) -> Path:
+    url = str(asset.get("url", ""))
+    digest = str(asset.get("digest", ""))
+    if not url.startswith("https://github.com/"):
+        raise ValueError("The update asset is not hosted by the MeshMill GitHub release.")
+    if not digest.lower().startswith("sha256:"):
+        raise ValueError("The release asset does not include a SHA-256 digest.")
+    expected = digest.split(":", 1)[1].strip().lower()
+    if not re.fullmatch(r"[0-9a-f]{64}", expected):
+        raise ValueError("The release asset has an invalid SHA-256 digest.")
+    request = Request(url, headers={"User-Agent": f"MeshMill/{APP_VERSION}"})
+    hasher = hashlib.sha256()
+    temporary = destination.with_suffix(destination.suffix + ".part")
+    try:
+        with urlopen(request, timeout=30) as response, temporary.open("wb") as output:
+            headers = getattr(response, "headers", None)
+            content_length = headers.get("Content-Length", 0) if headers is not None else 0
+            total = int(content_length or asset.get("size", 0) or 0)
+            received = 0
+            while chunk := response.read(1024 * 1024):
+                if cancel_event is not None and cancel_event.is_set():
+                    raise OperationCancelled("Download cancelled")
+                output.write(chunk)
+                hasher.update(chunk)
+                received += len(chunk)
+                if progress_callback is not None:
+                    progress_callback(received, total)
+        if hasher.hexdigest().lower() != expected:
+            raise ValueError("The downloaded update did not match its release digest.")
+        temporary.replace(destination)
+        return destination
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def binary_stl_size(triangle_count: int) -> int:
     return 84 + 50 * triangle_count
 
@@ -840,11 +1024,13 @@ def polydata_arrays(poly: vtkPolyData) -> tuple[np.ndarray, np.ndarray]:
 def arrays_polydata(points: np.ndarray, faces: np.ndarray) -> vtkPolyData:
     vtk_points = vtkPoints()
     vtk_points.SetData(numpy_to_vtk(np.ascontiguousarray(points), deep=True))
-    packed = np.empty((len(faces), 4), dtype=np.int64)
-    packed[:, 0] = 3
-    packed[:, 1:] = faces
+    offsets = np.arange(0, 3 * len(faces) + 1, 3, dtype=np.int64)
+    connectivity = np.ascontiguousarray(faces, dtype=np.int64).ravel()
     cells = vtkCellArray()
-    cells.SetCells(len(faces), numpy_to_vtkIdTypeArray(packed.ravel(), deep=True))
+    cells.SetData(
+        numpy_to_vtkIdTypeArray(offsets, deep=True),
+        numpy_to_vtkIdTypeArray(connectivity, deep=True),
+    )
     poly = vtkPolyData()
     poly.SetPoints(vtk_points)
     poly.SetPolys(cells)
@@ -898,6 +1084,7 @@ def load_stl_smart(
     memory_budget_bytes: int,
     overview_triangle_limit: int,
     cancel_event: threading.Event | None = None,
+    analysis_workers: int | None = None,
 ) -> tuple[vtkPolyData, np.ndarray, np.ndarray, dict]:
     triangle_count = binary_stl_triangle_count(path)
     estimated_memory = (
@@ -929,6 +1116,7 @@ def load_stl_smart(
                 index_directory,
                 target_triangles_per_tile=max(262_144, overview_triangle_limit),
                 cancel_event=cancel_event,
+                analysis_workers=analysis_workers,
             )
         return poly, points, faces, {
             "overview": True,
@@ -971,6 +1159,20 @@ def available_physical_memory() -> int:
         except (AttributeError, OSError, ValueError):
             pass
     return 4 * 1024**3
+
+
+def automatic_overview_triangle_limit(memory_budget_bytes: int, vram_capacity_bytes: int) -> int:
+    """Choose an interactive overview size from current RAM and GPU capacity."""
+    ram_allowance = max(64 * 1024**2, int(memory_budget_bytes * 0.05))
+    vram_allowance = (
+        max(64 * 1024**2, int(vram_capacity_bytes * 0.15))
+        if vram_capacity_bytes > 0
+        else ram_allowance
+    )
+    allowance = min(ram_allowance, vram_allowance)
+    estimated_display_bytes_per_triangle = 220
+    capacity = allowance // estimated_display_bytes_per_triangle
+    return max(100_000, min(4_000_000, int(capacity)))
 
 
 def dedicated_vram_capacity() -> int:
@@ -1080,7 +1282,10 @@ class MeshInteractorStyle(vtkInteractorStyleTrackballCamera):
         self._crop_edit_down = False
         self._crop_right_consumed = False
         self._consume_left_release = False
+        self._left_pan_down = False
+        self._pan_depth: float | None = None
         self._middle_mode: str | None = None
+        self._rotation_center: np.ndarray | None = None
         self._zoom_picker = vtkHardwarePicker()
         self.invert_horizontal = False
         self.invert_vertical = False
@@ -1098,10 +1303,13 @@ class MeshInteractorStyle(vtkInteractorStyleTrackballCamera):
         self.AddObserver("KeyReleaseEvent", self._key_release)
 
     def _left_press(self, _obj, _event) -> None:
-        if self.GetInteractor().GetShiftKey() and not self.GetInteractor().GetControlKey():
-            if self._measurement_callback("click", self.GetInteractor().GetEventPosition()):
-                self._consume_left_release = True
-                return
+        if (
+            self.GetInteractor().GetShiftKey()
+            and not self.GetInteractor().GetControlKey()
+            and self._measurement_callback("click", self.GetInteractor().GetEventPosition())
+        ):
+            self._consume_left_release = True
+            return
         if self.GetInteractor().GetControlKey():
             self._crop_down = True
             self._widget.setCursor(Qt.CursorShape.CrossCursor)
@@ -1111,7 +1319,15 @@ class MeshInteractorStyle(vtkInteractorStyleTrackballCamera):
             self._consume_left_release = True
             return
         else:
-            self.OnLeftButtonDown()
+            self._crop_callback("navigation", None)
+            x, y = self.GetInteractor().GetEventPosition()
+            self.FindPokedRenderer(x, y)
+            if self.GetCurrentRenderer() is None:
+                return
+            self._left_pan_down = True
+            self._widget.setCursor(Qt.CursorShape.SizeAllCursor)
+            self._set_pan_depth_at_cursor()
+            self.StartPan()
 
     def _left_release(self, _obj, _event) -> None:
         if self._consume_left_release:
@@ -1124,18 +1340,29 @@ class MeshInteractorStyle(vtkInteractorStyleTrackballCamera):
             self._crop_down = False
             self._crop_callback("finish", self.GetInteractor().GetEventPosition())
             self._widget.setCursor(Qt.CursorShape.ArrowCursor)
+        elif self._left_pan_down:
+            self._left_pan_down = False
+            self.EndPan()
+            self._pan_depth = None
+            self._widget.setCursor(Qt.CursorShape.ArrowCursor)
         else:
             self.OnLeftButtonUp()
 
     def _middle_press(self, _obj, _event) -> None:
         self._crop_callback("navigation", None)
+        x, y = self.GetInteractor().GetEventPosition()
+        self.FindPokedRenderer(x, y)
+        if self.GetCurrentRenderer() is None:
+            return
         if self.GetInteractor().GetShiftKey():
             self._middle_mode = "pan"
             self._widget.setCursor(Qt.CursorShape.SizeAllCursor)
+            self._set_pan_depth_at_cursor()
             self.StartPan()
         else:
             self._middle_mode = "rotate"
             self._widget.setCursor(Qt.CursorShape.ClosedHandCursor)
+            self._set_rotation_center_at_cursor()
             self.StartRotate()
 
     def _middle_release(self, _obj, _event) -> None:
@@ -1144,6 +1371,8 @@ class MeshInteractorStyle(vtkInteractorStyleTrackballCamera):
         elif self._middle_mode == "rotate":
             self.EndRotate()
         self._middle_mode = None
+        self._rotation_center = None
+        self._pan_depth = None
         self._widget.setCursor(Qt.CursorShape.ArrowCursor)
 
     def _right_press(self, _obj, _event) -> None:
@@ -1177,15 +1406,24 @@ class MeshInteractorStyle(vtkInteractorStyleTrackballCamera):
             interactor = self.GetInteractor()
             if (
                 (self.invert_horizontal or self.invert_vertical)
-                and self._middle_mode in ("rotate", "pan")
+                and (self._middle_mode in ("rotate", "pan") or self._left_pan_down)
             ):
                 current_x, current_y = interactor.GetEventPosition()
                 last_x, last_y = interactor.GetLastEventPosition()
                 mapped_x = 2 * last_x - current_x if self.invert_horizontal else current_x
                 mapped_y = 2 * last_y - current_y if self.invert_vertical else current_y
                 interactor.SetEventPosition(mapped_x, mapped_y)
-                self.OnMouseMove()
+                if self._middle_mode == "rotate":
+                    self._rotate_about_cursor_anchor()
+                elif self._middle_mode == "pan" or self._left_pan_down:
+                    self._pan_at_cursor_depth()
+                else:
+                    self.OnMouseMove()
                 interactor.SetEventPosition(current_x, current_y)
+            elif self._middle_mode == "rotate":
+                self._rotate_about_cursor_anchor()
+            elif self._middle_mode == "pan" or self._left_pan_down:
+                self._pan_at_cursor_depth()
             else:
                 self.OnMouseMove()
             self._measurement_callback("refresh", None)
@@ -1198,6 +1436,124 @@ class MeshInteractorStyle(vtkInteractorStyleTrackballCamera):
         if abs(world[3]) > 1e-12:
             world = world / world[3]
         return world[:3]
+
+    def _set_rotation_center_at_cursor(self) -> None:
+        """Use the visible mesh beneath the pointer as the middle-drag orbit pivot."""
+        interactor = self.GetInteractor()
+        x, y = interactor.GetEventPosition()
+        self.FindPokedRenderer(x, y)
+        renderer = self.GetCurrentRenderer()
+        if renderer is None:
+            return
+        picked = self._zoom_picker.Pick(x, y, 0.0, renderer)
+        anchor = np.asarray(self._zoom_picker.GetPickPosition(), dtype=float) if picked else None
+        if anchor is None or anchor.shape != (3,) or not np.all(np.isfinite(anchor)):
+            bounds = np.asarray(renderer.ComputeVisiblePropBounds(), dtype=float)
+            valid_bounds = (
+                bounds.shape == (6,)
+                and np.all(np.isfinite(bounds))
+                and np.all(bounds[[1, 3, 5]] >= bounds[[0, 2, 4]])
+            )
+            anchor = (
+                (bounds[[0, 2, 4]] + bounds[[1, 3, 5]]) * 0.5
+                if valid_bounds
+                else np.asarray(renderer.GetActiveCamera().GetFocalPoint(), dtype=float)
+            )
+        self._rotation_center = anchor
+        self.SetCenterOfRotation(*anchor)
+
+    def _set_pan_depth_at_cursor(self) -> None:
+        interactor = self.GetInteractor()
+        x, y = interactor.GetEventPosition()
+        renderer = self.GetCurrentRenderer()
+        if renderer is None:
+            self._pan_depth = None
+            return
+        picked = self._zoom_picker.Pick(x, y, 0.0, renderer)
+        anchor = (
+            np.asarray(self._zoom_picker.GetPickPosition(), dtype=float)
+            if picked
+            else np.asarray(renderer.GetActiveCamera().GetFocalPoint(), dtype=float)
+        )
+        renderer.SetWorldPoint(*anchor, 1.0)
+        renderer.WorldToDisplay()
+        depth = float(renderer.GetDisplayPoint()[2])
+        self._pan_depth = depth if np.isfinite(depth) else None
+
+    def _pan_at_cursor_depth(self) -> None:
+        interactor = self.GetInteractor()
+        renderer = self.GetCurrentRenderer()
+        if renderer is None:
+            return
+        depth = self._pan_depth
+        if depth is None:
+            self._set_pan_depth_at_cursor()
+            depth = self._pan_depth
+        if depth is None:
+            return
+        x, y = interactor.GetEventPosition()
+        last_x, last_y = interactor.GetLastEventPosition()
+        previous_world = self._display_to_world(renderer, last_x, last_y, depth)
+        current_world = self._display_to_world(renderer, x, y, depth)
+        motion = previous_world - current_world
+        if not np.all(np.isfinite(motion)):
+            return
+        camera = renderer.GetActiveCamera()
+        camera.SetPosition(*(np.asarray(camera.GetPosition(), dtype=float) + motion))
+        camera.SetFocalPoint(*(np.asarray(camera.GetFocalPoint(), dtype=float) + motion))
+        renderer.ResetCameraClippingRange()
+        interactor.Render()
+
+    @staticmethod
+    def _rotate_vector(vector: np.ndarray, axis: np.ndarray, degrees: float) -> np.ndarray:
+        axis_length = float(np.linalg.norm(axis))
+        if axis_length <= 1e-12:
+            return vector.copy()
+        unit_axis = axis / axis_length
+        radians = np.deg2rad(degrees)
+        return (
+            vector * np.cos(radians)
+            + np.cross(unit_axis, vector) * np.sin(radians)
+            + unit_axis * float(unit_axis @ vector) * (1.0 - np.cos(radians))
+        )
+
+    def _rotate_about_cursor_anchor(self) -> None:
+        interactor = self.GetInteractor()
+        x, y = interactor.GetEventPosition()
+        last_x, last_y = interactor.GetLastEventPosition()
+        self.FindPokedRenderer(x, y)
+        renderer = self.GetCurrentRenderer()
+        anchor = self._rotation_center
+        if renderer is None or anchor is None:
+            return
+        width, height = renderer.GetRenderWindow().GetSize()
+        if width <= 0 or height <= 0:
+            return
+        motion = self.GetMotionFactor()
+        azimuth = (x - last_x) * (-20.0 / width) * motion
+        elevation = (y - last_y) * (-20.0 / height) * motion
+        camera = renderer.GetActiveCamera()
+        position = np.asarray(camera.GetPosition(), dtype=float)
+        focal = np.asarray(camera.GetFocalPoint(), dtype=float)
+        view_up = np.asarray(camera.GetViewUp(), dtype=float)
+
+        position = anchor + self._rotate_vector(position - anchor, view_up, azimuth)
+        focal = anchor + self._rotate_vector(focal - anchor, view_up, azimuth)
+        view_up = self._rotate_vector(view_up, view_up, azimuth)
+
+        direction = focal - position
+        elevation_axis = np.cross(view_up, direction)
+        position = anchor + self._rotate_vector(position - anchor, elevation_axis, elevation)
+        focal = anchor + self._rotate_vector(focal - anchor, elevation_axis, elevation)
+        view_up = self._rotate_vector(view_up, elevation_axis, elevation)
+
+        if np.all(np.isfinite(position)) and np.all(np.isfinite(focal)):
+            camera.SetPosition(*position)
+            camera.SetFocalPoint(*focal)
+            camera.SetViewUp(*view_up)
+            camera.OrthogonalizeViewUp()
+            renderer.ResetCameraClippingRange()
+            interactor.Render()
 
     def _zoom_at_cursor(self, factor: float) -> None:
         interactor = self.GetInteractor()
@@ -1339,6 +1695,80 @@ def mesh_surface_area(points: np.ndarray, faces: np.ndarray) -> float:
     return float((0.5 * np.linalg.norm(np.cross(b - a, c - a), axis=1)).sum())
 
 
+def mesh_quality_metrics(
+    source_points: np.ndarray,
+    source_faces: np.ndarray,
+    output_points: np.ndarray,
+    output_faces: np.ndarray,
+    sample_count: int = 20_000,
+) -> dict[str, float]:
+    """Calculate compact, deterministic quality indicators for the Stats panel."""
+    if not len(source_points) or not len(output_points):
+        return {}
+    rng = np.random.default_rng(20261005)
+    sample_size = min(sample_count, len(source_points))
+    samples = source_points[rng.choice(len(source_points), sample_size, replace=False)]
+    output_poly = arrays_polydata(output_points, output_faces)
+    locator = vtkStaticPointLocator()
+    locator.SetDataSet(output_poly)
+    locator.BuildLocator()
+    vtk_output_points = output_poly.GetPoints()
+    distances = np.empty(sample_size, dtype=np.float64)
+    for index, sample in enumerate(samples):
+        closest = vtk_output_points.GetPoint(locator.FindClosestPoint(sample))
+        distances[index] = np.linalg.norm(sample - closest)
+    source_bounds = source_points.max(axis=0) - source_points.min(axis=0)
+    output_bounds = output_points.max(axis=0) - output_points.min(axis=0)
+    diagonal = max(float(np.linalg.norm(source_bounds)), 1e-12)
+    source_area = max(mesh_surface_area(source_points, source_faces), 1e-12)
+    output_area = mesh_surface_area(output_points, output_faces)
+    edges = np.concatenate(
+        (output_faces[:, [0, 1]], output_faces[:, [1, 2]], output_faces[:, [2, 0]])
+    )
+    edges.sort(axis=1)
+    _, edge_counts = np.unique(edges, axis=0, return_counts=True)
+    return {
+        "reduction_percent": 100.0 * (1.0 - len(output_faces) / len(source_faces)),
+        "rms_percent": 100.0 * float(np.sqrt(np.mean(distances * distances))) / diagonal,
+        "p95_percent": 100.0 * float(np.percentile(distances, 95)) / diagonal,
+        "drift_percent": 100.0 * float(np.max(np.abs(output_bounds - source_bounds))) / diagonal,
+        "area_percent": 100.0 * abs(output_area / source_area - 1.0),
+        "nonmanifold_percent": 100.0 * float(np.count_nonzero(edge_counts > 2)) / len(output_faces),
+    }
+
+
+def mesh_quality_baseline(
+    points: np.ndarray,
+    faces: np.ndarray,
+    estimated_triangles: int,
+    algorithm: str = "Fast QEM",
+    quality: str = "Balanced",
+) -> dict[str, float]:
+    """Return a fast projection for the requested settings without scanning the mesh."""
+    if not len(points) or not len(faces):
+        return {}
+    reduction = max(0.0, min(1.0, 1.0 - estimated_triangles / len(faces)))
+    profile = {
+        "Fast QEM": (0.22, 0.55, 0.030, 0.18, 0.040),
+        "Depth Adaptive QEM": (0.16, 0.40, 0.020, 0.12, 0.030),
+        "Density balanced": (0.28, 0.70, 0.050, 0.22, 0.050),
+        "Shape preserving": (0.19, 0.48, 0.025, 0.15, 0.035),
+        "Preserve topology": (0.24, 0.60, 0.030, 0.18, 0.010),
+    }
+    profile_key = "Depth Adaptive QEM" if algorithm.startswith("Depth Adaptive QEM") else algorithm
+    rms, p95, drift, area, topology = profile.get(profile_key, profile["Fast QEM"])
+    quality_factor = {"Draft": 1.20, "Balanced": 1.0, "Fine": 0.82}.get(quality, 1.0)
+    severity = reduction * reduction * quality_factor
+    return {
+        "reduction_percent": 100.0 * reduction,
+        "rms_percent": rms * severity,
+        "p95_percent": p95 * severity,
+        "drift_percent": drift * severity,
+        "area_percent": area * severity,
+        "nonmanifold_percent": topology * severity,
+    }
+
+
 def smart_target(points: np.ndarray, faces: np.ndarray, quality: str) -> int:
     bounds_min = points.min(axis=0)
     bounds_max = points.max(axis=0)
@@ -1476,8 +1906,14 @@ def simplify_arrays(
     target: int,
     algorithm: str,
     aggressiveness: float = 7.0,
+    gpu_preference: str = "system",
 ) -> tuple[np.ndarray, np.ndarray]:
     reduction = 1.0 - target / len(faces)
+    if algorithm.startswith("Depth Adaptive QEM"):
+        output_points, output_faces, _report = simplify_depth_adaptive_qem(
+            points, faces, target, max(8.0, aggressiveness), gpu_preference
+        )
+        return output_points, output_faces
     if algorithm == "Fast QEM":
         return fast_simplification.simplify(
             points, faces, target_reduction=reduction, agg=aggressiveness, verbose=False
@@ -1503,13 +1939,24 @@ def simplify_arrays(
     return polydata_arrays(decimator.GetOutput())
 
 
-def simplify_process_job(points, faces, target: int, algorithm: str):
+def simplify_process_job(
+    points, faces, target: int, algorithm: str, gpu_preference: str = "system"
+):
     """Run native simplification outside the UI process."""
     try:
-        p_out, f_out = simplify_arrays(points, faces, target, algorithm)
-        return p_out, f_out, None
-    except Exception:
-        return None, None, traceback.format_exc()
+        p_out, f_out = simplify_arrays(
+            points, faces, target, algorithm, gpu_preference=gpu_preference
+        )
+        metrics = mesh_quality_metrics(points, faces, p_out, f_out)
+        return p_out, f_out, metrics, None
+    except Exception:  # noqa: BLE001 - worker boundary returns tracebacks to the UI process
+        return None, None, None, traceback.format_exc()
+
+
+def depth_adaptive_progress_text(gpu_preference: str = "system") -> str:
+    if first_time_gpu_setup_needed(gpu_preference):
+        return "First-time GPU setup: preparing and caching kernels (one-time setup)"
+    return "Analyzing surface on GPU"
 
 
 def cli_main(argv: list[str]) -> int:
@@ -1531,7 +1978,7 @@ def cli_main(argv: list[str]) -> int:
     )
     parser.add_argument(
         "--algorithm", choices=sorted(CLI_ALGORITHMS), default="fast",
-        help="fast, density, shape, or topology (default: fast)",
+        help="available reduction algorithm (default: fast)",
     )
     parser.add_argument("--overwrite", action="store_true", help="Replace an existing output file")
     args = parser.parse_args(argv)
@@ -1571,6 +2018,13 @@ def cli_main(argv: list[str]) -> int:
         f"(aggressiveness {args.aggressiveness:g})...",
         flush=True,
     )
+    if CLI_ALGORITHMS[args.algorithm].startswith("Depth Adaptive QEM"):
+        print(
+            "First-time GPU setup: preparing and caching kernels (one-time setup)..."
+            if first_time_gpu_setup_needed()
+            else "Analyzing surface on GPU...",
+            flush=True,
+        )
     reduced_points, reduced_faces = simplify_arrays(
         points, faces, target, CLI_ALGORITHMS[args.algorithm], args.aggressiveness
     )
@@ -1589,7 +2043,22 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.settings = QSettings("MeshMill", "MeshMill")
-        self.settings.remove("rendering/gpu_preference")
+        self.gpu_preference = str(
+            self.settings.value("performance/gpu_preference", "system")
+        )
+        self.cuda_device_list = cuda_devices()
+        detected_gpu_ids = {device["pci_bus_id"] for device in self.cuda_device_list}
+        if self.gpu_preference != "system" and self.gpu_preference not in detected_gpu_ids:
+            self.gpu_preference = "system"
+        self.update_checks_enabled = self.settings.value(
+            "updates/automatic", False, type=bool
+        )
+        self.latest_release_version = ""
+        self.latest_release_url = ""
+        self.latest_release = {}
+        self.update_check_status = "Not checked"
+        self.update_future = None
+        self.update_install_future = None
         self.locale_preference = str(self.settings.value("interface/locale", "system"))
         self.locale_code = locale_manager.select(self._resolved_locale(self.locale_preference))
         self.shortcuts = {
@@ -1624,9 +2093,8 @@ class MainWindow(QMainWindow):
         self.large_mesh_memory_percent = max(
             20, min(80, round(saved_memory_percent / 5) * 5)
         )
-        self.overview_triangle_limit = max(
-            50_000,
-            min(2_000_000, self.settings.value("performance/overview_triangles", 250_000, type=int)),
+        self.geometry_processes = max(
+            0, self.settings.value("performance/geometry_processes", 0, type=int)
         )
         legacy_mouse = self.settings.value("navigation/invert_mouse", False, type=bool)
         legacy_keyboard = self.settings.value("navigation/invert_keyboard", False, type=bool)
@@ -1714,7 +2182,7 @@ class MainWindow(QMainWindow):
         self.measure_points: list[np.ndarray] = []
         self.measure_hover_world: np.ndarray | None = None
         self.measure_pending_position: tuple[int, int] | None = None
-        self.measure_overlay_actor: vtkActor2D | None = None
+        self.measure_overlay_actors: list[vtkActor2D] = []
         self.measure_info_frame: QFrame | None = None
         self.measure_info_label: QLabel | None = None
         self.measure_units: ArrowComboBox | None = None
@@ -1732,13 +2200,30 @@ class MainWindow(QMainWindow):
         self.redo_bytes = 0
         self.undo_limit_bytes = 1_000_000_000
         self.logical_cpu_count = max(1, os.cpu_count() or 1)
-        self.vram_capacity_bytes = dedicated_vram_capacity()
+        selected_cuda = next(
+            (
+                device
+                for device in self.cuda_device_list
+                if device["pci_bus_id"] == self.gpu_preference
+            ),
+            self.cuda_device_list[0] if self.cuda_device_list else None,
+        )
+        self.vram_capacity_bytes = (
+            int(selected_cuda["total_memory"])
+            if selected_cuda is not None
+            else dedicated_vram_capacity()
+        )
         self._last_cpu_times: tuple[int, int, int] | None = None
+        self._last_io_totals: tuple[int, int, float] | None = None
+        self._io_active_seconds = 0.0
+        self._peak_read_sample = 0
+        self._peak_write_sample = 0
         self.gpu_counters = WindowsGpuCounters()
         self.verification_screenshot: Path | None = None
         self.diagnostic_log_path: Path | None = None
         self._last_diagnostic_camera_time = 0.0
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="mesh-reducer")
+        self.update_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="update-check")
         self.optimization_executor = ProcessPoolExecutor(
             max_workers=1, mp_context=multiprocessing.get_context("spawn")
         )
@@ -1750,6 +2235,9 @@ class MainWindow(QMainWindow):
         self.edit_bridge.done.connect(self._finish_mesh_edit)
         self.density_bridge = DensityBridge()
         self.density_bridge.done.connect(self._finish_density_analysis)
+        self.update_bridge = UpdateBridge()
+        self.update_bridge.done.connect(self._finish_update_check)
+        self.update_bridge.install_done.connect(self._finish_update_download)
         self.timer = QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.setInterval(650)
@@ -1774,10 +2262,20 @@ class MainWindow(QMainWindow):
         controls.setFixedWidth(352)
         controls_content = QWidget(controls)
         self.controls_content = controls_content
+        # A scroll area's content widget otherwise inherits the combined minimum width of
+        # every child row. Wide paths and button groups can then extend behind the window
+        # edge while the horizontal scrollbar is intentionally hidden. Let the viewport
+        # determine the content width and allow each row to compress to the toolbox.
+        controls_content.setMinimumWidth(0)
+        controls_content.setSizePolicy(
+            QSizePolicy.Policy.Ignored,
+            QSizePolicy.Policy.Preferred,
+        )
         self._busy_control_states: dict[QWidget, bool] = {}
         controls_content.setObjectName("controlsContent")
         controls.setWidget(controls_content)
         panel = QVBoxLayout(controls_content)
+        panel.setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)
         panel.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         def field_label(text: str, help_text: str) -> QLabel:
@@ -1834,21 +2332,25 @@ class MainWindow(QMainWindow):
         history_row.addWidget(self.cancel_preview_button)
         history_row.addWidget(self.redo_button)
 
-        def tool_section(title_text: str) -> QVBoxLayout:
+        def tool_section(title_text: str) -> tuple[QVBoxLayout, QHBoxLayout]:
             frame = QFrame(controls_content)
             frame.setObjectName("toolSection")
             layout = QVBoxLayout(frame)
             layout.setContentsMargins(9, 7, 9, 9)
             layout.setSpacing(6)
+            header = QHBoxLayout()
+            header.setContentsMargins(0, 0, 0, 0)
             heading = QLabel(title_text, frame)
             heading.setObjectName("sectionTitle")
-            layout.addWidget(heading)
+            header.addWidget(heading)
+            header.addStretch(1)
+            layout.addLayout(header)
             panel.addWidget(frame)
-            return layout
+            return layout, header
 
-        optimization_panel = tool_section("OPTIMIZATION")
-        stats_panel = tool_section("STATS")
-        general_panel = tool_section("GENERAL")
+        optimization_panel, _optimization_header = tool_section("OPTIMIZATION")
+        stats_panel, _stats_header = tool_section("STATS")
+        general_panel, general_header = tool_section("GENERAL")
 
         self.file_label = QLabel("No file loaded")
         self.file_label.setObjectName("fileCard")
@@ -1918,15 +2420,55 @@ class MainWindow(QMainWindow):
         stats.addWidget(self.estimated_file_size, 8, 1)
         stats_panel.addLayout(stats)
 
-        units_row = QHBoxLayout()
-        units_row.addWidget(field_label("Model units", "Units used to display dimensions. STL coordinates are unchanged."))
-        self.units = ArrowComboBox()
-        self.units.addItems(["mm", "cm", "m", "in", "ft"])
-        self.units.currentTextChanged.connect(self._units_changed)
-        self.units.setCurrentText(self.default_units)
-        self._units_changed(self.default_units)
-        units_row.addWidget(self.units, 1)
-        stats_panel.addLayout(units_row)
+        quality_row = QHBoxLayout()
+        quality_row.setSpacing(3)
+        self.quality_metric_labels: dict[str, QLabel] = {}
+        quality_help_text = {
+            "rms_percent": (
+                "Average shape error: sampled distance from the original mesh to the result, shown "
+                "as a percentage of the model diagonal. Lower preserves the overall surface better. "
+                "A very low average can still hide isolated damaged areas, so compare it with P95."
+            ),
+            "p95_percent": (
+                "High-end shape error: 95% of sampled original points are within this distance of "
+                "the result, shown as a percentage of the model diagonal. Lower is better. This "
+                "reveals localized damage that the average error can hide."
+            ),
+            "area_percent": (
+                "Surface-area change: how much total triangle area changed. Lower is usually better. "
+                "A large value can indicate collapsed features, folded surfaces, or duplicated geometry."
+            ),
+            "nonmanifold_percent": (
+                "Topology risk: non-manifold edges per output triangle. Lower is better. High values "
+                "can cause trouble in downstream editing or fabrication, but zero does not guarantee "
+                "that an open scan is watertight."
+            ),
+        }
+        quality_definitions = (
+            ("p95_percent", "P95"),
+            ("rms_percent", "RMS"),
+            ("nonmanifold_percent", "TOPO"),
+            ("area_percent", "AREA"),
+        )
+        for key, short_name in quality_definitions:
+            metric = QLabel(f"{short_name}\n—")
+            metric.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            metric.setToolTip(tr(quality_help_text[key]))
+            metric.setMinimumWidth(38)
+            metric.setStyleSheet(
+                "color: #0B1B34; background: #FFFFFF; border: 1px solid #D8DCE5; "
+                "border-radius: 4px; padding: 3px 1px; font-size: 9px; font-weight: 600;"
+            )
+            quality_row.addWidget(metric, 1)
+            self.quality_metric_labels[key] = metric
+        self.quality_metrics_state = QLabel("Quality estimate")
+        self.quality_metrics_state.setStyleSheet("color: #6B7280; font-size: 10px;")
+        self.quality_metrics_state.setToolTip(
+            "Before optimization, these values estimate the expected result. After optimization, "
+            "they are measured against the mesh used for that pass."
+        )
+        stats_panel.addWidget(self.quality_metrics_state)
+        stats_panel.addLayout(quality_row)
 
         self.preview_button = QPushButton("Optimize")
         self.preview_button.setProperty("accent", True)
@@ -1939,43 +2481,65 @@ class MainWindow(QMainWindow):
         self.slider.valueChanged.connect(self._slider_changed)
         optimization_panel.addWidget(self.slider)
 
-        optimization_panel.addWidget(field_label("Target triangles", "Requested triangle count for whole-mesh or selected-region optimization."))
+        target_row = QHBoxLayout()
+        target_row.addWidget(
+            field_label(
+                "Target triangles",
+                "Approximate triangle count requested by the optimization slider. Lower values "
+                "produce lighter meshes; higher values preserve more detail.",
+            )
+        )
+        self.target_display = QLabel("200,000")
+        self.target_display.setAlignment(
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
+        )
+        self.target_display.setToolTip(
+            "Live target from the optimization slider. The optimizer may finish a few triangles "
+            "above or below this value when preserving valid geometry requires it."
+        )
+        target_row.addStretch(1)
+        target_row.addWidget(self.target_display)
+        optimization_panel.addLayout(target_row)
         self.target = QSpinBox()
         self.target.setButtonSymbols(QSpinBox.ButtonSymbols.NoButtons)
         self.target.setRange(1_000, 5_000_000)
         self.target.setSingleStep(10_000)
         self.target.setValue(200_000)
         self.target.valueChanged.connect(self._target_changed)
-        optimization_panel.addWidget(self.target)
-
-        presets = QHBoxLayout()
-        self.preset_buttons: list[QPushButton] = []
-        for _ in range(4):
-            button = QPushButton("—")
-            button.setProperty("preset_value", 1000)
-            button.clicked.connect(
-                lambda _=False, b=button: self.target.setValue(int(b.property("preset_value")))
-            )
-            presets.addWidget(button)
-            self.preset_buttons.append(button)
-        optimization_panel.addLayout(presets)
 
         smart_row = QHBoxLayout()
-        smart_row.addWidget(field_label("Smart quality", "Automatic density level used when calculating a target."))
+        smart_row.addWidget(
+            field_label(
+                "Smart quality",
+                "Sets how aggressively MeshMill derives the triangle target. Draft favors a "
+                "smaller mesh, Balanced splits the tradeoff, and Fine preserves more detail. "
+                "Changing this value updates the target immediately.",
+            )
+        )
         self.smart_quality = ArrowComboBox()
         self.smart_quality.addItems(list(SMART_DIVISORS))
         self.smart_quality.setCurrentText("Balanced")
         self.smart_quality.currentTextChanged.connect(self._apply_smart_target)
         smart_row.addWidget(self.smart_quality, 1)
-        self.smart_button = QPushButton("Auto target")
-        self.smart_button.clicked.connect(self._apply_smart_target)
-        smart_row.addWidget(self.smart_button)
         optimization_panel.addLayout(smart_row)
 
         algorithm_row = QHBoxLayout()
         algorithm_row.addWidget(field_label("Algorithm", "Geometry optimization method used for the next operation."))
         self.algorithm = ArrowComboBox()
         self.algorithm.addItems(ALGORITHMS)
+        self.algorithm.setToolTip(
+            "Fast QEM works on every supported system. Depth Adaptive QEM uses its bundled "
+            "NVIDIA CUDA runtime to measure the surface before reduction and can preserve more "
+            "shape detail. It is available when MeshMill detects compatible NVIDIA hardware."
+        )
+        if not gpu_backend_supported():
+            depth_index = self.algorithm.findText(DEPTH_ADAPTIVE_LABEL)
+            if depth_index >= 0:
+                self.algorithm.setItemData(
+                    depth_index,
+                    QColor("#9CA3AF"),
+                    Qt.ItemDataRole.ForegroundRole,
+                )
         self.algorithm.currentTextChanged.connect(self._algorithm_changed)
         algorithm_row.addWidget(self.algorithm, 1)
         optimization_panel.addLayout(algorithm_row)
@@ -2001,6 +2565,21 @@ class MainWindow(QMainWindow):
         )
         display_row.addWidget(self.display_type, 1)
         optimization_panel.addLayout(display_row)
+
+        units_row = QHBoxLayout()
+        units_row.addWidget(
+            field_label(
+                "Model units",
+                "Choose how dimensions and measurements are displayed. STL coordinates are unchanged.",
+            )
+        )
+        self.units = ArrowComboBox()
+        self.units.addItems(["mm", "cm", "m", "in", "ft"])
+        self.units.currentTextChanged.connect(self._units_changed)
+        self.units.setCurrentText(self.default_units)
+        self._units_changed(self.default_units)
+        units_row.addWidget(self.units, 1)
+        optimization_panel.addLayout(units_row)
         general_panel.addWidget(self.open_button)
         general_panel.addWidget(self.reload_button)
 
@@ -2059,6 +2638,20 @@ class MainWindow(QMainWindow):
         self.repository_button.clicked.connect(self._open_repository)
         info_row.addWidget(self.repository_button)
         general_panel.addLayout(info_row)
+        self.version_label = VersionButton(f"MeshMill {APP_VERSION}")
+        self.version_label.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.version_label.setStyleSheet(
+            "QPushButton { color: #8A94A6; font-size: 9px; border: 0; "
+            "background: transparent; padding: 2px; } "
+            "QPushButton:hover { color: #2563FF; text-decoration: underline; }"
+        )
+        self.version_label.setToolTip(
+            "Click to check GitHub for a newer MeshMill release. Right-click to copy the installed "
+            "version. This does not enable automatic checks."
+        )
+        self.version_label.clicked.connect(self._version_action_clicked)
+        self.version_label.rightClicked.connect(self._copy_version)
+        general_header.addWidget(self.version_label)
         panel.addStretch(1)
 
         viewport_column = QWidget(root)
@@ -2087,6 +2680,7 @@ class MainWindow(QMainWindow):
         self.vtk_widget.GetRenderWindow().GetInteractor().SetInteractorStyle(self.navigation_style)
         self._create_view_pad()
         self._create_density_legend()
+        self.vtk_widget.installEventFilter(self)
         QTimer.singleShot(0, self._position_view_pad)
         self.metrics_timer = QTimer(self)
         self.metrics_timer.setInterval(1000)
@@ -2101,6 +2695,8 @@ class MainWindow(QMainWindow):
         # Route application commands before focused editors consume standard text shortcuts.
         # The filter is active only while this MeshMill window is active.
         QApplication.instance().installEventFilter(self)
+        if self.update_checks_enabled:
+            QTimer.singleShot(1500, self._check_for_updates)
 
     @staticmethod
     def _resolved_locale(preference: str) -> str:
@@ -2116,12 +2712,10 @@ class MainWindow(QMainWindow):
             DEFAULT_LOCALE,
         )
 
-    def eventFilter(self, watched, event) -> bool:  # noqa: N802
+    def eventFilter(self, watched, event) -> bool:
         if event.type() == QEvent.Type.KeyPress and event.key() == Qt.Key.Key_Control:
             self.control_key_held = True
-        elif event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_Control:
-            self.control_key_held = False
-        elif event.type() == QEvent.Type.ApplicationDeactivate:
+        elif event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_Control or event.type() == QEvent.Type.ApplicationDeactivate:
             self.control_key_held = False
         if watched is self.vtk_widget and event.type() == QEvent.Type.Resize:
             QTimer.singleShot(0, self._position_viewport_overlays)
@@ -2159,6 +2753,11 @@ class MainWindow(QMainWindow):
             # some keyboards. Treat that hardware flag as irrelevant so the
             # physical keys match the displayed shortcuts.
             modifiers &= ~Qt.KeyboardModifier.KeypadModifier
+        elif event.key() in {Qt.Key.Key_Plus, Qt.Key.Key_Minus}:
+            # Treat the main keyboard and numeric keypad + / - identically.
+            modifiers &= ~Qt.KeyboardModifier.KeypadModifier
+            if event.key() == Qt.Key.Key_Plus:
+                modifiers &= ~Qt.KeyboardModifier.ShiftModifier
         combination = QKeyCombination(modifiers, Qt.Key(event.key()))
         sequence = QKeySequence(combination).toString(QKeySequence.SequenceFormat.PortableText)
         matching_actions = [
@@ -2188,7 +2787,8 @@ class MainWindow(QMainWindow):
         navigation_actions = {
             "orbit_left", "orbit_right", "orbit_up", "orbit_down",
             "pan_left", "pan_right", "pan_up", "pan_down",
-            "zoom_in", "zoom_out", "roll_counterclockwise", "roll_clockwise",
+            "zoom_in", "zoom_out", "zoom_in_alt", "zoom_out_alt",
+            "roll_counterclockwise", "roll_clockwise",
         }
         if event.isAutoRepeat() and action not in navigation_actions:
             event.accept()
@@ -2224,6 +2824,13 @@ class MainWindow(QMainWindow):
             button = getattr(self, name, None)
             if button is not None:
                 button.setVisible(button.isEnabled())
+
+    def _sync_modified_mesh_actions(self) -> None:
+        """Keep save and reload availability tied to the current history state."""
+        available = bool(self.mesh_modified and self.source_poly is not None)
+        self.save_button.setEnabled(available)
+        self.reload_button.setEnabled(available)
+        self._update_action_row_visibility()
 
     def _shortcut_callback(self, action: str):
         callbacks = {
@@ -2280,6 +2887,8 @@ class MainWindow(QMainWindow):
             "pan_down": ("down", True, False),
             "zoom_in": ("up", True, True),
             "zoom_out": ("down", True, True),
+            "zoom_in_alt": ("up", True, True),
+            "zoom_out_alt": ("down", True, True),
             "roll_counterclockwise": ("left", True, True),
             "roll_clockwise": ("right", True, True),
         }
@@ -2347,6 +2956,38 @@ class MainWindow(QMainWindow):
             layout.addWidget(frame)
             return section_layout
 
+        updates_layout = section("Updates")
+        automatic_updates = QCheckBox("Check for updates when MeshMill opens", dialog)
+        automatic_updates.setChecked(self.update_checks_enabled)
+        automatic_updates.setToolTip(
+            "Runs one GitHub release check inside MeshMill shortly after the app opens. "
+            "MeshMill does not install an updater, service, scheduled task, startup item, or "
+            "background process. Nothing runs while MeshMill is closed, and updates are never "
+            "downloaded or installed automatically."
+        )
+        updates_layout.addWidget(automatic_updates)
+        update_row = QHBoxLayout()
+        check_updates_button = QPushButton("Check now", dialog)
+        check_updates_button.setProperty("quiet", True)
+        check_updates_button.setToolTip(
+            "Check GitHub once for a newer MeshMill release. This does not change the automatic setting."
+        )
+        updates_status = QLabel(self.update_check_status, dialog)
+        updates_status.setStyleSheet("color: #6B7280;")
+        update_row.addWidget(check_updates_button)
+        update_row.addWidget(updates_status, 1)
+        updates_layout.addLayout(update_row)
+
+        def refresh_update_status() -> None:
+            updates_status.setText(self.update_check_status)
+            check_updates_button.setEnabled(self.update_future is None)
+
+        check_updates_button.clicked.connect(lambda: self._check_for_updates(force=True))
+        updates_timer = QTimer(dialog)
+        updates_timer.setInterval(250)
+        updates_timer.timeout.connect(refresh_update_status)
+        updates_timer.start()
+
         interface_layout = section("Interface")
         form = QFormLayout()
 
@@ -2373,18 +3014,68 @@ class MainWindow(QMainWindow):
 
         interface_layout.addLayout(form)
 
-        performance_layout = section("Large meshes")
+        performance_layout = section("Performance")
         performance_form = QFormLayout()
+
+        def performance_row(label_text: str, control: QWidget, help_text: str) -> None:
+            label = QLabel(label_text, dialog)
+            label.setToolTip(help_text)
+            label.setMouseTracking(True)
+            control.setToolTip(help_text)
+            control.setMouseTracking(True)
+            for child in control.findChildren(QWidget):
+                child.setToolTip(help_text)
+                child.setMouseTracking(True)
+            performance_form.addRow(label, control)
+
+        gpu_preference = ArrowComboBox(dialog)
+        gpu_preference.addItem("System default", "system")
+        for device in self.cuda_device_list:
+            memory = fmt_bytes(int(device["total_memory"]))
+            gpu_preference.addItem(
+                f"{device['name']}  ({device['pci_bus_id']}, {memory})",
+                device["pci_bus_id"],
+            )
+        selected_gpu = gpu_preference.findData(self.gpu_preference)
+        gpu_preference.setCurrentIndex(max(0, selected_gpu))
+        performance_row(
+            "GPU",
+            gpu_preference,
+            "Selects the CUDA GPU used by Depth Adaptive QEM. System default uses CUDA's default "
+            "adapter. The viewport uses the graphics adapter selected by the operating system. "
+            "The selected GPU is used the next time an optimization starts.",
+        )
+
+        geometry_processes = ArrowComboBox(dialog)
+        recommended_processes = min(8, max(1, self.logical_cpu_count // 2))
+        geometry_processes.addItem(
+            f"Automatic ({recommended_processes} detected)", 0
+        )
+        for process_count in range(1, self.logical_cpu_count + 1):
+            geometry_processes.addItem(str(process_count), process_count)
+        selected_processes = geometry_processes.findData(self.geometry_processes)
+        geometry_processes.setCurrentIndex(max(0, selected_processes))
+        performance_row(
+            "Geometry processes",
+            geometry_processes,
+            f"Controls how many pieces of geometry MeshMill can analyze at the same time. "
+            f"Automatic detected {recommended_processes} workers from this computer's "
+            f"{self.logical_cpu_count} logical processors. Higher values can finish sooner but "
+            "use more processor time and memory.",
+        )
+
         large_mesh_mode = ArrowComboBox(dialog)
         large_mesh_mode.addItem("Auto", "auto")
         large_mesh_mode.addItem("Full mesh", "full")
         large_mesh_mode.addItem("Overview only", "overview")
         large_mesh_mode.setCurrentIndex(max(0, large_mesh_mode.findData(self.large_mesh_mode)))
-        large_mesh_mode.setToolTip(
-            "Auto checks estimated memory before loading. Oversized binary STL files open as a "
-            "bounded overview instead of exhausting system memory."
+        performance_row(
+            "Loading",
+            large_mesh_mode,
+            "Automatic loads the complete mesh when it fits safely and uses a lighter overview "
+            "when it does not. Full mesh attempts to load everything. Overview only opens a "
+            "lighter navigation copy and leaves editing disabled.",
         )
-        performance_form.addRow("Loading", large_mesh_mode)
 
         memory_percent_control = QWidget(dialog)
         memory_percent_layout = QVBoxLayout(memory_percent_control)
@@ -2397,9 +3088,6 @@ class MainWindow(QMainWindow):
         memory_percent.setTickInterval(10)
         memory_percent.setTickPosition(QSlider.TickPosition.TicksBelow)
         memory_percent.setValue(self.large_mesh_memory_percent)
-        memory_percent.setToolTip(
-            "Share of currently available RAM that Auto may use for loading a full mesh."
-        )
         memory_scale = QHBoxLayout()
         memory_minimum = QLabel("20%", memory_percent_control)
         memory_value = QLabel(memory_percent_control)
@@ -2424,17 +3112,14 @@ class MainWindow(QMainWindow):
         update_memory_budget(memory_percent.value())
         memory_percent_layout.addWidget(memory_percent)
         memory_percent_layout.addLayout(memory_scale)
-        performance_form.addRow("Memory budget", memory_percent_control)
-
-        overview_triangles = QSpinBox(dialog)
-        overview_triangles.setRange(50_000, 2_000_000)
-        overview_triangles.setSingleStep(50_000)
-        overview_triangles.setButtonSymbols(QSpinBox.ButtonSymbols.NoButtons)
-        overview_triangles.setValue(self.overview_triangle_limit)
-        overview_triangles.setToolTip(
-            "Triangle sample used for navigation when the complete binary STL exceeds the budget."
+        performance_row(
+            "Memory budget",
+            memory_percent_control,
+            "Sets how much currently available RAM MeshMill may use when deciding whether a mesh "
+            "can be loaded in full. A higher value accepts larger meshes but leaves less memory "
+            "for other applications.",
         )
-        performance_form.addRow("Overview triangles", overview_triangles)
+
         performance_layout.addLayout(performance_form)
 
         invert_layout = section("Invert")
@@ -2598,12 +3283,14 @@ class MainWindow(QMainWindow):
             if answer != QMessageBox.StandardButton.Yes:
                 return
             reset_all_requested["value"] = True
+            automatic_updates.setChecked(False)
             language.setCurrentIndex(language.findData("system"))
             tools_side.setCurrentText("Right")
             default_units.setCurrentText("cm")
+            gpu_preference.setCurrentIndex(gpu_preference.findData("system"))
+            geometry_processes.setCurrentIndex(geometry_processes.findData(0))
             large_mesh_mode.setCurrentIndex(large_mesh_mode.findData("auto"))
             memory_percent.setValue(50)
-            overview_triangles.setValue(250_000)
             for mouse_check, keyboard_check in inversion_checks.values():
                 mouse_check.setChecked(False)
                 keyboard_check.setChecked(False)
@@ -2645,11 +3332,24 @@ class MainWindow(QMainWindow):
         if reset_all_requested["value"]:
             self.settings.clear()
         self.locale_preference = str(language.currentData() or "system")
+        previous_update_setting = self.update_checks_enabled
+        self.update_checks_enabled = automatic_updates.isChecked()
         self.locale_code = locale_manager.select(self._resolved_locale(self.locale_preference))
         self.default_units = default_units.currentText()
+        self.gpu_preference = str(gpu_preference.currentData() or "system")
+        selected_cuda = next(
+            (
+                device
+                for device in self.cuda_device_list
+                if device["pci_bus_id"] == self.gpu_preference
+            ),
+            self.cuda_device_list[0] if self.cuda_device_list else None,
+        )
+        if selected_cuda is not None:
+            self.vram_capacity_bytes = int(selected_cuda["total_memory"])
+        self.geometry_processes = int(geometry_processes.currentData() or 0)
         self.large_mesh_mode = str(large_mesh_mode.currentData())
         self.large_mesh_memory_percent = memory_percent.value()
-        self.overview_triangle_limit = overview_triangles.value()
         self.mouse_horizontal = inversion_checks["Horizontal"][0].isChecked()
         self.keyboard_horizontal = inversion_checks["Horizontal"][1].isChecked()
         self.mouse_vertical = inversion_checks["Vertical"][0].isChecked()
@@ -2669,13 +3369,17 @@ class MainWindow(QMainWindow):
         self._refresh_display_mode_labels()
 
         self.settings.setValue("interface/tools_side", self.tools_side)
+        self.settings.setValue("updates/automatic", self.update_checks_enabled)
         self.settings.setValue("interface/locale", self.locale_preference)
+        self.settings.setValue("performance/gpu_preference", self.gpu_preference)
         self.settings.remove("rendering/gpu_preference")
         self.settings.setValue("interface/default_units", self.default_units)
         self.settings.setValue("interface/units_default_version", 2)
         self.settings.setValue("performance/large_mesh_mode", self.large_mesh_mode)
         self.settings.setValue("performance/memory_percent", self.large_mesh_memory_percent)
-        self.settings.setValue("performance/overview_triangles", self.overview_triangle_limit)
+        self.settings.remove("performance/geometry_compute")
+        self.settings.setValue("performance/geometry_processes", self.geometry_processes)
+        self.settings.remove("performance/overview_triangles")
         self.settings.setValue("navigation/mouse_horizontal", self.mouse_horizontal)
         self.settings.setValue("navigation/mouse_vertical", self.mouse_vertical)
         self.settings.setValue("navigation/mouse_zoom", self.mouse_zoom)
@@ -2693,6 +3397,10 @@ class MainWindow(QMainWindow):
         for shortcut_id, sequence in self.shortcuts.items():
             self.settings.setValue(f"shortcuts/{shortcut_id}", sequence)
         self.settings.sync()
+        if self.update_checks_enabled and not previous_update_setting:
+            self._check_for_updates()
+        else:
+            self._update_update_action()
         localize_widget_tree(self)
 
     def _install_help_tooltips(self) -> None:
@@ -2702,10 +3410,9 @@ class MainWindow(QMainWindow):
             self.undo_button: "Undo one mesh action.",
             self.redo_button: "Redo one mesh action.",
             self.units: "Dimension display units.",
-            self.target: "Target triangle count.",
+            self.target_display: "Target triangle count derived from the slider and Smart quality.",
             self.preview_button: "Optimize the mesh or apply the completed result.",
             self.smart_quality: "Automatic target density: Draft 15%, Balanced 50%, Fine 75% maximum.",
-            self.smart_button: "Calculate target from mesh size and surface area.",
             self.algorithm: "Mesh optimization algorithm.",
             self.slider: "Triangle target density.",
             self.display_type: "Choose shaded, wireframe, point, or color-mapped point-density display.",
@@ -2713,6 +3420,10 @@ class MainWindow(QMainWindow):
             self.previous_mesh_button: "Switch between the current mesh and its previous undo state.",
             self.save_button: "Save the current mesh as a binary STL.",
             self.settings_button: "Open app settings.",
+            self.version_label: (
+                "Click to check GitHub for a newer MeshMill release. "
+                "Right-click to copy the installed version. This does not enable automatic checks."
+            ),
             self.metrics_toggle: "Show or hide CPU, memory, GPU, and mesh metrics.",
             self.about_button: "Version and license information.",
             self.repository_button: (
@@ -2758,7 +3469,9 @@ class MainWindow(QMainWindow):
         grid.setVerticalSpacing(4)
         self.metric_labels: dict[str, QLabel] = {}
         self.metric_bars: dict[str, QProgressBar] = {}
-        for column, (key, title) in enumerate((("cpu", "CPU"), ("ram", "RAM"), ("gpu", "GPU"))):
+        for column, (key, title) in enumerate(
+            (("cpu", "CPU"), ("ram", "RAM"), ("gpu", "GPU"), ("vram", "VRAM"))
+        ):
             heading = QLabel(title)
             heading.setStyleSheet("font-weight: 600;")
             value = QLabel("Reading…")
@@ -2773,7 +3486,15 @@ class MainWindow(QMainWindow):
             self.metric_bars[key] = bar
         self.live_mesh_metric = QLabel("Mesh: no file loaded")
         self.live_mesh_metric.setStyleSheet("color: #6B7280;")
-        grid.addWidget(self.live_mesh_metric, 3, 0, 1, 3)
+        self.io_metric = QLabel("I/O: reading…")
+        self.io_metric.setStyleSheet("color: #6B7280;")
+        self.io_metric.setToolTip(
+            "Total data read and written by MeshMill since it opened. Active time counts sampled "
+            "intervals in which I/O changed. Peak samples are the largest totals observed during "
+            "one metrics interval."
+        )
+        grid.addWidget(self.io_metric, 3, 0, 1, 4)
+        grid.addWidget(self.live_mesh_metric, 4, 0, 1, 4)
         self.capacity_metric = QLabel("Capacity: calculating…")
         self.capacity_metric.setStyleSheet("color: #6B7280;")
         self.capacity_metric.setWordWrap(True)
@@ -2781,10 +3502,10 @@ class MainWindow(QMainWindow):
             "Estimated from currently available memory, the configured memory budget, CPU "
             "count, and overview chunk size. Geometry operations currently run one at a time."
         )
-        grid.addWidget(self.capacity_metric, 4, 0, 1, 3)
+        grid.addWidget(self.capacity_metric, 5, 0, 1, 4)
         self.geometry_activity_graph = GeometryActivityGraph(frame)
         self.geometry_activity_graph.setToolTip("CPU, GPU, and geometry activity.")
-        grid.addWidget(self.geometry_activity_graph, 5, 0, 1, 3)
+        grid.addWidget(self.geometry_activity_graph, 6, 0, 1, 4)
         parent_layout.addWidget(frame)
         frame.hide()
 
@@ -2931,35 +3652,97 @@ class MainWindow(QMainWindow):
             gpu = load
             self.metric_bars["gpu"].setValue(round(load))
             self.metric_bars["gpu"].setFormat("%p% used")
-            if self.vram_capacity_bytes > 0:
-                memory_text = (
-                    f"  •  {fmt_bytes(round(dedicated_bytes))} / "
-                    f"{fmt_bytes(self.vram_capacity_bytes)} VRAM"
-                )
-            elif dedicated_bytes > 0:
-                memory_text = f"  •  {fmt_bytes(round(dedicated_bytes))} VRAM in use"
-            else:
-                memory_text = ""
             self.metric_labels["gpu"].setText(
-                f"Windows GPU engines  •  {load:.0f}% load  •  {100-load:.0f}% idle{memory_text}"
+                f"{load:.0f}% load  •  {100-load:.0f}% idle"
             )
+            if self.vram_capacity_bytes > 0:
+                vram_percent = max(
+                    0.0,
+                    min(100.0, 100.0 * dedicated_bytes / self.vram_capacity_bytes),
+                )
+                self.metric_bars["vram"].setValue(round(vram_percent))
+                self.metric_bars["vram"].setFormat("%p% used")
+                self.metric_labels["vram"].setText(
+                    f"{fmt_bytes(round(dedicated_bytes))} used  •  "
+                    f"{fmt_bytes(max(0, self.vram_capacity_bytes - round(dedicated_bytes)))} free  •  "
+                    f"{fmt_bytes(self.vram_capacity_bytes)} total"
+                )
+            else:
+                self.metric_bars["vram"].setValue(0)
+                self.metric_bars["vram"].setFormat("Unavailable")
+                self.metric_labels["vram"].setText("Dedicated VRAM capacity unavailable")
         except (OSError, ValueError, IndexError):
             self.metric_bars["gpu"].setValue(0)
             self.metric_bars["gpu"].setFormat("Unavailable")
             self.metric_labels["gpu"].setText("Windows GPU performance counters unavailable")
+            self.metric_bars["vram"].setValue(0)
+            self.metric_bars["vram"].setFormat("Unavailable")
+            self.metric_labels["vram"].setText("Windows GPU memory counters unavailable")
+
+        if os.name == "nt":
+            class IO_COUNTERS(ctypes.Structure):
+                _fields_ = [
+                    ("ReadOperationCount", ctypes.c_ulonglong),
+                    ("WriteOperationCount", ctypes.c_ulonglong),
+                    ("OtherOperationCount", ctypes.c_ulonglong),
+                    ("ReadTransferCount", ctypes.c_ulonglong),
+                    ("WriteTransferCount", ctypes.c_ulonglong),
+                    ("OtherTransferCount", ctypes.c_ulonglong),
+                ]
+
+            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            kernel32.GetCurrentProcess.argtypes = []
+            kernel32.GetCurrentProcess.restype = ctypes.c_void_p
+            kernel32.GetProcessIoCounters.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(IO_COUNTERS)
+            ]
+            kernel32.GetProcessIoCounters.restype = ctypes.c_int
+            counters = IO_COUNTERS()
+            if kernel32.GetProcessIoCounters(
+                kernel32.GetCurrentProcess(), ctypes.byref(counters)
+            ):
+                now = time.monotonic()
+                current_io = (int(counters.ReadTransferCount), int(counters.WriteTransferCount), now)
+                if self._last_io_totals is not None:
+                    elapsed = max(0.001, now - self._last_io_totals[2])
+                    read_delta = max(0, current_io[0] - self._last_io_totals[0])
+                    write_delta = max(0, current_io[1] - self._last_io_totals[1])
+                    if read_delta or write_delta:
+                        self._io_active_seconds += elapsed
+                    self._peak_read_sample = max(self._peak_read_sample, read_delta)
+                    self._peak_write_sample = max(self._peak_write_sample, write_delta)
+                self.io_metric.setText(
+                    f"I/O  •  Read {fmt_bytes(current_io[0])} total "
+                    f"(peak sample {fmt_bytes(self._peak_read_sample)})  •  "
+                    f"Written {fmt_bytes(current_io[1])} total "
+                    f"(peak sample {fmt_bytes(self._peak_write_sample)})  •  "
+                    f"Active {fmt_elapsed(self._io_active_seconds)}"
+                )
+                self._last_io_totals = current_io
+            else:
+                self.io_metric.setText("I/O counters unavailable")
+        else:
+            self.io_metric.setText("I/O counters unavailable")
 
         memory_budget = max(1, round(available_memory * self.large_mesh_memory_percent / 100.0))
         estimated_triangles = max(1, memory_budget // ESTIMATED_BYTES_PER_TRIANGLE)
         estimated_vertices = estimated_triangles // 2
-        chunk_memory = max(1, self.overview_triangle_limit * ESTIMATED_BYTES_PER_TRIANGLE)
+        overview_triangle_limit = automatic_overview_triangle_limit(
+            memory_budget, self.vram_capacity_bytes
+        )
+        chunk_memory = max(1, overview_triangle_limit * ESTIMATED_BYTES_PER_TRIANGLE)
+        configured_processes = self.geometry_processes or min(
+            8, max(1, self.logical_cpu_count // 2)
+        )
         parallel_cube_budget = max(
-            1, min(self.logical_cpu_count, memory_budget // chunk_memory)
+            1, min(configured_processes, memory_budget // chunk_memory)
         )
         self.capacity_metric.setText(
             f"Capacity estimate  •  Full mesh: ~{fmt_count(estimated_triangles)} triangles / "
             f"~{fmt_count(estimated_vertices)} vertices / "
             f"{fmt_bytes(binary_stl_size(estimated_triangles))} binary STL  •  "
-            f"Geometry jobs: 1  •  Parallel cube budget: ~{parallel_cube_budget}"
+            f"Geometry processes: {configured_processes}  •  "
+            f"Parallel cube budget: ~{parallel_cube_budget}"
         )
 
         if self.source_faces is None:
@@ -3013,12 +3796,28 @@ class MainWindow(QMainWindow):
         self.geometry_activity_label = label
         self.geometry_activity_until = max(self.geometry_activity_until, time.monotonic() + seconds)
 
-    def resizeEvent(self, event) -> None:  # noqa: N802
+    def resizeEvent(self, event) -> None:
         super().resizeEvent(event)
         if self.crop_points:
             self._update_crop_overlay()
-        QTimer.singleShot(0, self._position_view_pad)
-        QTimer.singleShot(0, self._position_loading_panel)
+        # A maximized native window can receive its final client size after the
+        # first Qt resize event. Reposition every viewport overlay from the VTK
+        # widget's settled geometry instead of updating only selected overlays.
+        QTimer.singleShot(0, self._position_viewport_overlays)
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        self._schedule_viewport_layout_refresh()
+
+    def changeEvent(self, event) -> None:
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.WindowStateChange:
+            self._schedule_viewport_layout_refresh()
+
+    def _schedule_viewport_layout_refresh(self) -> None:
+        """Refresh after Qt and Windows settle maximized client geometry."""
+        for delay in (0, 75, 250):
+            QTimer.singleShot(delay, self._refresh_viewport_layout)
 
     def _create_loading_panel(self) -> None:
         self.loading_frame = QFrame(self.vtk_widget)
@@ -3232,6 +4031,8 @@ class MainWindow(QMainWindow):
         self._position_loading_panel()
         self.loading_frame.raise_()
         self.loading_timer.start()
+        self.loading_progress.setRange(0, 0)
+        self.loading_progress.setTextVisible(False)
         QApplication.processEvents()
         return self.edit_generation
 
@@ -3245,6 +4046,7 @@ class MainWindow(QMainWindow):
         self.operation_cancel_event = None
         self.operation_future = None
         self.operation_uses_process = False
+        self._sync_modified_mesh_actions()
 
     def _create_view_pad(self) -> None:
         self.view_pad = QFrame(self.vtk_widget)
@@ -3387,14 +4189,9 @@ class MainWindow(QMainWindow):
         self.view_pad.adjustSize()
         x = margin
         y = max(margin, self.vtk_widget.height() - self.view_pad.height() - margin)
-        if self.view_pad.pos() == QPoint(x, y):
-            self.view_pad.raise_()
-            return
-        self.view_pad.hide()
-        QApplication.processEvents()
-        self.vtk_widget.GetRenderWindow().Render()
         self.view_pad.move(x, y)
-        self.view_pad.show()
+        if not self.view_pad.isVisible():
+            self.view_pad.show()
         self.view_pad.raise_()
 
     def _position_orientation_overlays(self) -> None:
@@ -3640,8 +4437,9 @@ class MainWindow(QMainWindow):
         self.vtk_widget.GetRenderWindow().Render()
         return True
 
-    def closeEvent(self, event) -> None:  # noqa: N802
+    def closeEvent(self, event) -> None:
         self.executor.shutdown(wait=False, cancel_futures=True)
+        self.update_executor.shutdown(wait=False, cancel_futures=True)
         self.optimization_executor.shutdown(wait=False, cancel_futures=True)
         self.gpu_counters.close()
         self.vtk_widget.Finalize()
@@ -3669,7 +4467,7 @@ class MainWindow(QMainWindow):
             return
         try:
             file_size = path.stat().st_size
-        except Exception as exc:
+        except OSError as exc:
             QMessageBox.critical(self, APP_NAME, f"Could not load the STL:\n\n{exc}")
             self.status.setText("Load failed.")
             return
@@ -3698,13 +4496,17 @@ class MainWindow(QMainWindow):
         memory_budget = round(
             available_physical_memory() * self.large_mesh_memory_percent / 100.0
         )
+        overview_triangle_limit = automatic_overview_triangle_limit(
+            memory_budget, self.vram_capacity_bytes
+        )
         future = self.executor.submit(
             load_stl_smart,
             path,
             self.large_mesh_mode,
             memory_budget,
-            self.overview_triangle_limit,
+            overview_triangle_limit,
             self.operation_cancel_event,
+            self.geometry_processes or None,
         )
         self.operation_future = future
 
@@ -3792,6 +4594,7 @@ class MainWindow(QMainWindow):
         self.drift.setText("—")
         self.optimization_ratio.setText("—")
         self.dimension_drift_model_units = None
+        self._update_quality_metrics(None)
         with QSignalBlocker(self.target):
             self.target.setRange(1_000, max(1_000, len(faces)))
         self._update_dynamic_presets()
@@ -4023,7 +4826,7 @@ class MainWindow(QMainWindow):
             return None
         return float(display[0]), float(display[1])
 
-    def _nearest_measure_point(self, position: tuple[int, int], limit: float = 12.0) -> int | None:
+    def _nearest_measure_point(self, position: tuple[int, int], limit: float = 16.0) -> int | None:
         nearest, distance = None, float("inf")
         for index, world in enumerate(self.measure_points):
             display = self._world_to_display(world)
@@ -4190,9 +4993,9 @@ class MainWindow(QMainWindow):
         self.measure_info_frame.raise_()
 
     def _update_measure_overlay(self, render: bool = True) -> None:
-        if self.measure_overlay_actor is not None:
-            self.renderer.RemoveViewProp(self.measure_overlay_actor)
-            self.measure_overlay_actor = None
+        for overlay_actor in self.measure_overlay_actors:
+            self.renderer.RemoveViewProp(overlay_actor)
+        self.measure_overlay_actors = []
         displays = [self._world_to_display(point) for point in self.measure_points]
         displays = [point for point in displays if point is not None]
         hover = self._world_to_display(self.measure_hover_world) if self.measure_hover_world is not None else None
@@ -4210,9 +5013,9 @@ class MainWindow(QMainWindow):
             lines.InsertCellPoint(first)
             lines.InsertCellPoint(second)
 
-        for first, second in zip(displays, displays[1:]):
+        for first, second in pairwise(displays):
             add_segment(first, second)
-        for center, radius in [(point, 7.0) for point in displays] + ([(hover, 10.0)] if hover else []):
+        for center, radius in [(point, 10.0) for point in displays] + ([(hover, 14.0)] if hover else []):
             ring = [
                 (center[0] + radius * math.cos(index * math.tau / 24.0),
                  center[1] + radius * math.sin(index * math.tau / 24.0))
@@ -4228,12 +5031,17 @@ class MainWindow(QMainWindow):
         mapper = vtkPolyDataMapper2D()
         mapper.SetInputData(poly)
         mapper.SetTransformCoordinate(coordinate)
-        actor = vtkActor2D()
-        actor.SetMapper(mapper)
-        actor.GetProperty().SetColor(0.20, 0.82, 1.0)
-        actor.GetProperty().SetLineWidth(2.5)
-        self.measure_overlay_actor = actor
-        self.renderer.AddViewProp(actor)
+        outline = vtkActor2D()
+        outline.SetMapper(mapper)
+        outline.GetProperty().SetColor(0.02, 0.07, 0.13)
+        outline.GetProperty().SetLineWidth(7.0)
+        foreground = vtkActor2D()
+        foreground.SetMapper(mapper)
+        foreground.GetProperty().SetColor(0.72, 0.96, 0.22)
+        foreground.GetProperty().SetLineWidth(4.0)
+        self.measure_overlay_actors = [outline, foreground]
+        for overlay_actor in self.measure_overlay_actors:
+            self.renderer.AddViewProp(overlay_actor)
         if render:
             self.vtk_widget.GetRenderWindow().Render()
 
@@ -4495,19 +5303,31 @@ class MainWindow(QMainWindow):
         source_faces = self.source_faces
         token = self._begin_mesh_operation(
             "Optimizing selection",
-            f"{fmt_count(len(selected_faces))} selected triangles → about {fmt_count(target)}",
+            (
+                depth_adaptive_progress_text(self.gpu_preference)
+                if algorithm.startswith("Depth Adaptive QEM")
+                else f"{fmt_count(len(selected_faces))} selected triangles → about {fmt_count(target)}"
+            ),
         )
         self._set_primary_action(False, False)
         cancel_event = self.operation_cancel_event
         self.status.setText(
-            f"Optimizing selected region: {fmt_count(len(selected_faces))} to about "
-            f"{fmt_count(target)} triangles…"
+            depth_adaptive_progress_text(self.gpu_preference) + "…"
+            if algorithm.startswith("Depth Adaptive QEM")
+            else (
+                f"Optimizing selected region: {fmt_count(len(selected_faces))} to about "
+                f"{fmt_count(target)} triangles…"
+            )
         )
 
         def job():
             try:
                 reduced_points, reduced_faces = simplify_arrays(
-                    selected_points, selected_faces, target, algorithm
+                    selected_points,
+                    selected_faces,
+                    target,
+                    algorithm,
+                    gpu_preference=self.gpu_preference,
                 )
                 if cancel_event is not None and cancel_event.is_set():
                     raise OperationCancelled
@@ -4524,16 +5344,20 @@ class MainWindow(QMainWindow):
                 remap[used] = np.arange(len(used))
                 merged_points = np.ascontiguousarray(combined_points[used])
                 merged_faces = np.ascontiguousarray(remap[combined_faces], dtype=np.int32)
+                metrics = mesh_quality_metrics(
+                    source_points, source_faces, merged_points, merged_faces
+                )
                 return {
                     "kind": "optimize",
                     "poly": arrays_polydata(merged_points, merged_faces),
                     "points": merged_points,
                     "faces": merged_faces,
                     "removed": len(selected_faces) - len(reduced_faces),
+                    "metrics": metrics,
                 }
             except OperationCancelled:
                 return {"kind": "optimize", "cancelled": True}
-            except Exception:
+            except Exception:  # noqa: BLE001 - worker boundary reports failures through the result payload
                 return {"kind": "optimize", "error": traceback.format_exc()}
 
         future = self.executor.submit(job)
@@ -4732,7 +5556,7 @@ class MainWindow(QMainWindow):
                 }
             except OperationCancelled:
                 return {"kind": "delete", "cancelled": True}
-            except Exception:
+            except Exception:  # noqa: BLE001 - worker boundary reports failures through the result payload
                 return {"kind": "delete", "error": traceback.format_exc()}
 
         future = self.executor.submit(job)
@@ -4784,6 +5608,7 @@ class MainWindow(QMainWindow):
         preview_faces = result["faces"]
         self.preview_count.setText(fmt_count(len(preview_faces)))
         self.preview_vertices.setText(fmt_count(len(preview_points)))
+        self._update_quality_metrics(result.get("metrics"), measured=True)
         self._update_optimization_ratio(len(preview_faces))
         self.estimated_file_size.setText(fmt_bytes(binary_stl_size(len(preview_faces))))
         source_size = np.asarray(bounds_size(self.source_poly.GetBounds()))
@@ -4989,7 +5814,7 @@ class MainWindow(QMainWindow):
         # Ending the busy state restores the controls that were enabled before navigation.
         # Reapply state-derived availability afterward so undoing back to the loaded mesh does
         # not leave Reload Original enabled from the edited state.
-        self.reload_button.setEnabled(self.mesh_modified)
+        self._sync_modified_mesh_actions()
         self._reset_previous_view()
 
     def _restore_history_state(self, state: MeshHistoryState, message: str) -> None:
@@ -5092,29 +5917,14 @@ class MainWindow(QMainWindow):
         self._update_estimated_size()
         self._sync_slider_from_target()
 
-    @staticmethod
-    def _compact_count(value: int) -> str:
-        if value >= 1_000_000:
-            return f"{value / 1_000_000:.2g}m"
-        if value >= 1_000:
-            number = value / 1_000
-            return f"{number:.0f}k" if number >= 10 else f"{number:.1f}k"
-        return str(value)
-
     def _update_dynamic_presets(self, selection_total: int | None = None) -> None:
-        if self.source_faces is None:
-            return
-        total = selection_total if selection_total is not None else len(self.source_faces)
-        for button, fraction in zip(self.preset_buttons, (0.125, 0.25, 0.5, 1.0)):
-            count = total if fraction == 1.0 else max(1, round(total * fraction))
-            button.setProperty("preset_value", count)
-            button.setText(self._compact_count(count))
-            if fraction == 1.0:
-                description = f"Target all {total:,} triangles."
-            else:
-                description = f"Target {count:,} triangles ({fraction * 100:g}%)."
-            button.setToolTip(description)
-            button.setMouseTracking(True)
+        if hasattr(self, "target_display"):
+            target = (
+                self.selection_target
+                if selection_total and self.selection_target
+                else self.target.value()
+            )
+            self.target_display.setText(fmt_count(int(target)))
 
     def _apply_smart_target(self, _checked=False) -> None:
         if self.source_points is None or self.source_faces is None:
@@ -5148,6 +5958,21 @@ class MainWindow(QMainWindow):
         self._update_estimated_size()
 
     def _algorithm_changed(self, _algorithm: str) -> None:
+        if _algorithm == DEPTH_ADAPTIVE_LABEL and not gpu_backend_supported(self.gpu_preference):
+            message = QMessageBox(self)
+            message.setWindowTitle("Depth Adaptive QEM")
+            message.setIcon(QMessageBox.Icon.Information)
+            message.setText("Depth Adaptive QEM is unavailable on this system.")
+            message.setInformativeText(
+                "Its runtime is included with MeshMill, but the algorithm requires a compatible "
+                "NVIDIA GPU and driver. Fast QEM and the other built-in algorithms remain "
+                "available."
+            )
+            message.addButton(QMessageBox.StandardButton.Ok)
+            message.exec()
+            with QSignalBlocker(self.algorithm):
+                self.algorithm.setCurrentText("Fast QEM")
+            _algorithm = "Fast QEM"
         if self.source_faces is None:
             return
         if self.crop_candidate is not None or (
@@ -5240,32 +6065,43 @@ class MainWindow(QMainWindow):
         self.generation += 1
         self.running_target = target
         generation = self.generation
+        algorithm = self.algorithm.currentText()
         self._begin_mesh_operation(
             "Optimizing",
-            f"Optimizing {fmt_count(len(self.source_faces))} triangles to about {fmt_count(target)}",
+            (
+                depth_adaptive_progress_text(self.gpu_preference)
+                if algorithm.startswith("Depth Adaptive QEM")
+                else (
+                    f"Optimizing {fmt_count(len(self.source_faces))} triangles to about "
+                    f"{fmt_count(target)}"
+                )
+            ),
         )
         self._set_primary_action(False, False)
         self.save_button.setEnabled(self.mesh_modified)
-        self.status.setText(f"Optimizing to about {fmt_count(target)} triangles…")
+        self.status.setText(
+            depth_adaptive_progress_text(self.gpu_preference) + "…"
+            if algorithm.startswith("Depth Adaptive QEM")
+            else f"Optimizing to about {fmt_count(target)} triangles…"
+        )
         points = self.source_points
         faces = self.source_faces
-        algorithm = self.algorithm.currentText()
         self.operation_uses_process = True
         future = self.optimization_executor.submit(
-            simplify_process_job, points, faces, target, algorithm
+            simplify_process_job, points, faces, target, algorithm, self.gpu_preference
         )
         self.operation_future = future
 
         def completed(result_future) -> None:
             try:
                 result = result_future.result()
-            except Exception:
-                result = (None, None, traceback.format_exc())
+            except Exception:  # noqa: BLE001 - Future may surface any worker exception type
+                result = (None, None, None, traceback.format_exc())
             self.bridge.done.emit(generation, *result)
 
         future.add_done_callback(completed)
 
-    def _finish_simplify(self, generation: int, points, faces, error) -> None:
+    def _finish_simplify(self, generation: int, points, faces, metrics, error) -> None:
         if generation != self.generation:
             return
         self._end_mesh_operation()
@@ -5285,6 +6121,7 @@ class MainWindow(QMainWindow):
             self.preview_count.setText(fmt_count(len(faces)))
             self.preview_vertices.setText(fmt_count(len(points)))
             self._update_optimization_ratio(len(faces))
+            self._update_quality_metrics(metrics, measured=True)
             self.estimated_file_size.setText(fmt_bytes(binary_stl_size(len(faces))))
             source_size = np.asarray(bounds_size(self.source_poly.GetBounds()))
             preview_size = np.asarray(bounds_size(self.preview_poly.GetBounds()))
@@ -5321,6 +6158,46 @@ class MainWindow(QMainWindow):
             return
         reduction = 100.0 * (1.0 - optimized_triangles / self.loaded_triangle_count)
         self.optimization_ratio.setText(f"{reduction:.1f}%")
+
+    def _update_quality_metrics(
+        self, metrics: dict[str, float] | None, *, measured: bool = False
+    ) -> None:
+        if not hasattr(self, "quality_metric_labels"):
+            return
+        if hasattr(self, "quality_metrics_state"):
+            self.quality_metrics_state.setText(
+                "Measured quality" if measured else "Quality estimate"
+            )
+        abbreviations = {
+            "rms_percent": "RMS",
+            "p95_percent": "P95",
+            "area_percent": "AREA",
+            "nonmanifold_percent": "TOPO",
+        }
+        thresholds = {
+            "rms_percent": (0.25, 0.75),
+            "p95_percent": (0.50, 1.50),
+            "area_percent": (1.0, 5.0),
+            "nonmanifold_percent": (0.01, 0.10),
+        }
+        for key, label in self.quality_metric_labels.items():
+            if not metrics or key not in metrics:
+                label.setText(f"{abbreviations[key]}\n—")
+                label.setStyleSheet(
+                    "color: #0B1B34; background: #FFFFFF; border: 1px solid #D8DCE5; "
+                    "border-radius: 4px; padding: 3px 1px; font-size: 9px; font-weight: 600;"
+                )
+                continue
+            value = float(metrics[key])
+            good, caution = thresholds[key]
+            color = (
+                "#16794A" if value <= good else "#9A6700" if value <= caution else "#B42318"
+            )
+            label.setText(f"{abbreviations[key]}\n{value:.2f}%")
+            label.setStyleSheet(
+                f"color: #0B1B34; background: #FFFFFF; border: 2px solid {color}; "
+                "border-radius: 4px; padding: 2px 1px; font-size: 9px; font-weight: 600;"
+            )
 
     def _update_save_button_label(self) -> None:
         label = "Save current mesh"
@@ -5375,7 +6252,17 @@ class MainWindow(QMainWindow):
         )
         self.preview_count.setText(f"~{fmt_count(estimated_triangles)}")
         self.preview_vertices.setText(f"~{fmt_count(estimated_vertices)}")
+        self.target_display.setText(fmt_count(target))
         self._update_optimization_ratio(estimated_triangles)
+        self._update_quality_metrics(
+            mesh_quality_baseline(
+                self.source_points,
+                self.source_faces,
+                estimated_triangles,
+                self.algorithm.currentText(),
+                self.smart_quality.currentText(),
+            )
+        )
         self.dimension_drift_model_units = None
         self.drift.setText("—")
         self.estimated_file_size.setText(fmt_bytes(binary_stl_size(estimated_triangles)))
@@ -5661,6 +6548,8 @@ class MainWindow(QMainWindow):
         resident = inspect_resident_vertices(actor)
         if resident is not None:
             self.resident_vertex_buffers[id(actor)] = resident
+        else:
+            self.resident_vertex_buffers.pop(id(actor), None)
         density_visible = self._display_mode() == "Density"
         self.density_legend.setVisible(density_visible)
         if density_visible:
@@ -5830,7 +6719,7 @@ class MainWindow(QMainWindow):
                 return point_density_colors(points, faces, cancel_event), None
             except OperationCancelled:
                 return None, "cancelled"
-            except Exception:
+            except Exception:  # noqa: BLE001 - worker boundary reports failures through the result payload
                 return None, traceback.format_exc()
 
         future = self.executor.submit(job)
@@ -5878,6 +6767,166 @@ class MainWindow(QMainWindow):
         if self.save_button.isEnabled():
             self.save_file()
 
+    def _check_for_updates(self, force: bool = False) -> None:
+        if not force and not self.update_checks_enabled:
+            return
+        if self.update_future is not None:
+            return
+        self.update_check_status = "Checking…"
+        self.version_label.setText("Checking for updates…")
+        self.version_label.setEnabled(False)
+        future = self.update_executor.submit(fetch_latest_release)
+        self.update_future = future
+
+        def completed(result_future) -> None:
+            try:
+                release = result_future.result()
+                release_url = release["release_url"]
+                error = None
+            except (HTTPError, URLError, OSError, ValueError, json.JSONDecodeError) as exc:
+                release_url = release = None
+                error = exc
+            self.update_bridge.done.emit(release, release_url, error)
+
+        future.add_done_callback(completed)
+
+    def _finish_update_check(self, release, release_url, error) -> None:
+        self.update_future = None
+        version = release.get("version") if isinstance(release, dict) else None
+        if error is not None or not version or not release_url:
+            self.update_check_status = "Could not check GitHub"
+            self._update_update_action()
+            return
+        self.latest_release_version = str(version)
+        self.latest_release_url = str(release_url)
+        self.latest_release = release
+        if version_key(self.latest_release_version) > version_key(APP_VERSION):
+            self.update_check_status = f"Version {self.latest_release_version} is available"
+        else:
+            self.update_check_status = "MeshMill is up to date"
+        self._update_update_action()
+
+    def _update_update_action(self) -> None:
+        update_available = (
+            bool(self.latest_release_url)
+            and version_key(self.latest_release_version) > version_key(APP_VERSION)
+        )
+        self.version_label.setEnabled(True)
+        if update_available:
+            self.version_label.setText(f"Upgrade to {self.latest_release_version}")
+            installable = update_asset_for_current_platform(self.latest_release)
+            action = (
+                "download, verify, install, and reopen MeshMill"
+                if installable
+                else "open the release downloads"
+            )
+            self.version_label.setToolTip(
+                f"Click to {action}. Right-click to copy the installed version."
+            )
+        elif self.update_check_status == "MeshMill is up to date":
+            self.version_label.setText(f"MeshMill {APP_VERSION}  •  Up to date")
+            self.version_label.setToolTip(
+                "This is the newest MeshMill release. Click to check again. "
+                "Right-click to copy the installed version."
+            )
+        else:
+            self.version_label.setText(f"MeshMill {APP_VERSION}")
+            self.version_label.setToolTip(
+                "Click to check GitHub for a newer MeshMill release. "
+                "Right-click to copy the installed version. This does not enable automatic checks."
+            )
+
+    def _version_action_clicked(self) -> None:
+        if (
+            self.latest_release_url
+            and version_key(self.latest_release_version) > version_key(APP_VERSION)
+        ):
+            self._install_latest_release()
+            return
+        self._check_for_updates(force=True)
+
+    def _copy_version(self) -> None:
+        QApplication.clipboard().setText(APP_VERSION)
+        self.status.setText(f"Version {APP_VERSION} copied")
+
+    def _open_latest_release(self) -> None:
+        if self.latest_release_url:
+            QDesktopServices.openUrl(QUrl(self.latest_release_url))
+
+    def _install_latest_release(self) -> None:
+        asset = update_asset_for_current_platform(self.latest_release)
+        if asset is None or not getattr(sys, "frozen", False):
+            self._open_latest_release()
+            return
+        if self.update_install_future is not None:
+            return
+        answer = QMessageBox.question(
+            self,
+            "Install MeshMill update",
+            f"Install MeshMill {self.latest_release_version}?\n\n"
+            "The package will be verified, MeshMill will close, and the open STL "
+            "will reopen after the upgrade."
+            + (
+                "\n\nThe current mesh has unapplied or unsaved changes. Save it before "
+                "continuing if you want to keep them."
+                if self.mesh_modified
+                else ""
+            ),
+        )
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+        update_dir = (
+            Path(tempfile.gettempdir()) / "MeshMill" / "updates" / self.latest_release_version
+        )
+        update_dir.mkdir(parents=True, exist_ok=True)
+        destination = update_dir / str(asset["name"])
+        self.version_label.setText("Downloading update...")
+        self.version_label.setEnabled(False)
+        self.update_check_status = "Downloading update..."
+        future = self.update_executor.submit(download_verified_update, asset, destination)
+        self.update_install_future = future
+
+        def completed(result_future) -> None:
+            try:
+                installer = result_future.result()
+                error = None
+            except (HTTPError, URLError, OSError, ValueError) as exc:
+                installer = None
+                error = exc
+            self.update_bridge.install_done.emit(installer, error)
+
+        future.add_done_callback(completed)
+
+    def _finish_update_download(self, installer: Path | None, error) -> None:
+        self.update_install_future = None
+        if error is not None or installer is None:
+            self.update_check_status = "Update download failed"
+            self._update_update_action()
+            QMessageBox.warning(self, APP_NAME, f"The update was not installed.\n\n{error}")
+            return
+        reopen = os.fspath(self.source_path) if self.source_path is not None else ""
+        if platform.system().lower() == "windows":
+            command = [
+                os.fspath(installer),
+                "/VERYSILENT",
+                "/SUPPRESSMSGBOXES",
+                "/NORESTART",
+                "/CLOSEAPPLICATIONS",
+                "/REOPEN=1",
+                f"/REOPENFILE={reopen}",
+            ]
+        elif platform.system().lower() == "darwin":
+            command = ["open", os.fspath(installer)]
+        else:
+            command = [os.fspath(installer)]
+        try:
+            subprocess.Popen(command, close_fds=True)
+        except OSError as exc:
+            QMessageBox.warning(self, APP_NAME, f"The installer could not start.\n\n{exc}")
+            self._update_update_action()
+            return
+        QApplication.quit()
+
     def _show_about(self) -> None:
         dialog = QMessageBox(self)
         dialog.setWindowTitle(f"About {APP_NAME}")
@@ -5887,6 +6936,8 @@ class MainWindow(QMainWindow):
             f"<b>{APP_NAME} {APP_VERSION}</b><br><br>"
             "STL mesh inspection, selection, and optimization.<br><br>"
             f'<a href="{REPOSITORY_URL}">GitHub repository</a><br>'
+            f'<a href="{BUG_REPORT_URL}">Report a bug</a><br>'
+            f'<a href="{FEATURE_REQUEST_URL}">Request a feature</a><br>'
             f'<a href="{SUPPORT_URL}">Support MeshMill on Buy Me a Coffee</a><br><br>'
             "GNU General Public License v3.0 or later."
         )
@@ -5935,6 +6986,12 @@ def main() -> int:
     verify_args, qt_args = verify_parser.parse_known_args(sys.argv[1:])
     app = QApplication([sys.argv[0], *qt_args])
     app.setApplicationName(APP_NAME)
+    app.setStyleSheet(APP_STYLESHEET)
+    tooltip_palette = app.palette()
+    tooltip_palette.setColor(QPalette.ColorRole.ToolTipBase, QColor("#FFFFFF"))
+    tooltip_palette.setColor(QPalette.ColorRole.ToolTipText, QColor("#111827"))
+    app.setPalette(tooltip_palette)
+    QToolTip.setPalette(tooltip_palette)
     app_icon = resource_path("assets/meshmill-mark.svg")
     if app_icon.exists():
         app.setWindowIcon(QIcon(os.fspath(app_icon)))
@@ -5946,6 +7003,9 @@ def main() -> int:
     window.verification_screenshot = verify_args.verification_screenshot
     window.verification_target = verify_args.verification_target
     window.showMaximized()
+    # The Windows frame and the embedded native VTK window settle in separate
+    # event-loop passes during startup. Refresh against the final client area.
+    window._schedule_viewport_layout_refresh()
     paths = [arg for arg in qt_args if not arg.startswith("-")]
     if paths:
         def load_initial() -> None:

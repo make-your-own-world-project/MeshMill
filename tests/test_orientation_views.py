@@ -4,13 +4,12 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PySide6.QtCore import QEvent, QTimer, Qt
+from PySide6.QtCore import QEvent, Qt, QTimer
 from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import meshmill as mm
-
 
 SCAN = Path(__file__).resolve().parents[1] / "samples" / "sample-scan.stl"
 KEYS = {
@@ -100,7 +99,7 @@ def calibrate(direction, azimuth, elevation, roll):
     window.renderer.ResetCameraClippingRange()
     window.vtk_widget.GetRenderWindow().Render()
     app.processEvents()
-    focal, position, frame = normalized_camera_frame(camera)
+    focal, _position, frame = normalized_camera_frame(camera)
     saved[direction] = {
         "focal": focal,
         "view": frame[:, 2].copy(),
@@ -126,7 +125,7 @@ def calibrate(direction, azimuth, elevation, roll):
 
 def recall_and_verify(direction):
     send_physical(direction)
-    focal, position, frame = normalized_camera_frame(camera)
+    focal, _position, frame = normalized_camera_frame(camera)
     expected = saved[direction]
     view_error = float(np.linalg.norm(frame[:, 2] - expected["view"]))
     up_error = float(np.linalg.norm(frame[:, 1] - expected["up"]))

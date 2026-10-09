@@ -3,6 +3,12 @@
 MeshMill algorithms should make difficult geometry manageable while keeping their effects visible,
 measurable, and reversible before a result is applied.
 
+Read the [algorithm reference](ALGORITHMS.md) for production formulas, implementation provenance,
+and the distinction between reduction and density display analysis. The reproducible full-scan
+results are in the [algorithm comparison](../benchmarks/ALGORITHM_COMPARISON.md).
+The [depth-gauge reduction design](DEPTH_GAUGE_REDUCTION.md) records the origin, complete mathematics,
+GPU execution profile, rejected approaches, and production Depth Adaptive QEM benchmark.
+
 ## Reference fixtures
 
 Use both bundled versions of the composite sample geometry:
@@ -31,7 +37,8 @@ For an algorithm or parameter change, record:
 - whether the result came from a whole-mesh or selection-only operation.
 
 Compare against the current behavior at the same target, not only against another preset with a
-different output count. Inspect shaded, density, wireframe, and vertices displays where applicable.
+different output count. Use matched, close wireframe and density views for the primary visual
+comparison. Inspect shaded and vertices displays as secondary checks where applicable.
 
 ## Acceptance guidance
 
@@ -43,6 +50,12 @@ not carry useful curvature or topology.
 Performance results should identify the processor, memory capacity, graphics hardware, operating
 system, input size, and whether the data was already cached. Structural validation and screenshots
 support review but do not replace inspection by contributors familiar with the source geometry.
+
+For the proposed Depth and Density Adaptive QEM experiment, report whether density-guided probe
+allocation improves sampled RMS and P95 surface error without preserving redundant scan noise.
+Measure it at matched output counts against Fast QEM, Density balanced, and Depth Adaptive QEM.
+Include flat oversampled regions, sparse curved regions, open boundaries, and overlapping layers so
+density is not treated as a substitute for geometric importance.
 
 ## Regression tests
 

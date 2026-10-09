@@ -16,8 +16,14 @@ DOCUMENTS = (
     "SUPPORT.md",
     "THIRD_PARTY_NOTICES.md",
     "docs/ALGORITHM_TESTING.md",
+    "docs/ALGORITHMS.md",
+    "docs/DEPTH_GAUGE_REDUCTION.md",
+    "docs/GPU_OUT_OF_CORE.md",
+    "docs/GPU_QEM_AND_DEPTH_ANALYSIS.md",
     "docs/OUT_OF_CORE.md",
+    "docs/PLATFORM_TESTING.md",
     "docs/TROUBLESHOOTING.md",
+    "docs/UPDATES.md",
 )
 UI_CATALOG = ROOT / "locales" / "en-US.json"
 

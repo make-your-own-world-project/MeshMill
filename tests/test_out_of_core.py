@@ -80,3 +80,28 @@ def test_cancel_does_not_publish_or_leave_staging(tmp_path):
 
     assert not destination.exists()
     assert not destination.with_name(destination.name + ".building").exists()
+
+
+def test_parallel_analysis_matches_sequential_index(tmp_path):
+    source = tmp_path / "parallel.stl"
+    triangle = np.array([[[0, 0, 0], [1, 0, 0], [0, 1, 0]]], dtype=np.float32)
+    triangles = np.repeat(triangle, 32_768, axis=0)
+    triangles[:, :, 0] += np.arange(len(triangles), dtype=np.float32)[:, None]
+    write_binary_stl(source, triangles)
+
+    sequential = build_index(
+        source,
+        tmp_path / "sequential.meshmill-index",
+        block_triangles=16_384,
+        analysis_workers=1,
+    )
+    parallel = build_index(
+        source,
+        tmp_path / "parallel.meshmill-index",
+        block_triangles=16_384,
+        analysis_workers=2,
+    )
+
+    assert parallel.bounds == sequential.bounds
+    assert parallel.max_depth == sequential.max_depth
+    assert parallel.tiles == sequential.tiles

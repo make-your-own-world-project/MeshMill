@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param(
     [switch]$Clean,
-    [string]$Version = "0.1.2"
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern('^\d+\.\d+\.\d+(?:\.\d+)?$')]
+    [string]$Version
 )
 
 $ErrorActionPreference = "Stop"

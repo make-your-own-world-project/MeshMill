@@ -5,8 +5,7 @@ It is a development record, not a claim that every listed GPU stage is available
 
 ## Release baseline
 
-The `v0.1.2` release preserves the application before this work. Development began from that release
-on `feature/out-of-core-gpu`.
+The `v0.1.2` release is the comparison baseline for these measurements.
 
 ## Reference input and environment
 
@@ -49,20 +48,40 @@ overflowing leaves. On the same scan it produced:
 - exactly 4,126,315 indexed triangles and 206,315,750 bytes of triangle records; and
 - a validated index in approximately 14.6 seconds, followed by removal of the test index.
 
+### Parallel analysis measurement
+
+Bounds and adaptive tile counting are read-only, independent block operations. They were measured
+before enabling multiprocessing. On the same 4,126,315-triangle scan, using 262,144-triangle
+blocks, the analysis results were:
+
+| Analysis workers | Analysis time | Speedup |
+| ---: | ---: | ---: |
+| 1 | 10.531 s | 1.00x |
+| 8 | 1.838 s | 5.73x |
+
+Both runs produced identical bounds, 50 tiles, and 4,126,315 assigned triangles. Complete index
+creation, including the deliberately single-owner partition-writing phase, improved from 8.836
+seconds to 5.406 seconds (1.63x) with a warm filesystem cache. MeshMill therefore parallelizes
+only bounds and adaptive tile counting, selects up to eight workers from available CPU capacity,
+and keeps partition publication under one owner. This preserves deterministic output and avoids
+competing writes to tile files.
+
 The persistent index duplicates the compact 50-byte binary STL triangle records so arbitrary tiles
 can be read independently. Later storage work may compare compression and shared immutable stores,
 but it should preserve deterministic addressing and bounded reads.
 
 ## Backend decisions
 
-Use a hybrid pipeline:
+The release uses a measured hybrid pipeline:
 
 1. CPU threads read, validate, schedule, publish, and assemble tiles.
-2. The active GPU handles sufficiently large independent analysis or scoring batches.
+2. The active GPU handles rendering, picking, density visualization, and validated independent
+   analysis batches.
 3. Reading tile N+1 overlaps compute for tile N and assembly for tile N-1.
 4. Small tiles remain on CPU unless adjacent compatible tiles can be batched safely.
-5. Topology mutation and cross-tile boundary decisions remain on CPU until a GPU implementation
-   demonstrates equivalent deterministic results.
+5. Topology mutation and cross-tile boundary decisions remain on CPU. Tested GPU voxel, quadric
+   clustering, conservative QEM, parallel QEM, RXMesh QSlim, and exterior-filtering prototypes did
+   not match the complete CPU result for speed and quality.
 
 Prefer resident-buffer processing. VTK's OpenGL mapper exposes vertex-buffer objects, and CUDA can
 map OpenGL buffers. A production implementation needs a native interoperability layer that:
@@ -76,9 +95,9 @@ map OpenGL buffers. A production implementation needs a native interoperability 
 - owns separate index or adjacency data where VTK does not expose stable public buffers; and
 - falls back without changing output when interoperability is unavailable.
 
-OpenGL compute shaders remain a cross-vendor alternative for display analysis. CUDA may provide a
-stronger path for reduction scoring on NVIDIA systems. Backend selection should be evidence-based,
-not vendor-based, and should remain invisible unless diagnostics are requested.
+OpenGL compute shaders remain a cross-vendor option for display analysis. Future reduction work
+should proceed only after a native resident implementation beats the measured CPU baseline without
+adding topology damage, platform baggage, or a host-coordination bottleneck.
 
 ## Multi-mesh expansion
 

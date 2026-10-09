@@ -1,5 +1,11 @@
 # MeshMill roadmap
 
+## Reliable application updates
+
+- Add a Developer ID signed and notarized macOS package, then enable verified in-app replacement on macOS.
+- Add a supported Linux AppImage and native upgrade/relaunch tests, then enable verified in-app replacement on Linux.
+- Preserve complete unsaved editing state across an application upgrade, beyond reopening the source STL.
+
 ## Platform support
 
 Windows is the initial packaged platform. The application architecture and mesh formats are
@@ -24,6 +30,30 @@ interchange so large or heavy mesh files remain useful in downstream editing wor
 General-purpose modeling, sculpting, painting, animation, rendering, scene composition, materials,
 rigging, and other content-creation systems are outside this roadmap. Distributed synthesis applies
 to MeshMill's mesh-management operations and does not expand the product into a general editor.
+
+## Control profiles
+
+Navigation preferences vary by operator, pointing device, and established workflow. Add named
+control profiles so users can change the complete interaction model without remapping each control
+individually.
+
+Planned behavior:
+
+- ship clear starting profiles for the MeshMill default, conventional CAD navigation, trackpads,
+  and left-handed input without naming or depending on another application;
+- map left, middle, right, auxiliary mouse buttons, wheel movement, drag modifiers, keyboard
+  commands, and viewport-axis controls independently;
+- configure orbit pivots, pan and orbit sensitivity, zoom rate, roll direction, and per-axis input
+  inversion within each profile;
+- detect conflicting or unreachable bindings before a profile can be applied;
+- preview and test a profile temporarily, with an automatic path back to the previous controls;
+- create, duplicate, rename, reset, and delete user profiles while keeping the built-in profiles
+  recoverable;
+- choose a global default and allow an optional profile override for a workspace or input device;
+- import and export a versioned, human-readable profile that contains no machine-specific or
+  personal data;
+- preserve profile compatibility across supported platforms and report unavailable device-specific
+  bindings clearly.
 
 ## Reference geometry
 
@@ -61,6 +91,25 @@ Planned behavior:
 This workflow should use the same out-of-core spatial index and work-unit model planned for large
 meshes. Statistical comparison and overlap consolidation should also be distributable across local
 or remote MeshMill nodes.
+
+## Depth Adaptive solid synthesis
+
+Create a separate Depth Adaptive QEM workflow that reconstructs a closed, printable solid from an
+open or incomplete surface. This mode should use the adaptive physical-probe surface estimate to
+bridge scan gaps and fill holes, then assemble a watertight exterior suitable for additive
+manufacturing. It remains separate from ordinary Depth Adaptive QEM, which preserves open
+boundaries and does not intentionally change topology.
+
+Planned validation and controls:
+
+- preview every filled region and the estimated enclosed volume before applying the result;
+- set the smallest hole to fill and the largest gap the surface model may bridge;
+- preserve deliberate openings through protected regions or explicit boundary selection;
+- remove enclosed duplicate and internal geometry that does not contribute to the exterior solid;
+- verify watertightness, manifold edges, consistent normals, self-intersections, and positive volume;
+- report dimensional drift and surface deviation against the source mesh;
+- export a printable STL only after solid validation passes, with unresolved regions identified for
+  review.
 
 ## Distributed synthesis
 
@@ -141,10 +190,17 @@ The index, streaming, cache, work-unit, and safety contract is documented in
 - Open oversized binary STL files as bounded, evenly sampled navigation overviews.
 - Partition full-resolution geometry into spatial cubes with deterministic overlap boundaries.
 - Read, analyze, and optimize independent cubes concurrently within CPU and memory limits.
-- Benchmark GPU-compute implementations for reduction stages such as error evaluation, candidate
-  scoring, spatial queries, and independent work-unit processing. Offload a stage only when it
-  provides a measurable end-to-end speed or memory benefit without reducing determinism, mesh
-  quality, topology guarantees, or compatibility with systems that lack a suitable GPU.
+- Continue GPU reduction research only from the measured baseline in
+  [`benchmarks/GPU_GEOMETRY_PROTOTYPE_RESULTS.md`](benchmarks/GPU_GEOMETRY_PROTOTYPE_RESULTS.md).
+  Depth Adaptive QEM is now a production GPU / Higher Quality option. Current voxel, clustering, topology-safe QEM,
+  parallel QEM, RXMesh, and exterior-cleanup paths
+  were rejected for speed, completeness, or quality. Integrate a future stage only when it improves
+  end-to-end time or memory while matching the CPU result's geometry and topology contract.
+- Prototype Depth and Density Adaptive QEM as a hybrid of the existing depth-probe analysis and
+  robust local-density statistics. Use density to allocate probe and triangle budgets, then use
+  depth agreement, curvature, and surface trajectory to distinguish useful detail from redundant
+  scan concentration. Compare it with Fast QEM, Density balanced, and Depth Adaptive QEM at matched
+  output counts before considering it for the application.
 - Stream coarse-to-fine viewport levels instead of requiring the complete mesh in memory.
 - Draw cube state directly in the viewport: queued, reading, processing, completed, and failed.
 - Show per-cube progress by filling each cube and retain a high-level whole-object view.

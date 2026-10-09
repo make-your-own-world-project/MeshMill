@@ -183,12 +183,12 @@ def main() -> int:
             destination.parent.mkdir(parents=True, exist_ok=True)
             try:
                 translated = assemble_document(locale, name, cache)
-            except Exception as error:
+            except Exception as error:  # noqa: BLE001 - collect every document failure for the final report
                 failures.append([locale, name, str(error)])
                 continue
             destination.write_text(translated, "utf-8")
-            if re.findall(r"^(#{1,6}) ", source, re.M) != re.findall(
-                r"^(#{1,6}) ", translated, re.M
+            if re.findall(r"^(#{1,6}) ", source, re.MULTILINE) != re.findall(
+                r"^(#{1,6}) ", translated, re.MULTILINE
             ):
                 failures.append([locale, name, "heading structure"])
             source_tables = [line.count("|") for line in source.splitlines() if line.startswith("|")]
@@ -257,7 +257,7 @@ def main() -> int:
     expected_installed = {}
     for relative, value in installed.items():
         rel = Path(relative)
-        actual = ROOT / rel if rel.parts[0] == "locales" else ROOT / rel
+        actual = ROOT / rel
         expected_installed[relative] = digest(actual)
     if installed != expected_installed:
         raise RuntimeError("Integrated translations differ from the validated candidate")

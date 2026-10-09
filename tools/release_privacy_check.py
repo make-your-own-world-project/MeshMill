@@ -1,13 +1,24 @@
-"""Reject common private-data and work-session artifacts before publication."""
+"""Reject common private data and temporary development artifacts before publication."""
 
 from __future__ import annotations
 
 import re
 import subprocess
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKIP_PARTS = {".git", ".localization-work", "__pycache__", "build", "dist", "release"}
+SKIP_PARTS = {
+    ".git",
+    ".localization-work",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "release",
+}
 TEXT_SUFFIXES = {
     ".cfg", ".css", ".ini", ".iss", ".json", ".md", ".ps1", ".py", ".svg",
     ".toml", ".txt", ".yml", ".yaml",
@@ -27,6 +38,7 @@ PATTERNS = {
     ),
 }
 PNG_PRIVATE_CHUNKS = {b"tEXt", b"zTXt", b"iTXt", b"eXIf"}
+PRIVATE_ARCHIVE_PARTS = SKIP_PARTS | {"logs", "sessions"}
 
 
 def publishable_files() -> list[Path]:
@@ -63,6 +75,56 @@ def check_commit_emails(failures: list[str]) -> None:
             break
 
 
+def check_release_artifacts(failures: list[str]) -> None:
+    release_directory = ROOT / "release"
+    if not release_directory.is_dir():
+        return
+
+    local_needles = {
+        str(Path.home()),
+        str(ROOT),
+        "Documents\\Codex",
+        ".codex\\",
+        ".codex/",
+        "localization-translation-engine",
+    }
+    local_needles = {needle.casefold() for needle in local_needles}
+
+    for archive_path in sorted(release_directory.glob("MeshMill-*-portable.zip")):
+        with zipfile.ZipFile(archive_path) as archive:
+            timestamps = {info.date_time for info in archive.infolist()}
+            if timestamps != {(1980, 1, 1, 0, 0, 0)}:
+                failures.append(
+                    f"{archive_path.relative_to(ROOT)}: archive entries expose source timestamps"
+                )
+            for info in archive.infolist():
+                parts = set(Path(info.filename).parts)
+                if parts & PRIVATE_ARCHIVE_PARTS or info.filename.casefold().endswith(
+                    (".log", ".pdb", ".jsonl")
+                ):
+                    failures.append(
+                        f"{archive_path.relative_to(ROOT)}: private artifact {info.filename}"
+                    )
+                if info.file_size > 100 * 1024 * 1024:
+                    continue
+                text = archive.read(info).decode("utf-8", errors="ignore").casefold()
+                for needle in local_needles:
+                    if needle in text:
+                        failures.append(
+                            f"{archive_path.relative_to(ROOT)}:{info.filename}: local build path"
+                        )
+
+    raw_needles = tuple(needle.encode("utf-8") for needle in local_needles)
+    for artifact in sorted(release_directory.glob("MeshMill-*")):
+        if not artifact.is_file():
+            continue
+        data = artifact.read_bytes().lower()
+        for needle in raw_needles:
+            if needle.lower() in data:
+                failures.append(f"{artifact.relative_to(ROOT)}: private build path")
+                break
+
+
 def main() -> int:
     failures: list[str] = []
     for path in publishable_files():
@@ -70,7 +132,7 @@ def main() -> int:
         if path.resolve() == Path(__file__).resolve():
             continue
         if path.name.casefold() in FORBIDDEN_FILE_NAMES:
-            failures.append(f"{relative}: work-session artifact filename")
+            failures.append(f"{relative}: temporary development artifact filename")
         if path.suffix.casefold() == ".png":
             check_png(path, failures)
         if path.suffix.casefold() not in TEXT_SUFFIXES:
@@ -85,9 +147,10 @@ def main() -> int:
             if pattern.search(text):
                 failures.append(f"{relative}: {label}")
     check_commit_emails(failures)
+    check_release_artifacts(failures)
     if failures:
         raise SystemExit("Privacy check failed:\n" + "\n".join(f"- {item}" for item in failures))
-    print("Privacy check passed: no private email, user path, session artifact, or image metadata found")
+    print("Privacy check passed: no private email, user path, temporary artifact, or image metadata found")
     return 0
 
 

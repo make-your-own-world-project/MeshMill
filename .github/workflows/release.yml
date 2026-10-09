@@ -9,7 +9,6 @@ on:
       version:
         description: "Release version, for example 0.1.0"
         required: true
-        default: "0.1.2"
 
 permissions:
   contents: write
@@ -56,6 +55,23 @@ jobs:
       - name: Build self-contained application
         run: python -m PyInstaller --noconfirm --clean MeshMill.spec
 
+      - name: Bundle Depth Adaptive QEM runtime
+        shell: pwsh
+        run: |
+          $runtime = "build\cuda-runtime"
+          New-Item -ItemType Directory -Path $runtime -Force | Out-Null
+          python -m pip install --only-binary=:all: --target $runtime -r requirements-cuda-runtime.txt
+          if ($LASTEXITCODE -ne 0) { throw "CUDA runtime dependency staging failed" }
+          Get-ChildItem -LiteralPath $runtime -Force |
+            Where-Object { $_.Name -match '^numpy(?:[.-]|$)' -or $_.Name -eq 'bin' } |
+            Remove-Item -Recurse -Force
+          Get-ChildItem -LiteralPath $runtime -Recurse -Directory -Filter '__pycache__' |
+            Remove-Item -Recurse -Force
+          @{ schema = 1; runtimeVersion = "1.0.0"; application = "MeshMill" } |
+            ConvertTo-Json |
+            Set-Content -LiteralPath "$runtime\meshmill-cuda-runtime.json" -Encoding utf8
+          Copy-Item -LiteralPath $runtime -Destination "dist\MeshMill\_internal\cuda_runtime" -Recurse
+
       - name: Sign application executables
         if: ${{ env.CERTIFICATE_BASE64 != '' }}
         shell: pwsh
@@ -91,21 +107,25 @@ jobs:
           $signtool = (Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Filter signtool.exe -Recurse |
             Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
             Sort-Object FullName -Descending | Select-Object -First 1).FullName
-          $installer = Get-Item "release\MeshMill-${{ steps.version.outputs.version }}-windows-x64-setup.exe"
-          & $signtool sign /fd SHA256 /td SHA256 /tr http://timestamp.digicert.com /f $certificate /p $env:CERTIFICATE_PASSWORD $installer.FullName
-          if ($LASTEXITCODE -ne 0) { throw "Installer signing failed" }
+          Get-ChildItem "release\MeshMill-${{ steps.version.outputs.version }}-windows-x64-*.exe" | ForEach-Object {
+            & $signtool sign /fd SHA256 /td SHA256 /tr http://timestamp.digicert.com /f $certificate /p $env:CERTIFICATE_PASSWORD $_.FullName
+            if ($LASTEXITCODE -ne 0) { throw "Installer signing failed: $($_.Name)" }
+          }
           [IO.File]::Delete($certificate)
 
       - name: Test installer upgrade and uninstall
         shell: pwsh
         run: |
-          .\tools\test_windows_installer.ps1 -InstallerPath "release\MeshMill-${{ steps.version.outputs.version }}-windows-x64-setup.exe"
+          .\tools\test_windows_installer.ps1 `
+            -InstallerPath "release\MeshMill-${{ steps.version.outputs.version }}-windows-x64-setup.exe" `
+            -ReopenFile "samples\sample-scan.stl"
 
       - name: Build portable archive and checksums
         shell: pwsh
         run: |
           $version = "${{ steps.version.outputs.version }}"
-          Compress-Archive -LiteralPath "dist\MeshMill" -DestinationPath "release\MeshMill-$version-windows-x64-portable.zip" -CompressionLevel Optimal
+          python tools/create_reproducible_zip.py "dist\MeshMill" "release\MeshMill-$version-windows-x64-portable.zip"
+          if ($LASTEXITCODE -ne 0) { throw "Portable archive creation failed" }
           Copy-Item -LiteralPath "samples\original-scan.stl" -Destination "release\MeshMill-sample-scan-original.stl"
           Get-ChildItem release -File | Sort-Object Name | ForEach-Object {
             $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -132,11 +152,22 @@ jobs:
 
           - **Installer:** normal Windows installation with Start menu and optional desktop shortcuts.
             Upgrades preserve settings and shortcut choices; uninstall removes MeshMill preferences.
+          - **Depth Adaptive QEM:** its minimal CUDA runtime is included in both Windows packages.
+            It activates on compatible NVIDIA hardware without a separate download or system-wide
+            CUDA installation.
           - **Portable ZIP:** no installation. Extract the complete ZIP, then run `MeshMill.exe`.
           - **Sample STL:** optional large test geometry for experimenting with MeshMill.
           - **SHA256SUMS.txt:** checksums for verifying downloads.
 
           These packages are self-contained. Python, Node.js, and development dependencies are not required.
+
+          ## Localization status
+
+          MeshMill 0.2.0 is currently distributed in English. Updated translations were deferred
+          because the available translation, validation, and review work exceeded current resource
+          and processing capacity. Existing community translation files remain in the repository for
+          future completion, but they are not included in these packages because they have not passed
+          the 0.2.0 release validation gates.
 
           Linux and macOS downloads are published separately as clearly labeled preview releases.
           "@ | Set-Content release-notes.md -Encoding utf8

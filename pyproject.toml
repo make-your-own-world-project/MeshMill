@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "meshmill"
-version = "0.1.2"
+version = "0.2.0"
 description = "A local desktop and command-line tool for inspecting and optimizing STL meshes."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -22,6 +22,8 @@ classifiers = [
 ]
 dependencies = [
   "fast-simplification==0.2.0",
+  "cupy-cuda12x==13.6.0; platform_system == 'Windows'",
+  "nvidia-cuda-nvrtc-cu12==12.0.140; platform_system == 'Windows'",
   "numpy==2.5.3",
   "PySide6==6.11.2",
   "vtk==9.7.1",
@@ -31,8 +33,11 @@ dependencies = [
 meshmill = "meshmill:main"
 
 [tool.setuptools]
-py-modules = ["meshmill", "out_of_core", "gpu_resident"]
+py-modules = ["meshmill", "out_of_core", "gpu_resident", "depth_adaptive_qem"]
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

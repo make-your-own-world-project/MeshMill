@@ -17,7 +17,7 @@ QUEUE_PATH = WORK / "queue.json"
 CACHE_PATH = WORK / "translation-cache.json"
 PROGRESS_PATH = WORK / "progress.json"
 RESULTS = WORK / "batch-results"
-MARKER_RE = re.compile(r"\[\[(\d{8})\]\]\s*(.*?)(?=\[\[\d{8}\]\]|\Z)", re.S)
+MARKER_RE = re.compile(r"\[\[(\d{8})\]\]\s*(.*?)(?=\[\[\d{8}\]\]|\Z)", re.DOTALL)
 
 queue = json.loads(QUEUE_PATH.read_text("utf-8"))
 cache = json.loads(CACHE_PATH.read_text("utf-8"))
@@ -63,7 +63,7 @@ def update_progress(status: str = "translating") -> None:
             "last_saved": state["last_saved"],
             "validation_error": state["validation_error"],
             "remaining_passages": sum(row["key"] not in cache for row in queue),
-            "updated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "updated_at": dt.datetime.now(dt.UTC).isoformat(),
         }
     )
     save_json_atomic(PROGRESS_PATH, existing)
@@ -153,14 +153,14 @@ th,td{{padding:8px;border-bottom:1px solid #d8dee9;text-align:right}}th:first-ch
 <dt>Last update</dt><dd>{html.escape(str(live_progress.get('updated_at', 'Unknown')))}</dd>
 <dt>Errors</dt><dd class="error">{error}</dd></dl>
 <table><thead><tr><th>Language</th><th>Completed</th><th>Total</th><th>Progress</th><th>Remaining</th></tr></thead>
-<tbody>{rows}</tbody></table></body></html>""".encode("utf-8")
+<tbody>{rows}</tbody></table></body></html>""".encode()
 
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *_: object) -> None:
         return
 
-    def do_GET(self) -> None:  # noqa: N802
+    def do_GET(self) -> None:
         path = urlparse(self.path).path
         if path == "/dashboard":
             body = dashboard_html()
@@ -194,14 +194,14 @@ class Handler(BaseHTTPRequestHandler):
 <form method="post"><input type="hidden" name="locale" value="{html.escape(locale)}">
 <label for="result">Translated result</label>
 <textarea id="result" name="result" rows="15" autofocus></textarea>
-<button type="submit">Save verified batch</button></form></body></html>""".encode("utf-8")
+<button type="submit">Save verified batch</button></form></body></html>""".encode()
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
 
-    def do_POST(self) -> None:  # noqa: N802
+    def do_POST(self) -> None:
         batch = pending_batch()
         length = int(self.headers.get("Content-Length", "0"))
         if length > 200_000:
@@ -236,7 +236,7 @@ class Handler(BaseHTTPRequestHandler):
             state["last_saved"] = f"{first}-{last}"
             state["validation_error"] = ""
             update_progress("complete" if not pending_batch() else "translating")
-        except Exception as error:  # validation errors are shown in the local UI
+        except Exception as error:  # noqa: BLE001 - validation failures are displayed in the local UI
             state["validation_error"] = str(error)
             update_progress("translation_error")
         self.send_response(303)

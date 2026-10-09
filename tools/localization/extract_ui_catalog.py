@@ -5,7 +5,6 @@ from __future__ import annotations
 import ast
 import json
 import re
-from pathlib import Path
 
 from config import ROOT, UI_CATALOG
 
@@ -21,6 +20,7 @@ VISIBLE_CALLS = {
     "critical",
     "getOpenFileName",
     "getSaveFileName",
+    "performance_row",
     "setInformativeText",
     "setText",
     "setToolTip",
@@ -58,7 +58,10 @@ def main() -> int:
     for node in ast.walk(tree):
         if isinstance(node, (ast.Assign, ast.AnnAssign)):
             targets = node.targets if isinstance(node, ast.Assign) else [node.target]
-            if any(isinstance(target, ast.Name) and target.id == "help_text" for target in targets):
+            if any(
+                isinstance(target, ast.Name) and target.id.endswith("help_text")
+                for target in targets
+            ):
                 values.extend(strings(node.value))
         if not isinstance(node, ast.Call):
             continue

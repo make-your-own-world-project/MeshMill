@@ -1,26 +1,37 @@
 #ifndef MyAppVersion
-  #define MyAppVersion "0.1.2"
+  #error MyAppVersion must be supplied by the release build
 #endif
 
-#define MyAppName "MeshMill"
+#ifndef MyAppName
+  #define MyAppName "MeshMill"
+#endif
+#ifndef MyAppId
+  #define MyAppId "{{C8E36B57-B05D-47EE-95B2-45B96E01F7D5}"
+#endif
+#ifndef MySettingsKey
+  #define MySettingsKey "Software\MeshMill"
+#endif
+#ifndef MyOutputBaseFilename
+  #define MyOutputBaseFilename "MeshMill-" + MyAppVersion + "-windows-x64-setup"
+#endif
 #define MyAppPublisher "MeshMill contributors"
 #define MyAppExeName "MeshMill.exe"
 
 [Setup]
-AppId={{C8E36B57-B05D-47EE-95B2-45B96E01F7D5}
+AppId={#MyAppId}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-AppPublisherURL=https://github.com/make-your-own-world-project/MeshMill
-AppSupportURL=https://github.com/make-your-own-world-project/MeshMill/issues
-AppUpdatesURL=https://github.com/make-your-own-world-project/MeshMill/releases/latest
+AppPublisherURL=https://github.com/make-your-own-world/MeshMill
+AppSupportURL=https://github.com/make-your-own-world/MeshMill/issues
+AppUpdatesURL=https://github.com/make-your-own-world/MeshMill/releases/latest
 DefaultDirName={localappdata}\Programs\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
 OutputDir=..\release
-OutputBaseFilename=MeshMill-{#MyAppVersion}-windows-x64-setup
+OutputBaseFilename={#MyOutputBaseFilename}
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
@@ -61,18 +72,41 @@ Type: files; Name: "{app}\LICENSE"
 Type: files; Name: "{app}\README.md"
 Type: files; Name: "{app}\ROADMAP.md"
 Type: files; Name: "{app}\THIRD_PARTY_NOTICES.md"
+Type: files; Name: "{app}\CUDA_EXCEPTION.md"
 
 [Files]
 Source: "..\dist\MeshMill\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 ; QSettings stores MeshMill preferences under this per-user key. An in-place
 ; upgrade keeps it. A real uninstall removes it with the rest of the app.
 [Registry]
-Root: HKCU; Subkey: "Software\MeshMill"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "{#MySettingsKey}"; Flags: uninsdeletekey
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Parameters: "{code:GetReopenParameters}"; Flags: nowait; Check: ShouldReopen
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{localappdata}\MeshMill"
+
+[Code]
+function GetReopenParameters(Param: String): String;
+var
+  ReopenFile: String;
+begin
+  ReopenFile := ExpandConstant('{param:REOPENFILE|}');
+  if ReopenFile <> '' then
+    Result := '"' + ReopenFile + '"'
+  else
+    Result := '';
+end;
+
+function ShouldReopen(): Boolean;
+begin
+  Result := ExpandConstant('{param:REOPEN|0}') = '1';
+end;

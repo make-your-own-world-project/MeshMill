@@ -1,9 +1,12 @@
 * text=auto
+/.gitattributes text eol=lf
 *.py text eol=lf
 *.md text eol=lf
 *.toml text eol=lf
 *.yml text eol=lf
 *.ps1 text eol=crlf
+*.iss text eol=crlf
+*.spec text eol=lf
 *.png binary
 *.ico binary
 *.stl binary

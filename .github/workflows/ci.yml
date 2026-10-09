@@ -22,8 +22,8 @@ jobs:
         run: python -m py_compile meshmill.py
       - name: Check release privacy
         run: python tools/release_privacy_check.py
-      - name: Validate localization catalogs
-        run: python tools/localization/validate_locales.py
+      - name: Validate English source catalog
+        run: python tools/localization/validate_locales.py --source-only
       - name: Test density processing
         run: python tools/test_density.py
       - name: Test shortcut routing

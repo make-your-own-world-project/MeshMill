@@ -6,7 +6,6 @@ import os
 import sys
 from pathlib import Path
 
-
 DEFAULT_LOCALE = "en-US"
 
 

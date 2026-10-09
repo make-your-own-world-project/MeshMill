@@ -3,34 +3,39 @@
 </p>
 
 <!-- localization-navigation:start -->
+> **0.2.0 localization status:** The current application and documentation release is English-only.
+> Updated translations were deferred because translation, structural validation, and review exceeded
+> the resources and processing capacity available for this release. The links below lead to older
+> community translation work and may not describe current features.
+
 <p align="center">
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/README.md">English</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ar/README.md">العربية</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/bn/README.md">বাংলা</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/de/README.md">Deutsch</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/el/README.md">Ελληνικά</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/es/README.md">Español</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/fa/README.md">فارسی</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/fr/README.md">Français</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ga/README.md">Gaeilge</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/hi/README.md">हिन्दी</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/hu/README.md">Magyar</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/id/README.md">Bahasa Indonesia</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/it/README.md">Italiano</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ja/README.md">日本語</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ko/README.md">한국어</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/nl/README.md">Nederlands</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/pl/README.md">Polski</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/pt/README.md">Português</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ro/README.md">Română</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ru/README.md">Русский</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/sr/README.md">Српски</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/th/README.md">ไทย</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/tr/README.md">Türkçe</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/uk/README.md">Українська</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/ur/README.md">اردو</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/vi/README.md">Tiếng Việt</a> ·
-  <a href="https://github.com/make-your-own-world-project/MeshMill/blob/main/docs/locales/zh-CN/README.md">简体中文</a>
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/README.md">English</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/ar/README.md">العربية</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/bn/README.md">বাংলা</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/de/README.md">Deutsch</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/el/README.md">Ελληνικά</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/es/README.md">Español</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/fa/README.md">فارسی</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/fr/README.md">Français</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/ga/README.md">Gaeilge</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/hi/README.md">हिन्दी</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/hu/README.md">Magyar</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/id/README.md">Bahasa Indonesia</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/it/README.md">Italiano</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/ja/README.md">日本語</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/ko/README.md">한국어</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/nl/README.md">Nederlands</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/pl/README.md">Polski</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/pt/README.md">Português</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/ro/README.md">Română</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/ru/README.md">Русский</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/sr/README.md">Српски</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/th/README.md">ไทย</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/tr/README.md">Türkçe</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/uk/README.md">Українська</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/ur/README.md">اردو</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/vi/README.md">Tiếng Việt</a> ·
+  <a href="https://github.com/make-your-own-world/MeshMill/blob/main/docs/locales/zh-CN/README.md">简体中文</a>
 </p>
 <!-- localization-navigation:end -->
 
@@ -39,8 +44,13 @@ manageable. It provides fast inspection, density analysis, regional selection, c
 and controlled mesh reduction without requiring an account or uploading geometry.
 
 GPU-accelerated OpenGL rendering keeps viewport navigation, hardware picking, density visualization,
-and interactive inspection responsive. Mesh reduction currently runs in separate native CPU workers,
-keeping long geometry calculations away from the interface.
+and interactive inspection responsive. That graphics support is included in the normal MeshMill
+package. **Depth Adaptive QEM (GPU / Higher Quality)** asks the GPU to perform a different kind of
+work: CUDA surface measurement before boundary-preserving Fast QEM. The Windows packages include the
+minimal NVIDIA CUDA computation runtime inside MeshMill, without installing a system-wide toolkit or
+background service. The first Depth Adaptive QEM run prepares and caches GPU kernels for that machine;
+later meshes reuse the cache. Geometry work runs outside the interface so long operations do not block
+navigation or controls.
 
 MeshMill works with meshes from 3D scanners, CAD and modeling exports, reconstruction pipelines,
 generated geometry, and other STL sources. It prepares geometry for downstream editors,
@@ -54,30 +64,29 @@ development dependencies are not required.
 
 | System | Recommended download | Status |
 | --- | --- | --- |
-| **Windows x64** | **[Download the Windows installer][windows-installer]** | Supported release |
-| Windows x64, no installation | [Download the portable ZIP][windows-portable] | Supported release |
-| Linux x86-64 | [Download the Linux preview][linux-preview] | Early testing preview |
-| macOS Apple silicon | [Download the Apple silicon preview][mac-arm-preview] | Early testing preview |
-| macOS Intel | [Download the Intel Mac preview][mac-intel-preview] | Early testing preview |
+| **Windows x64** | **[Download the Windows installer](https://github.com/make-your-own-world/MeshMill/releases/download/v0.2.0/MeshMill-0.2.0-windows-x64-setup.exe)** | Supported release |
+| Windows x64, no installation | [Download the portable ZIP](https://github.com/make-your-own-world/MeshMill/releases/download/v0.2.0/MeshMill-0.2.0-windows-x64-portable.zip) | Supported release |
+| Linux x86-64 | [Download the Linux preview](https://github.com/make-your-own-world/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz) | Early testing preview |
+| macOS Apple silicon | [Download the Apple silicon preview](https://github.com/make-your-own-world/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip) | Early testing preview |
+| macOS Intel | [Download the Intel Mac preview](https://github.com/make-your-own-world/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip) | Early testing preview |
 
 **Most Windows users should choose the Windows installer.** Use the portable ZIP only when you do
-not want MeshMill installed or do not have permission to install applications.
+not want MeshMill installed or do not have permission to install applications. The normal package
+includes GPU-accelerated viewing, every built-in CPU reduction algorithm, and the minimal CUDA
+runtime used by Depth Adaptive QEM. That algorithm activates when MeshMill detects a compatible
+NVIDIA GPU and driver. It requires no separate download or system-wide CUDA installation.
+CUDA Runtime, NVRTC, and CuPy remain separately licensed components. See the
+[third-party notices](THIRD_PARTY_NOTICES.md) and the
+[CUDA interoperability exception](CUDA_EXCEPTION.md).
 
 Linux and macOS packages are unsigned early previews. They pass automated native builds and
 packaged smoke tests, but still need real-hardware testing. Read the
 [Linux and macOS preview notes](docs/PLATFORM_TESTING.md) before installing them.
 
 Windows SmartScreen or macOS Gatekeeper may warn about unsigned packages.
-An optional sample mesh is included with the supported Windows release: [STL][sample-mesh].
-Older versions and download checksums are available on [GitHub Releases][all-releases].
-
-[windows-installer]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-0.1.2-windows-x64-setup.exe
-[windows-portable]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-0.1.2-windows-x64-portable.zip
-[linux-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-linux-x86_64.tar.gz
-[mac-arm-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-arm64.zip
-[mac-intel-preview]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.2.0-preview.2/MeshMill-0.2.0-preview.2-macos-x86_64.zip
-[sample-mesh]: https://github.com/make-your-own-world-project/MeshMill/releases/download/v0.1.2/MeshMill-sample-scan-original.stl
-[all-releases]: https://github.com/make-your-own-world-project/MeshMill/releases
+An optional [sample STL](https://github.com/make-your-own-world/MeshMill/releases/download/v0.2.0/MeshMill-sample-scan-original.stl)
+is included with the supported Windows release. Older versions and download checksums are available
+on [GitHub Releases](https://github.com/make-your-own-world/MeshMill/releases).
 
 ## Quick start
 
@@ -93,7 +102,12 @@ MeshMill never starts optimization merely because a file or setting changed.
 ## Capabilities
 
 - Binary and ASCII STL input, binary STL output
-- Fast QEM, density-balanced, shape-preserving, and topology-preserving reduction
+- Fast QEM plus optional Depth Adaptive QEM (GPU / Higher Quality), density-balanced,
+  shape-preserving, and topology-preserving reduction
+- A color-coded quality row comparing reduction, sampled error, dimensional drift, area change,
+  and non-manifold topology after optimization
+- GPU-adaptive physical probes that remove supported scan-scale variation before QEM reduction
+- Per-application CUDA GPU selection for Depth Adaptive QEM on multi-GPU systems
 - GPU-accelerated OpenGL viewport, hardware picking, and density visualization
 - Native background geometry workers for mesh reduction
 - Shaded, density, wireframe, and vertex display modes
@@ -108,6 +122,11 @@ MeshMill never starts optimization merely because a file or setting changed.
 - Bounded overview loading when a binary STL exceeds the configured memory budget
 - GUI and command-line applications
 - Local processing with no account, telemetry, upload, or cloud dependency
+
+The Performance settings list CUDA adapters by model, PCI address, and memory capacity. Selecting an
+adapter directs Depth Adaptive QEM analysis to that device for whole-mesh and selection-only work.
+System default uses CUDA device 0. The OpenGL viewport continues to use the graphics adapter chosen
+by the operating system.
 
 ## Inspect geometry before reducing it
 
@@ -149,7 +168,8 @@ stays centered on the pointer and reveals local density without changing the mai
 
 | Input | Action |
 | --- | --- |
-| Middle-drag | Orbit |
+| Left-drag | Pan |
+| Middle-drag | Orbit around the visible mesh beneath the pointer |
 | Shift + middle-drag | Pan |
 | Mouse wheel | Zoom toward the pointer |
 | Ctrl + mouse wheel | Roll clockwise or counterclockwise |
@@ -210,6 +230,14 @@ the full source triangle count but disables editing and export because it is a s
 object. Indexed, zoom-dependent out-of-core processing is planned in
 [docs/OUT_OF_CORE.md](docs/OUT_OF_CORE.md).
 
+## Updates
+
+Update checks are off by default. Click the version beside **General** to check manually, or enable
+one check when MeshMill opens in Settings. Supported installer builds can download a newer release,
+verify its GitHub SHA-256 digest, replace the installed version, and reopen the active STL. Portable
+archives are not modified in place. Platform packaging status and the updater contract are documented
+in [docs/UPDATES.md](docs/UPDATES.md).
+
 ## Command line
 
 `MeshMillCLI.exe` is included in both release packages:
@@ -217,6 +245,7 @@ object. Indexed, zoom-dependent out-of-core processing is planned in
 ```powershell
 .\MeshMillCLI.exe "C:\path\mesh.stl" --preset balanced
 .\MeshMillCLI.exe "C:\path\mesh.stl" --target 150000 --output "C:\path\mesh-reduced.stl"
+.\MeshMillCLI.exe "C:\path\mesh.stl" --algorithm depth-adaptive --target 150000
 .\MeshMillCLI.exe "C:\path\mesh.stl" --algorithm density --target 150000
 .\MeshMillCLI.exe "C:\path\mesh.stl" --algorithm topology --overwrite
 ```
@@ -249,6 +278,22 @@ See [`samples/README.md`](samples/README.md) for provenance, dimensions, and che
 Algorithm contributors should also read the
 [algorithm testing guide](docs/ALGORITHM_TESTING.md) before comparing or changing reduction
 behavior.
+
+The [algorithm reference](docs/ALGORITHMS.md) documents the production formulas, implementation
+sources, MeshMill-specific decisions, and density-display analysis. The
+[GPU QEM and depth-analysis note](docs/GPU_QEM_AND_DEPTH_ANALYSIS.md) explains why ray, depth, and
+surface-measurement workloads benefit from GPU parallelism while ordered QEM topology mutation did
+not, including the measured prototype results. The
+[full algorithm comparison](benchmarks/ALGORITHM_COMPARISON.md) records CPU, GPU, quality, topology,
+and runtime results for released algorithms and completed prototypes.
+
+The [Depth Adaptive QEM design](docs/DEPTH_GAUGE_REDUCTION.md) records the project-originated
+physical-probe model, its complete mathematics, the GPU execution profile, and why the other GPU
+approaches tested during development were rejected. The published paper,
+[Depth Adaptive QEM: GPU-Guided Surface Measurement for Practical Mesh Reduction](https://github.com/make-your-own-world/rnd/blob/main/depth-adaptive-qem/depth-adaptive-qem-v1.1.pdf),
+provides the consolidated derivation, measurements, comparisons, and research context. The
+[production reducer comparison](benchmarks/CURRENT_BEST_COMPARISON.md) provides matched resident
+timings, numerical quality metrics, and six identical camera views for all production reducers.
 
 ## STL units
 

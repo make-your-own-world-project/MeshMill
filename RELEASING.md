@@ -8,13 +8,15 @@ Before building, refresh and validate the localization source catalogs:
 
 ```powershell
 python tools/localization/extract_ui_catalog.py
-python tools/localization/validate_locales.py
+python tools/localization/validate_locales.py --source-only
 python tools/release_privacy_check.py
 ```
 
 ## Before the first public release
 
-1. Finish and validate the planned application and documentation translations.
+1. Validate the English source catalog. Updated translations are deferred for 0.2.0 and remain
+   excluded from release packages until translation, structural validation, and native-speaker review
+   are complete.
 2. Review the GPL and third-party notices.
 3. Test installation, launch, STL loading, optimization, export, and uninstallation on a clean
    Windows account or virtual machine.
@@ -63,11 +65,11 @@ The tag starts the release workflow. It:
 
 1. installs the pinned build dependencies;
 2. generates matching Windows version metadata;
-3. builds the self-contained GUI and CLI executables;
+3. builds the self-contained standard GUI and CLI executables;
 4. signs the executables when signing secrets are configured;
-5. builds the per-user Inno Setup installer;
+5. bundles the minimal Depth Adaptive QEM CUDA runtime and builds the per-user installer;
 6. signs the installer when configured;
-7. creates the portable ZIP and SHA-256 checksum file;
+7. creates the standard portable ZIP and SHA-256 checksum file;
 8. uploads workflow artifacts;
 9. creates the GitHub Release for the pushed tag.
 
@@ -75,6 +77,11 @@ Verify the installer and portable archive on a clean Windows system before annou
 Keep the source corresponding to every distributed binary available under the same release tag.
 Confirm that the GitHub button points to the final public repository URL before tagging the first
 release.
+
+Test the Windows installer and portable archive on systems with and without compatible NVIDIA
+hardware. Both packages should contain the same minimal CUDA runtime. Depth Adaptive QEM should
+activate on supported hardware and remain muted elsewhere, while GPU-accelerated viewport
+rendering and the built-in reduction algorithms remain available.
 
 ## Build Linux and macOS previews
 

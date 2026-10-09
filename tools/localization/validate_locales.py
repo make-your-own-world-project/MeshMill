@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -21,7 +22,19 @@ def load_object(path: Path) -> dict[str, str]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--source-only",
+        action="store_true",
+        help="validate only the English source catalog for an English-only release",
+    )
+    arguments = parser.parse_args()
     source = load_object(UI_CATALOG)
+    if arguments.source_only:
+        if not source:
+            raise SystemExit("English source catalog is empty")
+        print(f"English source catalog valid: {len(source)} UI strings")
+        return 0
     failures: list[str] = []
     locale_root = ROOT / "locales"
     for path in sorted(locale_root.glob("*.json")):

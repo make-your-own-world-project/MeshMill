@@ -10,13 +10,15 @@ a = Analysis(
         ('README.md', '.'),
         ('ROADMAP.md', '.'),
         ('THIRD_PARTY_NOTICES.md', '.'),
+        ('CUDA_EXCEPTION.md', '.'),
         ('docs/OUT_OF_CORE.md', 'docs'),
         ('docs/GPU_OUT_OF_CORE.md', 'docs'),
         ('assets/meshmill-mark.svg', 'assets'),
         ('assets/meshmill-logo.svg', 'assets'),
-        ('locales', 'locales'),
+        ('locales/en-US.json', 'locales'),
     ],
     hiddenimports=[
+        'unittest.mock',
         'vtkmodules.vtkInteractionStyle',
         'vtkmodules.vtkRenderingOpenGL2',
         'vtkmodules.vtkRenderingFreeType',
@@ -24,10 +26,29 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['matplotlib', 'pandas', 'scipy'],
+    excludes=[
+        'matplotlib',
+        'pandas',
+        'pytest',
+        'scipy',
+        'cupy',
+        'cupyx',
+        'cupy_backends',
+        'nvidia',
+        'cupy_backends.cuda.libs.cudnn',
+        'cupy_backends.cuda.libs.cutensor',
+    ],
     noarchive=False,
     optimize=1,
 )
+
+# Qt uses the Windows ICU compatibility libraries. A developer machine may also
+# expose unrelated ICU builds through PATH (for example, from PDF tooling), and
+# PyInstaller can otherwise collect those DLLs while resolving Qt6Core. Bundling
+# them makes Qt load the incompatible copy before the Windows implementation.
+_foreign_icu_dlls = {'icuuc.dll', 'icudt78.dll'}
+a.binaries = [entry for entry in a.binaries if entry[0].lower() not in _foreign_icu_dlls]
+
 pyz = PYZ(a.pure)
 gui = EXE(
     pyz,
